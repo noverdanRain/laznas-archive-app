@@ -11,15 +11,16 @@ export default function Sidebar() {
     const router = useRouter();
 
     return (
-        <aside className="h-screen w-16 pr-4 flex flex-col justify-between border-r-2 border-gray-200 border-dashed">
+        <aside className="h-screen px-4 flex flex-col justify-between border-r-2 border-gray-200 border-dashed">
             <div>
-                <Image
-                    src="/logo-icon.png"
-                    alt="Logo Laznas Al Irsyad Purwokerto"
-                    width={48}
-                    height={48}
-                    className="h-20 object-contain"
-                />
+                <div className="flex items-center justify-center h-20">
+                    <Image
+                        src="/logo-icon.png"
+                        alt="Logo Laznas Al Irsyad Purwokerto"
+                        width={48}
+                        height={48}
+                    />
+                </div>
                 <Sheet>
                     <SheetTrigger asChild>
                         <ButtonSidebar
