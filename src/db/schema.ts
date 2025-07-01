@@ -11,10 +11,10 @@ import {
     int,
 } from "drizzle-orm/mysql-core";
 
-const uuidKey = (name: string) => char(name, { length: 36 });
+const uuidType = (name: string) => char(name, { length: 36 });
 
 export const divisions = mysqlTable("divisions", {
-    id: uuidKey("id")
+    id: uuidType("id")
         .primaryKey()
         .notNull()
         .default(sql`(UUID())`),
@@ -24,16 +24,16 @@ export const divisions = mysqlTable("divisions", {
 export const users = mysqlTable(
     "users",
     {
-        id: uuidKey("id")
+        id: uuidType("id")
             .primaryKey()
             .notNull()
             .default(sql`(UUID())`),
-        divisionId: uuidKey("division_id"),
+        divisionId: uuidType("division_id"),
         username: varchar("username", { length: 255 })
             .unique("unique_password")
             .notNull(),
         password: varchar("password", { length: 255 }).notNull(),
-        role: mysqlEnum("role", ["administration", "staff"])
+        role: mysqlEnum("role", ["administrator", "staff"])
             .notNull()
             .default("staff"),
         createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -47,12 +47,11 @@ export const users = mysqlTable(
         })
             .onDelete("set null")
             .onUpdate("cascade"),
-        check("check_role", sql`role IN ('administration', 'staff')`),
     ]
 );
 
 export const documentTypes = mysqlTable("document_types", {
-    id: uuidKey("id")
+    id: uuidType("id")
         .primaryKey()
         .notNull()
         .default(sql`(UUID())`),
@@ -62,7 +61,7 @@ export const documentTypes = mysqlTable("document_types", {
 export const directories = mysqlTable(
     "directories",
     {
-        id: uuidKey("id")
+        id: uuidType("id")
             .primaryKey()
             .notNull()
             .default(sql`(UUID())`),
@@ -78,7 +77,7 @@ export const directories = mysqlTable(
 );
 
 export const files = mysqlTable("files", {
-    id: uuidKey("id")
+    id: uuidType("id")
         .primaryKey()
         .notNull()
         .default(sql`(UUID())`),
@@ -88,13 +87,13 @@ export const files = mysqlTable("files", {
 export const fileHistory = mysqlTable(
     "file_history",
     {
-        id: uuidKey("id")
+        id: uuidType("id")
             .primaryKey()
             .notNull()
             .default(sql`(UUID())`),
-        fileId: uuidKey("file_id"),
+        fileId: uuidType("file_id"),
         cid: varchar("cid", { length: 255 }).notNull(),
-        userId: uuidKey("user_id"),
+        userId: uuidType("user_id"),
         createdAt: timestamp("created_at").defaultNow().notNull(),
     },
     (t) => [
@@ -118,17 +117,17 @@ export const fileHistory = mysqlTable(
 export const documents = mysqlTable(
     "documents",
     {
-        id: uuidKey("id")
+        id: uuidType("id")
             .primaryKey()
             .notNull()
             .default(sql`(UUID())`),
         documentNum: varchar("document_num", { length: 255 })
             .unique("unique_document_num")
             .notNull(),
-        documentTypeId: uuidKey("document_type_id").notNull(),
-        directoryId: uuidKey("directory_id").notNull(),
-        fileId: uuidKey("file_id").notNull(),
-        userId: uuidKey("user_id"),
+        documentTypeId: uuidType("document_type_id").notNull(),
+        directoryId: uuidType("directory_id").notNull(),
+        fileId: uuidType("file_id").notNull(),
+        userId: uuidType("user_id"),
         title: varchar("title", { length: 255 }).notNull(),
         description: text("description"),
         viewCount: int("view_count").default(0).notNull(),
