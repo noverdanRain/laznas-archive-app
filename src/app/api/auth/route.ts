@@ -1,9 +1,10 @@
 import db from "@/db";
-import { users } from "@/db/schema";
+import { users, divisions } from "@/db/schema";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { signJwt, verifyJwt } from "@/lib/jwt";
+import { NextRequest } from "next/server";
 
 export async function POST(req: Request) {
     const cookieStore = await cookies();
@@ -82,8 +83,8 @@ export async function POST(req: Request) {
     }
 }
 
-export async function GET() {
-    const cookieStore = await cookies();
+export async function GET(request: NextRequest) {
+    const cookieStore = request.cookies;
     const token = cookieStore.get("token")?.value;
 
     if (!token) {
@@ -98,9 +99,19 @@ export async function GET() {
 
     try {
         const payload = await verifyJwt(token);
+        const [user] = await db
+            .select({
+                username: users.username,
+                role: users.role,
+                divisionName: divisions.name,
+            })
+            .from(users)
+            .where(eq(users.username, payload.username as string))
+            .leftJoin(divisions, eq(users.divisionId, divisions.id));
+
         return Response.json({
             message: "Token is valid",
-            user: payload,
+            user,
         });
     } catch (err) {
         return Response.json(
