@@ -6,7 +6,6 @@ import {
     mysqlEnum,
     timestamp,
     foreignKey,
-    check,
     text,
     int,
 } from "drizzle-orm/mysql-core";

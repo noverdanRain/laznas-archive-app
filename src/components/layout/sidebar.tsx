@@ -1,11 +1,14 @@
 "use client";
 
-import { FileText, Folder, House, LogOut, PanelLeftClose, PanelLeftOpen, Users } from "lucide-react";
+import { FileText, Folder, House, Loader, LogOut, PanelLeftClose, PanelLeftOpen, Users } from "lucide-react";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { deleteSession } from "@/app/actions";
+import { AlertDialog, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTrigger, AlertDialogAction, AlertDialogCancel, AlertDialogTitle, AlertDialogDescription } from "@/components/ui/alert-dialog";
+import { useTransition } from "react";
 
 export default function Sidebar() {
     const router = useRouter();
@@ -83,13 +86,7 @@ export default function Sidebar() {
                     </ButtonSidebar>
                 </nav>
             </div>
-            <ButtonSidebar
-                tooltipText="Logout"
-                className="mb-6"
-                onClick={() => alert("Woy")}
-            >
-                <LogOut size={20} />
-            </ButtonSidebar>
+            <AlertLogout />
         </aside>
     );
 }
@@ -123,4 +120,44 @@ function ButtonSidebar({
             </TooltipContent>
         </Tooltip>
     );
+}
+
+function AlertLogout() {
+    const [isPending, startTransition] = useTransition();
+    const router = useRouter();
+    const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        startTransition(() => {
+            deleteSession()
+                .then(() => {
+                    router.replace("/auth");
+                })
+        });
+    }
+    return (
+        <AlertDialog>
+            <AlertDialogTrigger asChild>
+                <ButtonSidebar
+                    tooltipText="Logout"
+                    className="mb-6"
+                >
+                    <LogOut size={20} />
+                </ButtonSidebar>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="w-96">
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Konfirmasi</AlertDialogTitle>
+                    <AlertDialogDescription>Apakah yakin untuk logout?</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel disabled={isPending}>Batal</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleLogout} className="bg-rose-600 hover:bg-rose-700 w-20" disabled={isPending}>
+                        {
+                        isPending ? <Loader className="animate-spin"/> : "Logout"
+                        }
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+    )
 }
