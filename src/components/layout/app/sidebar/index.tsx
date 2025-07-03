@@ -11,7 +11,7 @@ export default async function Sidebar() {
     const user = await getSession(cookie.get("token")?.value);
 
     return (
-        <aside className="h-screen px-4 flex flex-col justify-between border-r-2 border-gray-200 border-dashed">
+        <aside className="h-screen px-4 flex flex-col justify-between border-r-2 border-gray-200 border-dashed sticky top-0">
             <div>
                 <div className="flex items-center justify-center h-20">
                     <Image
@@ -26,19 +26,19 @@ export default async function Sidebar() {
                 <nav className="mt-6 flex flex-col gap-6">
                     <ButtonSidebar
                         tooltipText="Beranda"
-                        to={"/dashboard"}
+                        to={"/app"}
                     >
                         <House size={22} />
                     </ButtonSidebar>
                     <ButtonSidebar
                         tooltipText="Semua Dokumen"
-                        to={"/dashboard/documents"}
+                        to={"/app/documents"}
                     >
                         <FileText size={22} />
                     </ButtonSidebar>
                     <ButtonSidebar
                         tooltipText="Direktori"
-                        to={"/dashboard/directory"}
+                        to={"/app/directory"}
                     >
                         <Folder size={22} />
                     </ButtonSidebar>
@@ -46,7 +46,7 @@ export default async function Sidebar() {
                         user?.role === "administrator" && (
                             <ButtonSidebar
                                 tooltipText="Akun Staff"
-                                to={"/dashboard/accounts"}
+                                to={"/app/accounts"}
                             >
                                 <Users size={22} />
                             </ButtonSidebar>

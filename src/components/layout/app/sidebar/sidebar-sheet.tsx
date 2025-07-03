@@ -1,6 +1,6 @@
 'use client';
 
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import ButtonSidebar from "./button-sidebar";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Image from "next/image";
@@ -18,7 +18,8 @@ export default function SidebarSheet() {
             </SheetTrigger>
             <SheetContent className="w-72 [&>button:last-child]:hidden" side="left" onOpenAutoFocus={(e) => e.preventDefault()}>
                 <SheetHeader className="h-20 ml-4 flex flex-row items-center justify-between">
-                    <SheetTitle className="hidden">Sidebar</SheetTitle>
+                    <SheetTitle hidden>Sidebar</SheetTitle>
+                    <SheetDescription hidden>...</SheetDescription>
                     <Image
                         src="/logo-icon.png"
                         alt="Logo Laznas Al Irsyad Purwokerto"
