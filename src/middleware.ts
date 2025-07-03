@@ -5,7 +5,7 @@ export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const cookies = request.cookies;
 
-    if (pathname.startsWith("/dashboard")) {
+    if (pathname.startsWith("/app")) {
         const token = cookies.get("token")?.value;
 
         if (!token) {
@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
             try {
                 await verifyJwt(token);
                 return NextResponse.redirect(
-                    new URL("/dashboard", request.url)
+                    new URL("/app", request.url)
                 );
             } catch (error) {
                 console.log("Token verification failed in auth:", error);
