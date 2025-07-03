@@ -3,6 +3,7 @@ import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import Provider from "./provider";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({
     variable: "--font-inter",
@@ -27,6 +28,10 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${geistMono.variable} ${inter.variable} antialiased`}>
+                <NextTopLoader
+                color="var(--color-emerald-500)"
+                    showSpinner={false}
+                />
                 <Provider>
                     {children}
                 </Provider>

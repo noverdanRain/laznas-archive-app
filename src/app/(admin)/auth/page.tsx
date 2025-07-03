@@ -32,7 +32,7 @@ export default function AuthPage() {
         onSuccess: () => {
             toast.success("Login berhasil");
             startTransition(() => {
-                router.replace("/dashboard");
+                router.replace("/app");
             });
         }
     })
@@ -52,25 +52,27 @@ export default function AuthPage() {
     }
 
     return (
-        <div className="w-sm border-2 border-gray-200 rounded-2xl mx-auto p-10 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <Image src={"/vrdn-laznas.svg"} alt="logo" width={88} height={50} className="mx-auto" />
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-10">
-                <div className="grid w-full max-w-sm items-center gap-3">
-                    <Label htmlFor="username">Username</Label>
-                    <Input type="text" id="username" name="username" placeholder="Masukan Username" disabled={login.isPending || isPending} />
-                </div>
-                <div className="grid w-full max-w-sm items-center gap-3">
-                    <Label htmlFor="password">Password</Label>
-                    <Input type="password" id="password" name="password" placeholder="Masukan Password" disabled={login.isPending || isPending} />
-                </div>
-                <Button type="submit" className="mt-4" disabled={login.isPending || isPending}>
-                    {
-                        login.isPending || isPending ?
-                            <Loader className="animate-spin text-gray-200" /> :
-                            "Masuk"
-                    }
-                </Button>
-            </form>
-        </div>
+        <main className="w-full h-screen relative ">
+            <div className="w-sm border-2 border-gray-200 bg-white rounded-2xl mx-auto p-10 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <Image src={"/vrdn-laznas.svg"} alt="logo" width={88} height={50} className="mx-auto" />
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-10">
+                    <div className="grid w-full max-w-sm items-center gap-3">
+                        <Label htmlFor="username">Username</Label>
+                        <Input type="text" id="username" name="username" placeholder="Masukan Username" disabled={login.isPending || isPending} />
+                    </div>
+                    <div className="grid w-full max-w-sm items-center gap-3">
+                        <Label htmlFor="password">Password</Label>
+                        <Input type="password" id="password" name="password" placeholder="Masukan Password" disabled={login.isPending || isPending} />
+                    </div>
+                    <Button type="submit" className="mt-4 bg-emerald-600 hover:bg-emerald-700" disabled={login.isPending || isPending}>
+                        {
+                            login.isPending || isPending ?
+                                <Loader className="animate-spin text-gray-200" /> :
+                                "Masuk"
+                        }
+                    </Button>
+                </form>
+            </div>
+        </main>
     )
 }
