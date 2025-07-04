@@ -1,11 +1,5 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import { useAtom } from "jotai";
-import { userSessionAtom } from "@/atom";
-import { useEffect } from "react";
 import { FileCheck2, FilePlus2, Files, Folders, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { TooltipText } from "@/components/common/tooltip-text";
 import HomepageTabButton from "@/components/layout/app/homepage-tab/button-tab";
 import HomepageTabContent from "@/components/layout/app/homepage-tab/content-tab";
 import { Badge } from "@/components/ui/badge";
