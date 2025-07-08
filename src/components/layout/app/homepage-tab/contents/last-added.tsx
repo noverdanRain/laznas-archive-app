@@ -153,7 +153,7 @@ export default function LastAddedTabContent() {
                         }
                     </button>
                 </div>
-                <div className={`${!isSearchOpen && "hidden"} relative col-span-6 w-full px-4 mb-4`}>
+                <div className={`${!isSearchOpen && "hidden"} ml-auto w-full relative col-span-6 px-4 mb-4`}>
                     <Search
                         size={16}
                         strokeWidth={2}
@@ -281,7 +281,10 @@ function OthersInfo({ children, title }: { children?: React.ReactNode, title: st
                 {children}
             </PopoverTrigger>
             <PopoverContent side="left" className="max-w-lg w-fit grid grid-cols-[140px_1fr] gap-4 text-sm py-4 bg-gray-50">
-                <p className="col-span-2 font-medium">{title}</p>
+                <div className="col-span-2">
+                    <p className="font-medium">{title}</p>
+                    <p className="text-neutral-500 mt-1 line-clamp-3">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit animi facere ex recusandae quidem modi explicabo neque, voluptatem itaque, suscipit in quae hic possimus qui dolore eaque amet officia expedita. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dignissimos consectetur cupiditate dolorem nam nostrum possimus distinctio vel perspiciatis dolorum provident enim natus nemo sequi eligendi nobis ipsum, itaque quidem optio!</p>
+                </div>
                 <p className="text-neutral-500">No. Dokumen</p>
                 <p>1129-9294</p>
                 <p className="text-neutral-500">Ditambahkan Oleh</p>

@@ -103,6 +103,7 @@ export async function GET(request: NextRequest) {
             .select({
                 username: users.username,
                 role: users.role,
+                createdAt: users.createdAt,
                 divisionName: divisions.name,
             })
             .from(users)

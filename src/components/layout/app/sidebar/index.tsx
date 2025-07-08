@@ -38,7 +38,7 @@ export default async function Sidebar() {
                     </ButtonSidebar>
                     <ButtonSidebar
                         tooltipText="Direktori"
-                        to={"/app/directory"}
+                        to={"/app/directories"}
                     >
                         <Folder size={22} />
                     </ButtonSidebar>
