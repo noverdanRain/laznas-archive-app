@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { is, sql } from "drizzle-orm";
 import {
     mysqlTable,
     varchar,
@@ -8,6 +8,7 @@ import {
     foreignKey,
     text,
     int,
+    boolean,
 } from "drizzle-orm/mysql-core";
 
 const uuidType = (name: string) => char(name, { length: 36 });
@@ -29,12 +30,13 @@ export const users = mysqlTable(
             .default(sql`(UUID())`),
         divisionId: uuidType("division_id"),
         username: varchar("username", { length: 255 })
-            .unique("unique_password")
+            .unique("unique_username")
             .notNull(),
         password: varchar("password", { length: 255 }).notNull(),
         role: mysqlEnum("role", ["administrator", "staff"])
             .notNull()
             .default("staff"),
+        isDisabled: boolean("is_disabled").default(false).notNull(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
         updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
     },
@@ -66,6 +68,7 @@ export const directories = mysqlTable(
             .default(sql`(UUID())`),
         name: varchar("name", { length: 255 }).notNull(),
         description: text("description"),
+        isPrivate: boolean("is_private").default(false).notNull(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
         updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
     },
@@ -130,6 +133,7 @@ export const documents = mysqlTable(
         title: varchar("title", { length: 255 }).notNull(),
         description: text("description"),
         viewCount: int("view_count").default(0).notNull(),
+        isPrivate: boolean("is_private").default(true).notNull(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
         updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
     },

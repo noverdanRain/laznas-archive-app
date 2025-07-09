@@ -1,0 +1,110 @@
+'use client';
+
+import { TooltipText } from "@/components/common/tooltip-text";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Ban, Check, Loader, Loader2, Pencil } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+
+type Staff = {
+    username: string,
+    division: string,
+    role: string,
+    isDisabled: boolean
+}
+
+export default function ListAccountsSection() {
+    const getAllStaff = useQuery({
+        queryKey: ["getAllStaff"],
+        queryFn: async () => {
+            const response = await fetch("/api/staffs");
+            if (!response.ok) {
+                throw new Error("Failed to fetch staff data");
+            }
+            return response.json() as Promise<Staff[]>;
+        },
+    })
+
+    console.log("getAllStaff", getAllStaff.data);
+
+    if (getAllStaff.isLoading) {
+        return (
+            <section>
+                <Loader2 className="w-8 h-8 mx-auto mt-10 text-emerald-500 animate-spin" />
+            </section>
+        )
+    }
+
+    return (
+        <section className="grid grid-cols-2 gap-3 p-4">
+            {
+                getAllStaff.data?.map((staff) => (
+                    <Item
+                        key={staff.username}
+                        username={staff.username}
+                        division={staff.division}
+                        isDisabled={staff.isDisabled}
+                    />
+                ))
+            }
+        </section>
+    )
+}
+
+function Item({
+    username,
+    division,
+    isDisabled
+}: {
+    username: string;
+    division: string;
+    isDisabled: boolean;
+}
+) {
+    return (
+        <div className="flex items-center justify-between p-4 rounded-2xl border border-gray-200">
+            <div className="flex items-center gap-2">
+                <Avatar className="size-11">
+                    <AvatarFallback className="bg-gray-200 font-semibold">
+                        {username.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                </Avatar>
+                <div>
+                    <p className="font-medium">@{username}</p>
+                    <p className="text-sm text-gray-500 mt-1">Div. {division}</p>
+                </div>
+            </div>
+            <div className="flex items-center gap-6">
+                {
+                    isDisabled ? (
+                        <Badge className="bg-red-100 border border-red-400 text-primary rounded-full">Disabled</Badge>
+                    ) : (
+                        <Badge className="bg-green-100 border border-green-400 text-primary rounded-full">Actived</Badge>
+                    )
+                }
+                <div className="flex items-center gap-2">
+                    <TooltipText text="Edit akun" bgColorTw="bg-gray-200 text-neutral-800">
+                        <button className="text-neutral-600 hover:text-neutral-800 cursor-pointer">
+                            <Pencil size={18} />
+                        </button>
+                    </TooltipText>
+                    {
+                        isDisabled ? (
+                            <TooltipText text="Aktifkan akun" bgColorTw="bg-gray-200 text-neutral-800">
+                                <button className="text-green-500 hover:text-green-700 cursor-pointer">
+                                    <Check size={18} />
+                                </button>
+                            </TooltipText>
+                        ) : (
+                            <TooltipText text="Nonaktifkan akun" bgColorTw="bg-gray-200 text-neutral-800">
+                                <button className="text-red-500 hover:text-red-700 cursor-pointer">
+                                    <Ban size={18} />
+                                </button>
+                            </TooltipText>
+                        )
+                    }
+                </div>
+            </div>
+        </div>
+    )
+}

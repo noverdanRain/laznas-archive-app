@@ -1,7 +1,7 @@
 import db from "@/db";
 import { users, divisions } from "@/db/schema";
 import bcrypt from "bcryptjs";
-import { eq } from "drizzle-orm";
+import { eq, is } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { signJwt, verifyJwt } from "@/lib/jwt";
 import { NextRequest } from "next/server";
@@ -26,6 +26,7 @@ export async function POST(req: Request) {
             .select({
                 password: users.password,
                 role: users.role,
+                isDisabled: users.isDisabled,
             })
             .from(users)
             .where(eq(users.username, username));
@@ -49,6 +50,16 @@ export async function POST(req: Request) {
                     message: "Password yang anda masukkan salah",
                 },
                 { status: 401 }
+            );
+        }
+
+        if (user.isDisabled) {
+            return Response.json(
+                {
+                    error: "Forbidden",
+                    message: "Akun telah dinonaktifkan",
+                },
+                { status: 403 }
             );
         }
 
@@ -105,6 +116,7 @@ export async function GET(request: NextRequest) {
                 role: users.role,
                 createdAt: users.createdAt,
                 divisionName: divisions.name,
+                isDisabled: users.isDisabled,
             })
             .from(users)
             .where(eq(users.username, payload.username as string))

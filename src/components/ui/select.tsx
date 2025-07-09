@@ -63,7 +63,7 @@ function SelectContent({
         className={cn(
           "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border shadow-md",
           position === "popper" &&
-            "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
+          "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
           className
         )}
         position={position}
@@ -74,7 +74,7 @@ function SelectContent({
           className={cn(
             "p-1",
             position === "popper" &&
-              "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1"
+            "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1"
           )}
         >
           {children}
@@ -171,6 +171,48 @@ function SelectScrollDownButton({
   )
 }
 
+function SelectComponent({
+  lucideIcon: Icon,
+  className,
+  placeholder,
+  items,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Root> & {
+  lucideIcon?: React.ElementType;
+  placeholder?: string;
+  className?: string;
+  items: { value: string; label: string }[]; 
+}) {
+  return (
+    <Select {...props}>
+      <SelectTrigger className={
+        cn(
+          "min-w-[180px] shadow-none rounded-full border-none bg-gray-100 text-sm h-8 py-0 focus-within:ring-0",
+          className
+        )
+      }>
+        <div className="flex items-center gap-2">
+          {
+            Icon && <Icon strokeWidth={2.5} />
+          }
+          <SelectValue placeholder={placeholder || "Select"} />
+        </div>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          {
+            items.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))
+          }
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  )
+}
+
 export {
   Select,
   SelectContent,
@@ -182,4 +224,5 @@ export {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
+  SelectComponent
 }

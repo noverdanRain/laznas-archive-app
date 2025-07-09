@@ -1,7 +1,43 @@
+import { Button } from "@/components/ui/button";
+import { InputWithIcon } from "@/components/ui/input";
+import { SelectComponent } from "@/components/ui/select";
+import { Plus, Search } from "lucide-react";
+import ListAccountsSection from "./section-list-accounts";
+
 export default function AccountsPage() {
     return (
-        <div className="m-4">
-            <h1>Accounts</h1>
-        </div>
+        <>
+            <section className="flex items-center px-4 py-6 gap-4 border-b-2 border-gray-200 border-dashed">
+                <InputWithIcon
+                    lucideIcon={Search}
+                    placeholder="Masukan username"
+                    className="rounded-full bg-gray-100 border-none w-xs"
+                    type="search"
+                />
+                <SelectComponent
+                    defaultValue="all-divisions"
+                    items={[
+                        { value: "all-divisions", label: "Semua Divisi" },
+                        { value: "division1", label: "Divisi 1" },
+                        { value: "division2", label: "Divisi 2" }
+                    ]}
+                    placeholder="Pilih divisi"
+                />
+                <SelectComponent
+                    defaultValue="active"
+                    items={[
+                        { value: "all", label: "Semua Akun" },
+                        { value: "active", label: "Akun Aktif" },
+                        { value: "disabled", label: "Akun Tidak Aktif" }
+                    ]}
+                    placeholder="Pilih status akun"
+                />
+                <Button className="ml-auto rounded-full">
+                    Tambah Akun
+                    <Plus />
+                </Button>
+            </section>
+            <ListAccountsSection/>
+        </>
     )
 }

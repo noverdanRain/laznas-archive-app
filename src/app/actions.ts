@@ -5,7 +5,6 @@ import { divisions, users } from "@/db/schema";
 import { verifyJwt } from "@/lib/jwt";
 import { eq } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
-import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { cookies } from "next/headers";
 
 export const deleteSession = async () => {
@@ -28,10 +27,14 @@ export const getSession = unstable_cache(
                     username: users.username,
                     role: users.role,
                     divisionName: divisions.name,
+                    isDisabled: users.isDisabled,
                 })
                 .from(users)
                 .where(eq(users.username, payload.username as string))
                 .leftJoin(divisions, eq(users.divisionId, divisions.id));
+            if(user.isDisabled) {
+                return null; // User is disabled, return null
+            }
             return user;
         } catch (error) {
             return null;
