@@ -124,7 +124,11 @@ export async function GET(request: NextRequest) {
 
         return Response.json({
             message: "Token is valid",
-            user,
+            user: {
+                username: user.username,
+                divisionName: user.divisionName,
+                role: user.role,
+            },
         });
     } catch (err) {
         return Response.json(

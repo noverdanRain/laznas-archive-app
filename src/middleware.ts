@@ -1,22 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyJwt } from "./lib/jwt";
 
+const protectedRoute = "/app";
+const onlyAdminRoute = "/app/accounts";
+
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const cookies = request.cookies;
+    const token = cookies.get("token")?.value;
 
-    if (pathname.startsWith("/app")) {
-        const token = cookies.get("token")?.value;
-
+    if (pathname.startsWith(onlyAdminRoute)) {
         if (!token) {
             return NextResponse.redirect(new URL("/auth", request.url));
         }
+        try {
+            const payload = await verifyJwt(token);
+            if (payload.role === "administrator") {
+                return NextResponse.next();
+            } else {
+                return NextResponse.redirect(new URL("/app", request.url));
+            }
+        } catch (error) {
+            return NextResponse.redirect(new URL("/auth", request.url));
+        }
+    }
 
+    if (pathname.startsWith(protectedRoute)) {
+        if (!token) {
+            return NextResponse.redirect(new URL("/auth", request.url));
+        }
         try {
             await verifyJwt(token);
             return NextResponse.next();
         } catch (error) {
-            console.log("Token verification failed:", error);
             return NextResponse.redirect(new URL("/auth", request.url));
         }
     }
@@ -33,6 +49,8 @@ export async function middleware(request: NextRequest) {
             }
         }
     }
+
+    // API Middleware
 
     if (pathname.startsWith("/api/staffs")) {
         return await isAdministrator(request);

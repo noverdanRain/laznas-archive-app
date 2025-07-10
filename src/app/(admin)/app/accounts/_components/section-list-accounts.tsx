@@ -6,17 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Ban, Check, Loader2, Pencil } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { StaffTypes } from "@/types";
+import axios from "axios";
 
 export default function ListAccountsSection() {
     const getAllStaff = useQuery({
-        queryKey: ["getAllStaff"],
-        queryFn: async () => {
-            const response = await fetch("/api/staffs");
-            if (!response.ok) {
-                throw new Error("Failed to fetch staff data");
-            }
-            return response.json() as Promise<StaffTypes[]>;
-        },
+        queryKey: ["get-all-staff"],
+        queryFn: () => axios.get<StaffTypes[]>("/api/staffs").then(res => res.data),
     })
 
     if (getAllStaff.isLoading) {

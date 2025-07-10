@@ -1,3 +1,5 @@
+import axios from "axios";
+
 interface FetchOptions {
     method?: string;
     headers?: Record<string, string>;
@@ -11,10 +13,16 @@ interface FetchOptions {
     signal?: AbortSignal;
 }
 
-export async function fetchGet<T>(pathname: string, option?: FetchOptions): Promise<T> {
-    const response = await fetch(pathname, option);
-    if (!response.ok) {
-        throw new Error("Failed to fetch staff data");
-    }
-    return response.json() as Promise<T>;
+export async function fetchGet<T>(pathname: string, option?: FetchOptions) {
+    const response = await axios.get(pathname, option);
+    console.log("RESPONSE MADEFAKER: ", response);
+    // if (!response.ok) {
+    //     throw new Error("Failed to fetch staff data");
+    // }
+    // return response.json() as Promise<T>;
+}
+
+export async function fetchPost(){
+    const response = await axios.get("/api/staffs");
+    // console.log(response.);
 }
