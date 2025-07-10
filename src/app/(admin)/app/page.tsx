@@ -1,37 +1,14 @@
 "use client";
 import { FileCheck2, FilePlus2, Files, Folders, Search } from "lucide-react";
-import HomepageTabButton from "@/components/layout/app/homepage-tab/button-tab";
-import HomepageTabContent from "@/components/layout/app/homepage-tab/content-tab";
+import HomepageTabButton from "@/app/(admin)/app/_components/tab-button";
+import HomepageTabContent from "@/app/(admin)/app/_components/tab-container";
 import { Badge } from "@/components/ui/badge";
 
 export default function AppPage() {
-    // const [session, setSessionAtom] = useAtom(userSessionAtom)
-
-    // const query = useQuery({
-    //     queryKey: ["user"],
-    //     queryFn: async () => {
-    //         const response = await fetch("/api/auth");
-    //         if (!response.ok) {
-    //             throw new Error("Failed to fetch user data");
-    //         }
-    //         return response.json();
-    //     },
-    //     // refetchOnWindowFocus: false,
-    // })
-    // useEffect(() => {
-    //     if (query.isSuccess) {
-    //         setSessionAtom({
-    //             username: query.data?.user.username,
-    //             role: query.data?.user.role,
-    //             divisionName: query.data?.user.divisionName
-    //         })
-    //     }
-    // }, [query.isSuccess, query.data])
-
     return (
         <>
-            <section className="w-full p-4 flex gap-4 h-40 border-b-2 border-gray-200 border-dashed">
-                <div className="h-full min-w-sm xl:min-w-lg col-span-1 flex flex-col items-center justify-center gap-4 border-2 border-gray-200 rounded-2xl cursor-pointer hover:bg-gray-100 transition select-none">
+            <section className="w-full p-4 grid grid-cols-[2fr_1.4fr_1.4fr_1.4fr] gap-4 h-40 border-b-2 border-gray-200 border-dashed">
+                <div className="h-full w-full col-span-1 flex flex-col items-center justify-center gap-4 border-2 border-gray-200 rounded-2xl cursor-pointer hover:bg-gray-100 transition select-none">
                     <div className="flex items-center gap-1 font-medium text-gray-400">
                         <FilePlus2 />
                         <p>Tambahkan Dokumen</p>

@@ -2,12 +2,12 @@
 
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useAtom } from "jotai";
-import { activeTabAtom } from "./button-tab";
-import LastAddedTabContent from "./contents/last-added";
-import LastModifiedTabContent from "./contents/last-modified";
-import AddedByMeTabContent from "./contents/addded-by-me";
+import { activeTabAtom } from "./tab-button";
+import LastAddedTabContent from "./tab-contents/last-added";
+import LastModifiedTabContent from "./tab-contents/last-modified";
+import AddedByMeTabContent from "./tab-contents/addded-by-me";
 
-export default function HomepageTabContent() {
+export default function HomepageTabContainer() {
     
     const [activeTab] = useAtom(activeTabAtom);
 
