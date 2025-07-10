@@ -14,6 +14,7 @@ import {
 import { InputWithIcon } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SelectComponent } from "@/components/ui/select";
+import { queryKey } from "@/constants";
 import { DivisionTypes } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
@@ -40,7 +41,7 @@ export default function AddAccountDialog({ children, }: { children?: React.React
     })
 
     const getDivisions = useQuery({
-        queryKey: ["getDivisions"],
+        queryKey: [queryKey.GET_ALL_DIVISION],
         queryFn: () => axios.get<DivisionTypes[]>("/api/divisions").then(res => res.data),
     });
 
@@ -49,7 +50,7 @@ export default function AddAccountDialog({ children, }: { children?: React.React
         onSuccess: () => {
             closeRef.current?.click();
             toast.success("Akun staff berhasil ditambahkan.");
-            queryClient.invalidateQueries({ queryKey: ["get-all-staff"] });
+            queryClient.invalidateQueries({ queryKey: [queryKey.GET_ALL_STAFF] });
             handleReset();
         },
         onError: (error) => {

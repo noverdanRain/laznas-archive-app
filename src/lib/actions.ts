@@ -14,6 +14,12 @@ export const deleteSession = async () => {
     }
 };
 
+export const getSessionFromClient = async ()=>{
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value;
+    return await getSession(token);
+}
+
 export const getSession = unstable_cache(
     async (token: string | undefined) => {
         if (!token) {
@@ -32,16 +38,27 @@ export const getSession = unstable_cache(
                 .from(users)
                 .where(eq(users.username, payload.username as string))
                 .leftJoin(divisions, eq(users.divisionId, divisions.id));
-            if(user.isDisabled) {
-                return null; // User is disabled, return null
-            }
             return user;
         } catch (error) {
             return null;
         }
     },
-    ["user-session"],
+    [],
     {
         tags: ["user-session"],
+    }
+);
+
+export const isDisabledStaff = unstable_cache(
+    async (username: string) => {
+        const [user] = await db
+            .select({ isDisabled: users.isDisabled })
+            .from(users)
+            .where(eq(users.username, username));
+        return user?.isDisabled;
+    },
+    [],
+    {
+        tags: ["staff-disabled-status"],
     }
 );

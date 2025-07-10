@@ -142,6 +142,38 @@ function AlertDialogCancel({
   )
 }
 
+function AlertDialogComponent({
+  children,
+  title,
+  description,
+  onConfirm,
+  ...props
+}: React.PropsWithChildren<React.ComponentProps<typeof AlertDialog>> & {
+  title: string;
+  description: string;
+  onConfirm?: () => void;
+}) {
+  return (
+    <AlertDialog {...props}>
+      <AlertDialogTrigger asChild>
+        {children}
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {description}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Batal</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm}>Lanjut</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
+
 export {
   AlertDialog,
   AlertDialogPortal,
@@ -154,4 +186,5 @@ export {
   AlertDialogDescription,
   AlertDialogAction,
   AlertDialogCancel,
+  AlertDialogComponent
 }
