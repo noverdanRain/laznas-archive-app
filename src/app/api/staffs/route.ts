@@ -2,19 +2,21 @@ import db from "@/db";
 import { divisions, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { NextRequest } from "next/server";
-import { isAdministrator } from "../authorization";
+import { AddStaffParams, StaffTypes } from "@/types";
+import bcrypt from "bcryptjs";
 
-export async function GET(request: NextRequest) {
-    const cookies = request.cookies;
-    const token = cookies.get("token")?.value;
+export async function GET() {
     
     try {
-        const staffs = await db.select({
+        const staffs: StaffTypes[] = await db.select({
             username: users.username,
-            division: divisions.name,
             role: users.role,
             isDisabled: users.isDisabled,
-        }).from(users).innerJoin(divisions, eq(users.divisionId, divisions.id));
+            division: {
+                id: divisions.id,
+                name: divisions.name,
+            },
+        }).from(users).innerJoin(divisions, eq(users.divisionId, divisions.id)).orderBy(users.username);
 
         return Response.json(staffs);
 
@@ -29,5 +31,47 @@ export async function GET(request: NextRequest) {
             },
             { status: 500 }
         );
+    }
+}
+
+export async function POST(req: NextRequest) {
+    try {
+        const reqData: AddStaffParams = await req.json();
+        if(!reqData.username || !reqData.password || !reqData.divisionId) {
+            return Response.json(
+                {
+                    error: "Bad Request",
+                    message: "Username, password, and division ID are required.",
+                },
+                { status: 400 }
+            );
+        }
+        
+        const pwHash = bcrypt.hashSync(reqData.password, 10);
+
+        await db.insert(users).values({
+            username: reqData.username,
+            password: pwHash,
+            divisionId: reqData.divisionId,
+        })
+
+        return Response.json(
+            {
+                message: "Staff account created successfully.",
+            },
+            { status: 201 }
+        );
+    } catch (error) {
+        console.error("Error processing request:", error);
+        return Response.json(
+            {
+                error: "Internal Server Error",
+                message: `An error occurred while processing your request: ${
+                    error instanceof Error ? error.message : "Unknown error"
+                }`,
+            },
+            { status: 500 }
+        );
+        
     }
 }

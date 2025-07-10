@@ -23,11 +23,13 @@ function InputWithIcon({
   className,
   type,
   lucideIcon: Icon,
+  iconSize = 16,
+  iconColor = "#000000",
   ...props
-}: React.ComponentProps<"input"> & { lucideIcon: React.ElementType }) {
+}: { iconSize?: number, iconColor?: string } & React.ComponentProps<"input"> & { lucideIcon: React.ElementType }) {
   return (
     <div className="relative">
-      <Icon size={16} className="absolute left-3 top-1/2 -translate-y-1/2" />
+      <Icon size={iconSize} color={iconColor} className="absolute left-3 top-1/2 -translate-y-1/2" />
       <Input
         type={type}
         className={cn("pl-10", className)}

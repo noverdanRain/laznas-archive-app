@@ -2,7 +2,8 @@ import { Button } from "@/components/ui/button";
 import { InputWithIcon } from "@/components/ui/input";
 import { SelectComponent } from "@/components/ui/select";
 import { Plus, Search } from "lucide-react";
-import ListAccountsSection from "./section-list-accounts";
+import ListAccountsSection from "./_components/section-list-accounts";
+import AddAccountDialog from "./_components/dialog-add-account";
 
 export default function AccountsPage() {
     return (
@@ -32,12 +33,14 @@ export default function AccountsPage() {
                     ]}
                     placeholder="Pilih status akun"
                 />
-                <Button className="ml-auto rounded-full">
-                    Tambah Akun
-                    <Plus />
-                </Button>
+                <AddAccountDialog>
+                    <Button className="ml-auto rounded-full">
+                        Tambah Akun
+                        <Plus />
+                    </Button>
+                </AddAccountDialog>
             </section>
-            <ListAccountsSection/>
+            <ListAccountsSection />
         </>
     )
 }

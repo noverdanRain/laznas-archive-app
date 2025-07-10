@@ -3,15 +3,9 @@
 import { TooltipText } from "@/components/common/tooltip-text";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Ban, Check, Loader, Loader2, Pencil } from "lucide-react";
+import { Ban, Check, Loader2, Pencil } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-
-type Staff = {
-    username: string,
-    division: string,
-    role: string,
-    isDisabled: boolean
-}
+import { StaffTypes } from "@/types";
 
 export default function ListAccountsSection() {
     const getAllStaff = useQuery({
@@ -21,11 +15,9 @@ export default function ListAccountsSection() {
             if (!response.ok) {
                 throw new Error("Failed to fetch staff data");
             }
-            return response.json() as Promise<Staff[]>;
+            return response.json() as Promise<StaffTypes[]>;
         },
     })
-
-    console.log("getAllStaff", getAllStaff.data);
 
     if (getAllStaff.isLoading) {
         return (
@@ -42,7 +34,7 @@ export default function ListAccountsSection() {
                     <Item
                         key={staff.username}
                         username={staff.username}
-                        division={staff.division}
+                        division={staff.division.name}
                         isDisabled={staff.isDisabled}
                     />
                 ))

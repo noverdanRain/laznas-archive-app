@@ -1,4 +1,4 @@
-import { getSession } from "@/app/actions";
+import { getSession } from "@/lib/actions";
 import { UserRound } from "lucide-react";
 import { cookies } from "next/headers";
 import HeaderTitle from "./header-title";

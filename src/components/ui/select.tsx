@@ -176,18 +176,20 @@ function SelectComponent({
   className,
   placeholder,
   items,
+  id,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Root> & {
   lucideIcon?: React.ElementType;
   placeholder?: string;
   className?: string;
-  items: { value: string; label: string }[]; 
+  id?: string;
+  items?: { value: string; label: string }[]; 
 }) {
   return (
     <Select {...props}>
-      <SelectTrigger className={
+      <SelectTrigger id={id} className={
         cn(
-          "min-w-[180px] shadow-none rounded-full border-none bg-gray-100 text-sm h-8 py-0 focus-within:ring-0",
+          "min-w-[180px] shadow-none rounded-full border-0 bg-gray-100 text-sm h-8 py-0 focus-within:ring-0",
           className
         )
       }>
@@ -201,7 +203,7 @@ function SelectComponent({
       <SelectContent>
         <SelectGroup>
           {
-            items.map((item) => (
+            items?.map((item) => (
               <SelectItem key={item.value} value={item.value}>
                 {item.label}
               </SelectItem>

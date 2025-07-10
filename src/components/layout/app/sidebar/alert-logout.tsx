@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteSession } from "@/app/actions";
+import { deleteSession } from "@/lib/actions";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Loader, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation"; 

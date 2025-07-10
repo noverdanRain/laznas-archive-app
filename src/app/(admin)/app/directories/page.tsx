@@ -1,4 +1,4 @@
-import { getSession } from "@/app/actions";
+import { getSession } from "@/lib/actions";
 import { cookies } from "next/headers";
 
 export default async function DirectoryPage() {

@@ -1,5 +1,5 @@
 import Sidebar from "@/components/layout/app/sidebar";
-import { getSession } from "../../actions";
+import { getSession } from "../../../lib/actions";
 import { cookies } from "next/headers";
 import HeaderPage from "@/components/layout/app/header-page";
 

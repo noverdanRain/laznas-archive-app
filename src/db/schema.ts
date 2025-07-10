@@ -1,4 +1,4 @@
-import { is, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import {
     mysqlTable,
     varchar,

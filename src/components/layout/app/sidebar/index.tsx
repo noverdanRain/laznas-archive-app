@@ -4,7 +4,7 @@ import ButtonSidebar from "./button-sidebar";
 import AlertLogout from "./alert-logout";
 import SidebarSheet from "./sidebar-sheet";
 import { cookies } from "next/headers";
-import { getSession } from "@/app/actions";
+import { getSession } from "@/lib/actions";
 
 export default async function Sidebar() {
     const cookie = await cookies()
