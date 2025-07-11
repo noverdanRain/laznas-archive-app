@@ -2,6 +2,10 @@ export interface DivisionTypes {
     id: string;
     name: string;
 }
+export interface TypeOfDocumentTypes {
+    id: string;
+    name: string;
+}
 
 export interface StaffTypes {
     username: string;

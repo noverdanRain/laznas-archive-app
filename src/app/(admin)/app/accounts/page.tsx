@@ -34,7 +34,7 @@ export default function AccountsPage() {
                     placeholder="Pilih status akun"
                 />
                 <AddAccountDialog>
-                    <Button className="ml-auto rounded-full">
+                    <Button className="ml-auto rounded-full ">
                         Tambah Akun
                         <Plus />
                     </Button>
