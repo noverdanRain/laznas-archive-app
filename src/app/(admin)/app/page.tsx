@@ -1,22 +1,14 @@
-"use client";
-import { FileCheck2, FilePlus2, Files, Folders, Search } from "lucide-react";
+import { FileCheck2, Files, Folders, Search } from "lucide-react";
 import HomepageTabButton from "@/app/(admin)/app/_components/tab-button";
 import HomepageTabContent from "@/app/(admin)/app/_components/tab-container";
 import { Badge } from "@/components/ui/badge";
+import HomepageDragZone from "./_components/drag-zone";
 
 export default function AppPage() {
     return (
         <>
             <section className="w-full p-4 grid grid-cols-[2fr_1.4fr_1.4fr_1.4fr] gap-4 h-40 border-b-2 border-gray-200 border-dashed">
-                <div className="h-full w-full col-span-1 flex flex-col items-center justify-center gap-4 border-2 border-gray-200 rounded-2xl cursor-pointer hover:bg-gray-100 transition select-none">
-                    <div className="flex items-center gap-1 font-medium text-gray-400">
-                        <FilePlus2 />
-                        <p>Tambahkan Dokumen</p>
-                    </div>
-                    <p className="text-sm text-gray-400">
-                        Drag & drop or click here
-                    </p>
-                </div>
+                <HomepageDragZone/>
                 <div className="h-full w-full flex flex-col p-8 gap-2 justify-center bg-gray-100 rounded-2xl">
                     <div className="flex items-center gap-1">
                         <Files />
