@@ -84,6 +84,7 @@ export const files = mysqlTable("files", {
         .notNull()
         .default(sql`(UUID())`),
     cid: varchar("cid", { length: 255 }).unique("unique_cid").notNull(),
+    extension: varchar("extension", { length: 10 }).notNull(),
 });
 
 export const fileHistory = mysqlTable(
@@ -95,6 +96,8 @@ export const fileHistory = mysqlTable(
             .default(sql`(UUID())`),
         fileId: uuidType("file_id"),
         cid: varchar("cid", { length: 255 }).notNull(),
+        name: varchar("name", { length: 255 }).notNull(),
+        extension: varchar("extension", { length: 10 }).notNull(),
         userId: uuidType("user_id"),
         createdAt: timestamp("created_at").defaultNow().notNull(),
     },
