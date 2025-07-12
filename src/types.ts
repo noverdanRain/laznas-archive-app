@@ -7,6 +7,13 @@ export interface TypeOfDocumentTypes {
     name: string;
 }
 
+export interface DirectoryTypes {
+    id?: string;
+    name: string;
+    description: string;
+    isPrivate?: boolean;
+}
+
 export interface StaffTypes {
     username: string;
     division: DivisionTypes;
