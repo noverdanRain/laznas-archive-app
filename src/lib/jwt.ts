@@ -16,10 +16,26 @@ export async function signJwt(payload: Payload): Promise<string> {
 }
 
 export async function verifyJwt(token: string): Promise<Payload> {
-    const { payload } = await jwtVerify(
-        token,
-        new TextEncoder().encode(process.env.JWT_SECRET!)
-    );
+    try {
+        const { payload } = await jwtVerify(
+            token,
+            new TextEncoder().encode(process.env.JWT_SECRET!)
+        );
+        return payload as Payload;
+    } catch (error) {
+        console.error("JWT verification failed:", error);
+        throw new Error("Invalid token");
+    }
+}
 
-    return payload as Payload;
+export async function isJwtValid(token: string | undefined): Promise<boolean> {
+    if (!token) {
+        return false;
+    }
+    try {
+        await verifyJwt(token);
+        return true;
+    } catch {
+        return false;
+    }
 }
