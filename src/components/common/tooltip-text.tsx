@@ -20,7 +20,7 @@ export function TooltipText({
     return (
         <Tooltip delayDuration={delay || 700} >
             <TooltipTrigger asChild>{children}</TooltipTrigger>
-            <TooltipContent  bgColorTw="bg-emerald-500 text-white" {...props}>
+            <TooltipContent  bgColorTw="bg-gray-200 text-neutral-800" {...props}>
                 <p>{text}</p>
             </TooltipContent>
         </Tooltip>
