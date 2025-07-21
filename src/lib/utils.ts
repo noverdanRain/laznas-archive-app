@@ -5,9 +5,26 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export function bytesToMB(bytes: number = 0): number {
-    if (bytes === 0) return 0;
-    const k = 1024;
-    const sizeInMB = bytes / k / k;
-    return Math.round(sizeInMB * 100) / 100; // Round to 2 decimal places
+export default function getFileExt(filename: string = "") {
+    const parts = filename.split(".");
+    return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : "";
+}
+
+export function generateRandomCode() {
+    const now = new Date();
+
+    const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const year = now.getFullYear();
+
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let randomPart = "";
+
+    for (let i = 0; i < 4; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        randomPart += characters[randomIndex];
+    }
+
+    const formattedCode = `${day}${month}/${year}/${randomPart}`;
+    return formattedCode;
 }

@@ -34,13 +34,21 @@ export default function HomepageDragZone() {
                 {...getRootProps()}
             >
                 <input {...getInputProps()} />
-                <div className="flex items-center gap-1 font-medium text-gray-400">
-                    <FilePlus2 />
-                    <p>Tambahkan Dokumen</p>
-                </div>
-                <p className="text-sm text-gray-400">
-                    Drag & drop or click here
-                </p>
+                {
+                    isDragAccept ? (
+                        <p className='text-green-600 font-medium'>Lepaskan</p>
+                    ) : (
+                        <>
+                            <div className="flex items-center gap-1 font-medium text-gray-400">
+                                <FilePlus2 />
+                                <p>Tambahkan Dokumen</p>
+                            </div>
+                            <p className="text-sm text-gray-400">
+                                Drag & drop or click here
+                            </p>
+                        </>
+                    )
+                }
                 {
                     isDragReject && (
                         <p className='text-xs text-red-500 absolute bottom-2'>Maksimal upload 1 file</p>

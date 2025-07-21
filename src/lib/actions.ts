@@ -6,6 +6,8 @@ import { verifyJwt } from "@/lib/jwt";
 import { eq } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 import { cookies } from "next/headers";
+import { FileWithPath } from "react-dropzone";
+import { pinata } from "./pinata-config";
 
 export const deleteSession = async () => {
     const cookieStore = await cookies();
@@ -14,11 +16,11 @@ export const deleteSession = async () => {
     }
 };
 
-export const getSessionFromClient = async ()=>{
+export const getSessionFromClient = async () => {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
     return await getSession(token);
-}
+};
 
 export const getSession = unstable_cache(
     async (token: string | undefined) => {
@@ -62,3 +64,4 @@ export const isDisabledStaff = unstable_cache(
         tags: ["staff-disabled-status"],
     }
 );
+

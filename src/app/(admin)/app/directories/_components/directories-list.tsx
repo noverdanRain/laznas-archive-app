@@ -9,7 +9,7 @@ import { Loader2 } from "lucide-react";
 
 export default function DirectoriesList() {
     const directories = useQuery({
-        queryKey: queryKey.GET_ALL_DIRECTORIES,
+        queryKey: [queryKey.GET_ALL_DIRECTORIES],
         queryFn: () => axios.get<DirectoryTypes[]>("/api/directories").then(res => res.data),
     })
 

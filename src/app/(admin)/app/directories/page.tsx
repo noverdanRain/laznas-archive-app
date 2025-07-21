@@ -3,7 +3,7 @@ import { InputWithIcon } from "@/components/ui/input";
 import { FolderPlus, Search } from "lucide-react";
 import { DirectoriesFilter } from "./_components/directories-filter";
 import DirectoryCard from "@/components/common/directory-card";
-import AddDirectoryDialog from "@/components/layout/app/add-directory-dialog";
+import AddDirectoryDialog from "./_components/dialog-add-directory";
 import DirectoriesList from "./_components/directories-list";
 
 export default async function DirectoryPage() {

@@ -1,29 +1,38 @@
 import { cn } from "@/lib/utils";
 import { Icon } from "@iconify-icon/react";
 
-export type FileType = "pdf" | "doc" | "xls" | "ppt" | "img" | "other";
+const imageExt = ["png", "jpg", "jpeg", "webp"];
+const pdfExt = ["pdf"];
+const docExt = ["doc", "docx"];
+const xlsExt = ["xls", "xlsx", "csv"];
+const pptExt = ["ppt"];
+const videoExt = ["mp4"];
+
+
 
 type DocumentIconProps = {
-    type: FileType;
+    type: string;
     size?: number;
     className?: string;
 };
 
 export default function DocumentIcon(props: DocumentIconProps) {
     const icon =
-        props.type === "pdf" ? "mdi:file" :
-            props.type === "doc" ? "mdi:file-document" :
-                props.type === "xls" ? "mdi:file-table" :
-                    props.type === "ppt" ? "mdi:file-powerpoint" :
-                        props.type === "img" ? "mdi:image" :
-                            "mdi:file-question";
+        pdfExt.includes(props.type) ? "mdi:file" :
+            docExt.includes(props.type) ? "mdi:file-document" :
+                xlsExt.includes(props.type) ? "mdi:file-table" :
+                    pptExt.includes(props.type) ? "mdi:file-powerpoint" :
+                        imageExt.includes(props.type) ? "mdi:file-image" :
+                            videoExt.includes(props.type) ? "mdi:file-video" :
+                                "mdi:file-question";
     const twColor =
-        props.type === "pdf" ? "text-rose-600" :
-            props.type === "doc" ? "text-blue-600" :
-                props.type === "xls" ? "text-green-600" :
-                    props.type === "ppt" ? "text-orange-600" :
-                        props.type === "img" ? "text-gray-600" :
-                            "text-gray-500";
+        pdfExt.includes(props.type) ? "text-rose-600" :
+            docExt.includes(props.type) ? "text-blue-600" :
+                xlsExt.includes(props.type) ? "text-green-600" :
+                    pptExt.includes(props.type) ? "text-orange-600" :
+                        imageExt.includes(props.type) ? "text-gray-600" :
+                            videoExt.includes(props.type) ? "text-gray-600" :
+                                "text-gray-500";
     return (
         <Icon
             icon={icon}

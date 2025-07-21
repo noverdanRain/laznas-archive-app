@@ -106,6 +106,7 @@ export default function AddAccountDialog({ children, }: { children?: React.React
                 <DialogContent
                     onOpenAutoFocus={(e) => e.preventDefault()}
                     onInteractOutside={(e) => e.preventDefault()}
+                    className="w-lg"
                 >
                     <DialogHeader>
                         <DialogTitle>Tambah Akun Staff</DialogTitle>

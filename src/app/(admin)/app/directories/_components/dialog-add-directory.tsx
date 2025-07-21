@@ -33,7 +33,7 @@ export default function AddDirectoryDialog({
     const addDirectories = useMutation({
         mutationFn: (data: DirectoryTypes) => axios.post("/api/directories", data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: queryKey.GET_ALL_DIRECTORIES });
+            queryClient.invalidateQueries({ queryKey: [queryKey.GET_ALL_DIRECTORIES] });
             closeRef.current?.click();
             toast.success("Direktori berhasil dibuat", { id: "add-directory" });
         },
@@ -128,7 +128,7 @@ export default function AddDirectoryDialog({
                         </div>
 
                     </div>
-                    <DialogFooter className="mt-4">
+                    <DialogFooter className="mt-4 bg-amber">
                         <DialogClose asChild>
                             <Button ref={closeRef} variant="outline">Batal</Button>
                         </DialogClose>
