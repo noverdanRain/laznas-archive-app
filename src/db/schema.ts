@@ -9,6 +9,7 @@ import {
     text,
     int,
     boolean,
+    index,
 } from "drizzle-orm/mysql-core";
 
 const uuidType = (name: string) => char(name, { length: 36 });
@@ -72,52 +73,20 @@ export const directories = mysqlTable(
         createdAt: timestamp("created_at").defaultNow().notNull(),
         updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
     },
-    (t) => [
+    () => [
         // INI GAK TERBACA! PERLU DIBUAT MANUAL UNTUK FULLTEXT INDEX
         sql`FULLTEXT directories_fulltext (name)`,
     ]
 );
 
-export const files = mysqlTable("files", {
-    id: uuidType("id")
-        .primaryKey()
-        .notNull()
-        .default(sql`(UUID())`),
-    cid: varchar("cid", { length: 255 }).unique("unique_cid").notNull(),
-    extension: varchar("extension", { length: 10 }).notNull(),
-});
-
-export const fileHistory = mysqlTable(
-    "file_history",
-    {
-        id: uuidType("id")
-            .primaryKey()
-            .notNull()
-            .default(sql`(UUID())`),
-        fileId: uuidType("file_id"),
-        cid: varchar("cid", { length: 255 }).notNull(),
-        name: varchar("name", { length: 255 }).notNull(),
-        extension: varchar("extension", { length: 10 }).notNull(),
-        userId: uuidType("user_id"),
-        createdAt: timestamp("created_at").defaultNow().notNull(),
-    },
-    (t) => [
-        foreignKey({
-            columns: [t.fileId],
-            foreignColumns: [files.id],
-            name: "fk_file_history",
-        })
-            .onDelete("cascade")
-            .onUpdate("cascade"),
-        foreignKey({
-            columns: [t.userId],
-            foreignColumns: [users.id],
-            name: "fk_user_history",
-        })
-            .onDelete("set null")
-            .onUpdate("cascade"),
-    ]
-);
+// export const files = mysqlTable("files", {
+//     id: uuidType("id")
+//         .primaryKey()
+//         .notNull()
+//         .default(sql`(UUID())`),
+//     cid: varchar("cid", { length: 255 }).unique("unique_cid").notNull(),
+//     extension: varchar("extension", { length: 10 }).notNull(),
+// });
 
 export const documents = mysqlTable(
     "documents",
@@ -131,11 +100,12 @@ export const documents = mysqlTable(
             .notNull(),
         documentTypeId: uuidType("document_type_id").notNull(),
         directoryId: uuidType("directory_id").notNull(),
-        fileId: uuidType("file_id").notNull(),
         userId: uuidType("user_id"),
         title: varchar("title", { length: 255 }).notNull(),
         description: text("description"),
-        viewCount: int("view_count").default(0).notNull(),
+        cid: varchar("cid", { length: 255 }).notNull(),
+        fileExt: varchar("file_ext", { length: 10 }).notNull(),
+        viewsCount: int("views_count").default(0).notNull(),
         isPrivate: boolean("is_private").default(true).notNull(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
         updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
@@ -154,25 +124,52 @@ export const documents = mysqlTable(
             .onDelete("cascade")
             .onUpdate("cascade"),
         foreignKey({
-            columns: [t.fileId],
-            foreignColumns: [files.id],
-            name: "fk_file_document",
-        }).onUpdate("cascade"),
-        foreignKey({
             columns: [t.userId],
             foreignColumns: [users.id],
             name: "fk_user_document",
         })
             .onDelete("set null")
             .onUpdate("cascade"),
+        index("idx_document_cid").on(t.cid),
         // INI GAK TERBACA! PERLU DIBUAT MANUAL UNTUK FULLTEXT INDEX
         sql`FULLTEXT documents_fulltext (title, description, document_num)`,
     ]
 );
 
+export const fileHistory = mysqlTable(
+    "file_history",
+    {
+        id: uuidType("id")
+            .primaryKey()
+            .notNull()
+            .default(sql`(UUID())`),
+        documentId: uuidType("doc_id"),
+        userId: uuidType("user_id"),
+        cid: varchar("cid", { length: 255 }).notNull(),
+        changeName: varchar("change_name", { length: 255 }).notNull(),
+        fileExt: varchar("file_ext", { length: 10 }).notNull(),
+        createdAt: timestamp("created_at").defaultNow().notNull(),
+    },
+    (t) => [
+        foreignKey({
+            columns: [t.documentId],
+            foreignColumns: [documents.id],
+            name: "fk_file_history",
+        })
+            .onDelete("cascade")
+            .onUpdate("cascade"),
+        foreignKey({
+            columns: [t.userId],
+            foreignColumns: [users.id],
+            name: "fk_user_history",
+        })
+            .onDelete("set null")
+            .onUpdate("cascade"),
+    ]
+);
 
-// ALTER TABLE directories 
+// ALTER TABLE directories
 //     ADD FULLTEXT directories_fulltext (name);
 
-// ALTER TABLE documents 
+// ALTER TABLE documents
 //     ADD FULLTEXT documents_fulltext (title, description, document_num);
