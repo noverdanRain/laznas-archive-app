@@ -1,5 +1,5 @@
-import db from "@/db";
-import { directories } from "@/db/schema";
+import db from "@/lib/db";
+import { directories } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { errorHandler500, notOkResponse } from "../../helpers";

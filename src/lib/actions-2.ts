@@ -1,7 +1,7 @@
 "use server";
 
-import db from "@/db";
-import { divisions, users } from "@/db/schema";
+import db from "@/lib/db";
+import { divisions, users } from "@/lib/db/schema";
 import { verifyJwt } from "@/lib/jwt";
 import { eq } from "drizzle-orm";
 import { unstable_cache } from "next/cache";

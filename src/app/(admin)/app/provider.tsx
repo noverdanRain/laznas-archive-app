@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteSession, getSessionFromClient } from "@/lib/actions";
+import { deleteSession, getSessionFromClient } from "@/lib/actions-2";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { toast } from "sonner";

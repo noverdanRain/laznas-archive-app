@@ -96,8 +96,7 @@ export const documents = mysqlTable(
             .notNull()
             .default(sql`(UUID())`),
         documentNum: varchar("document_num", { length: 255 })
-            .unique("unique_document_num")
-            .notNull(),
+            .unique("unique_document_num"),
         documentTypeId: uuidType("document_type_id").notNull(),
         directoryId: uuidType("directory_id").notNull(),
         userId: uuidType("user_id"),

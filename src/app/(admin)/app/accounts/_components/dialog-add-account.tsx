@@ -15,7 +15,7 @@ import { InputWithIcon } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SelectComponent } from "@/components/ui/select";
 import { queryKey } from "@/constants";
-import { DivisionTypes } from "@/types";
+import { useGetDivisions } from "@/hooks/useGetDivisions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { AtSign, KeyRound, Loader2 } from "lucide-react";
@@ -33,17 +33,14 @@ export default function AddAccountDialog({ children, }: { children?: React.React
     const queryClient = useQueryClient();
     const closeRef = useRef<HTMLButtonElement>(null);
 
+    const { divisions } = useGetDivisions();
+
     const [inputValue, setInputValue] = useState<InputValue>({
         username: "",
         divisionId: "",
         password: "",
         passwordConfirm: "",
     })
-
-    const getDivisions = useQuery({
-        queryKey: [queryKey.GET_ALL_DIVISION],
-        queryFn: () => axios.get<DivisionTypes[]>("/api/divisions").then(res => res.data),
-    });
 
     const postStaff = useMutation({
         mutationFn: (data: InputValue) => axios.post("/api/staffs", data),
@@ -139,7 +136,7 @@ export default function AddAccountDialog({ children, }: { children?: React.React
                             name="divisionId"
                             onValueChange={handleSelectChange}
                             value={inputValue?.divisionId}
-                            items={getDivisions.data?.map((division) => ({
+                            items={divisions?.map((division) => ({
                                 value: division.id,
                                 label: division.name,
                             }))}

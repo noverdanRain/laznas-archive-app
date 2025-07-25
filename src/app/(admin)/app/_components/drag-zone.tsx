@@ -1,6 +1,6 @@
 'use client';
 
-import AddDocumentDialog from '@/components/layout/app/add-document-dialog';
+import AddDocumentDialog from '@/components/layout/admin/add-document-dialog';
 import { cn } from '@/lib/utils';
 import { FilePlus2 } from 'lucide-react';
 import { useEffect, useState } from 'react';

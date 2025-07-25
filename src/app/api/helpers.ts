@@ -1,7 +1,7 @@
+import { JOSEError, JWTInvalid } from "jose/errors";
 import { NextResponse } from "next/server";
 
 export function errorHandler500(error: unknown) {
-    console.error("Error processing request:", error);
     return NextResponse.json(
         {
             error: "Internal Server Error",

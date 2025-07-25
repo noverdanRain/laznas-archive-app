@@ -1,5 +1,5 @@
-import db from "@/db";
-import { divisions, users } from "@/db/schema";
+import db from "@/lib/db";
+import { divisions, users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextRequest } from "next/server";
 import { AddStaffParams, StaffTypes } from "@/types";

@@ -1,8 +1,9 @@
-import { SignJWT, jwtVerify, type JWTPayload } from "jose";
+import { SignJWT, jwtVerify } from "jose";
 
 type Payload = {
     username: string;
     role: "administrator" | "staff";
+    id: string;
 };
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET!);

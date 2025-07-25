@@ -1,5 +1,5 @@
-import { divisions } from "@/db/schema";
-import db from "@/db";
+import { divisions } from "@/lib/db/schema";
+import db from "@/lib/db";
 import { DivisionTypes } from "@/types";
 import { errorHandler500 } from "../helpers";
 

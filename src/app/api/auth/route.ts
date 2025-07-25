@@ -1,5 +1,5 @@
-import db from "@/db";
-import { users, divisions } from "@/db/schema";
+import db from "@/lib/db";
+import { users, divisions } from "@/lib/db/schema";
 import bcrypt from "bcryptjs";
 import { eq, is, not } from "drizzle-orm";
 import { cookies } from "next/headers";
@@ -26,6 +26,7 @@ export async function POST(req: Request) {
                 password: users.password,
                 role: users.role,
                 isDisabled: users.isDisabled,
+                id: users.id,
             })
             .from(users)
             .where(eq(users.username, username));
@@ -59,6 +60,7 @@ export async function POST(req: Request) {
         const token = await signJwt({
             username,
             role: user.role,
+            id: user.id,
         });
 
         cookieStore.set("token", token, {
