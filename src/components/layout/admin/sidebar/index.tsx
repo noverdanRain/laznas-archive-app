@@ -4,11 +4,11 @@ import ButtonSidebar from "./button-sidebar";
 import AlertLogout from "./alert-logout";
 import SidebarSheet from "./sidebar-sheet";
 import { cookies } from "next/headers";
-import { getSession } from "@/lib/actions-2";
+import { getUserSession } from "@/lib/actions/user-session";
 
 export default async function Sidebar() {
-    const cookie = await cookies()
-    const user = await getSession(cookie.get("token")?.value);
+    const cookieStorage = await cookies()
+    const user = await getUserSession({ token: cookieStorage.get("token")?.value });
 
     return (
         <aside className="h-screen px-4 flex flex-col justify-between border-r-2 border-gray-200 border-dashed sticky top-0">

@@ -1,4 +1,4 @@
-import { getDivisions } from "@/lib/actions";
+import { getDivisions } from "@/lib/actions/divisions";
 import { useQuery } from "@tanstack/react-query";
 
 interface IUseGetDivisionsProps {

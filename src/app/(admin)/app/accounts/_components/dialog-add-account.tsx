@@ -1,22 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
 import { InputWithIcon } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SelectComponent } from "@/components/ui/select";
 import { queryKey } from "@/constants";
+import { useAddStaff } from "@/hooks/useAddStaff";
 import { useGetDivisions } from "@/hooks/useGetDivisions";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { AtSign, KeyRound, Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
@@ -30,11 +22,9 @@ type InputValue = {
 }
 
 export default function AddAccountDialog({ children, }: { children?: React.ReactNode }) {
+
     const queryClient = useQueryClient();
     const closeRef = useRef<HTMLButtonElement>(null);
-
-    const { divisions } = useGetDivisions();
-
     const [inputValue, setInputValue] = useState<InputValue>({
         username: "",
         divisionId: "",
@@ -42,19 +32,15 @@ export default function AddAccountDialog({ children, }: { children?: React.React
         passwordConfirm: "",
     })
 
-    const postStaff = useMutation({
-        mutationFn: (data: InputValue) => axios.post("/api/staffs", data),
+    const { divisions } = useGetDivisions();
+
+    const addStaff = useAddStaff({
         onSuccess: () => {
             closeRef.current?.click();
-            toast.success("Akun staff berhasil ditambahkan.");
             queryClient.invalidateQueries({ queryKey: [queryKey.GET_ALL_STAFF] });
+            toast.success("Berhasil Menambahkan Akun");
             handleReset();
-        },
-        onError: (error) => {
-            toast.error("Gagal menambahkan akun", {
-                description: error instanceof AxiosError ? error.response?.data.message || error.message : "Terjadi kesalahan saat menambahkan akun.",
-            });
-        },
+        }
     })
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,8 +65,7 @@ export default function AddAccountDialog({ children, }: { children?: React.React
             toast.error(validateInput(inputValue).validateMessage as string);
             return;
         }
-        console.log("Submitting staff data:", inputValue);
-        postStaff.mutate({
+        addStaff.mutate({
             username: inputValue.username,
             password: inputValue.password,
             divisionId: inputValue.divisionId,
@@ -124,7 +109,7 @@ export default function AddAccountDialog({ children, }: { children?: React.React
                             className="pl-8"
                             onChange={handleInputChange}
                             value={inputValue?.username}
-                            disabled={postStaff.isPending}
+                            disabled={addStaff.isPending}
                         />
                     </div>
                     <div className="grid grid-cols-1 gap-2">
@@ -140,7 +125,7 @@ export default function AddAccountDialog({ children, }: { children?: React.React
                                 value: division.id,
                                 label: division.name,
                             }))}
-                            disabled={postStaff.isPending}
+                            disabled={addStaff.isPending}
                         />
                     </div>
                     <div className="grid grid-cols-1 gap-2">
@@ -156,7 +141,7 @@ export default function AddAccountDialog({ children, }: { children?: React.React
                             className="pl-8"
                             onChange={handleInputChange}
                             value={inputValue?.password}
-                            disabled={postStaff.isPending}
+                            disabled={addStaff.isPending}
                         />
                     </div>
                     <div className="grid grid-cols-1 gap-2">
@@ -174,7 +159,7 @@ export default function AddAccountDialog({ children, }: { children?: React.React
                             className="pl-8"
                             onChange={handleInputChange}
                             value={inputValue?.passwordConfirm}
-                            disabled={postStaff.isPending}
+                            disabled={addStaff.isPending}
                         />
                     </div>
                     <DialogFooter className="flex gap-2">
@@ -189,7 +174,7 @@ export default function AddAccountDialog({ children, }: { children?: React.React
                 </DialogContent>
             </Dialog>
             {
-                postStaff.isPending &&
+                addStaff.isPending &&
                 <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-[10000]">
                     <div className="flex flex-col gap-2 items-center justify-center p-10 bg-white rounded-2xl shadow-lg">
                         <Loader2 size={40} className="text-emerald-500 animate-spin" />

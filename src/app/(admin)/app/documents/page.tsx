@@ -1,24 +1,33 @@
 'use client';
 import { useAtom } from "jotai";
-import { userSessionAtom } from "@/atom";
+import { userSessionAtom } from "@/lib/atom";
 import axios, { AxiosError } from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { DivisionTypes } from "@/types";
-import { fetchGet } from "@/lib/fetch-function";
 import { useEffect } from "react";
 import { FilePlus, Filter, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import SelectClearable from "@/components/common/select-clearable";
 import { DocumentsFilter } from "./_components/documents-filter";
+import { useAddStaff } from "@/hooks/useAddStaff";
+import { toast } from "sonner";
 
 export default function DocumentsPage() {
-    const [userSession] = useAtom(userSessionAtom);
 
-    // const hellYeah = useQuery({
-    //     queryKey: ["getassdsdg"],
-    //     queryFn: () => axios.get("/api/thestaffsus").then(res => res.data),
-    // });
+    const addStaff = useAddStaff({
+        onError: (error) => {
+            toast.error(error.message);
+        }
+    });
+
+    const handleAddStaff = () => {
+        addStaff.mutate({
+            username: "shogun",
+            password: "88888888",
+            divisionId: "5c6a73d3-66cc-11f0-a420-862ccfb04071"
+        })
+    }
 
     return (
         <>
@@ -39,7 +48,7 @@ export default function DocumentsPage() {
                         Ctrl K
                     </Badge>
                 </div>
-                <Button className="rounded-full">
+                <Button onClick={handleAddStaff} className="rounded-full">
                     <FilePlus/>
                     Tambah Dokumen
                 </Button>

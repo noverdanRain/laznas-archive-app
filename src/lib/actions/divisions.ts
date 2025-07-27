@@ -1,9 +1,11 @@
+"use server";
+
 import db from "../db";
 import { divisions } from "../db/schema";
 
 type GetDivisionReturnType = (typeof divisions.$inferSelect)[];
 
-export default async function getDivisions(): Promise<GetDivisionReturnType | null> {
+export async function getDivisions(): Promise<GetDivisionReturnType | null> {
     try {
         const result = await db.select().from(divisions);
         if (result.length === 0) {

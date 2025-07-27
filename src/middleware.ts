@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyJwt } from "./lib/jwt";
+import { verifyJwt, verifyToken } from "./lib/jwt";
 
 const protectedRoute = "/app";
 const onlyAdminRoute = "/app/accounts";
@@ -14,7 +14,12 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL("/auth", request.url));
         }
         try {
-            const payload = await verifyJwt(token);
+            const { isValid, payload } = await verifyToken(token);
+
+            if (!isValid || !payload) {
+                return NextResponse.redirect(new URL("/auth", request.url));
+            }
+
             if (payload.role === "administrator") {
                 return NextResponse.next();
             } else {
@@ -30,7 +35,10 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL("/auth", request.url));
         }
         try {
-            await verifyJwt(token);
+            const { isValid } = await verifyToken(token);
+            if (!isValid) {
+                return NextResponse.redirect(new URL("/auth", request.url));
+            }
             return NextResponse.next();
         } catch (error) {
             return NextResponse.redirect(new URL("/auth", request.url));
@@ -41,10 +49,12 @@ export async function middleware(request: NextRequest) {
         const token = cookies.get("token")?.value;
         if (token) {
             try {
-                await verifyJwt(token);
-                return NextResponse.redirect(new URL("/app", request.url));
+                const { isValid } = await verifyToken(token);
+                if (isValid) {
+                    return NextResponse.redirect(new URL("/app", request.url));
+                }
+                return NextResponse.next();
             } catch (error) {
-                console.log("Token verification failed in auth:", error);
                 return NextResponse.next();
             }
         }

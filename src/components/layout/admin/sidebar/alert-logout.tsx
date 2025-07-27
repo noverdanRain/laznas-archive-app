@@ -1,11 +1,11 @@
 "use client";
 
-import { deleteSession } from "@/lib/actions-2";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Loader, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation"; 
 import { useTransition } from "react";
 import ButtonSidebar from "./button-sidebar";
+import { removeUserSession } from "@/lib/actions/user-session";
 
 export default function AlertLogout() {
     const [isPending, startTransition] = useTransition();
@@ -13,7 +13,7 @@ export default function AlertLogout() {
     const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         startTransition(() => {
-            deleteSession()
+            removeUserSession()
                 .then(() => {
                     router.replace("/auth");
                 })

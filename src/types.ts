@@ -1,3 +1,18 @@
+export interface CustomMutateHooksProps {
+    onSuccess?: () => void;
+    onReject?: (message: string) => void;
+    onError?: (error: Error) => void;
+}
+
+export interface MutateActionsReturnType {
+    isSuccess: boolean;
+    isRejected: boolean;
+    reject?: {
+        message?: string;
+    };
+}
+
+
 export interface DivisionTypes {
     id: string;
     name: string;
