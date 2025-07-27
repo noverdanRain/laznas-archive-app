@@ -1,17 +1,21 @@
 import { addStaff } from "@/lib/actions/staff";
-import { useMutation } from "@tanstack/react-query";
-import { type IAddStaffParams } from "@/lib/actions/staff";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { CustomMutateHooksProps } from "@/types";
+import { useGetStaff } from "./useGetStaff";
 
 export function useAddStaff(props?: CustomMutateHooksProps) {
     const { onSuccess, onReject, onError } = props || {};
+
+    const queryClient = useQueryClient();
+    const { getStaffKey } = useGetStaff();
 
     const { ...data } = useMutation({
         mutationFn: addStaff,
         onSettled: (data) => {
             const { isSuccess, isRejected, reject } = data || {};
             if (isSuccess) {
+                queryClient.invalidateQueries({ queryKey: getStaffKey })
                 if (onSuccess) {
                     onSuccess?.()
                 } else {
@@ -35,7 +39,6 @@ export function useAddStaff(props?: CustomMutateHooksProps) {
                     description: error.message || "Ada kesalahan saat menambahkan staff, silakan coba lagi."
                 });
             }
-            onError?.(error);
         },
     })
 
