@@ -1,15 +1,11 @@
 import { getDivisions } from "@/lib/actions/divisions";
 import { useQuery } from "@tanstack/react-query";
 
-interface IUseGetDivisionsProps {
-    key?: string[]
-}
-
-export function useGetDivisions(props?: IUseGetDivisionsProps) {
-    const { key } = props || {};
+export function useGetDivisions() {
+    const queryKey = ["get-all-divisions"];
     const { data: divisions, ...others } = useQuery({
-        queryKey: key ? [...key] : ["get-all-divisions"],
+        queryKey,
         queryFn: getDivisions,
     })
-    return { divisions, ...others };
+    return { divisions, ...others, queryKey };
 }
