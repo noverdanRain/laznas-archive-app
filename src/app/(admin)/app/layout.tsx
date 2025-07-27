@@ -1,6 +1,6 @@
 import Sidebar from "@/components/layout/admin/sidebar";
 import HeaderPage from "@/components/layout/admin/header-page";
-import AppProvider from "./provider";
+import AppProvider from "./admin-provider";
 
 export default async function AppLayout({
     children,
