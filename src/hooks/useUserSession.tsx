@@ -1,29 +1,26 @@
-import { getUserSession, removeUserSession } from "@/lib/actions";
+import { getUserSession } from "@/lib/actions";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useLogout } from "./useLogout";
 
 export function useUserSession() {
-    const router = useRouter();
+    const { logout } = useLogout();
+    const queryKey = ["user-session"];
     const { data: userSession, isLoading, isError, ...others } = useQuery({
-        queryKey: ["user-session"],
+        queryKey,
         queryFn: () => getUserSession(),
         staleTime: 1000 * 60 * 10, // 10 minutes
     });
 
     if (!isLoading) {
         if (!userSession) {
-            removeUserSession().then(() => {
-                router.replace("/auth");
-            });
+            logout();
         }
     }
 
     if (isError) {
-        removeUserSession().then(() => {
-            router.replace("/auth");
-        });
+        logout();
     }
 
 
-    return { userSession, isLoading, isError, ...others };
+    return { userSession, isLoading, isError, ...others, queryKey };
 }

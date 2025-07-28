@@ -2,6 +2,7 @@
 
 import SelectClearable from "@/components/common/select-clearable";
 import { queryKey } from "@/constants";
+import { useGetDivisions } from "@/hooks/useGetDivisions";
 import { DivisionTypes } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -15,10 +16,7 @@ export type DocumentsFilterType = {
 export function DirectoriesFilter() {
     const [filter, setFilter] = useState<DocumentsFilterType>();
 
-    const divisions = useQuery({
-        queryKey: [queryKey.GET_ALL_DIVISION],
-        queryFn: () => axios.get<DivisionTypes[]>("/api/divisions").then(res => res.data),
-    });
+    const { divisions } = useGetDivisions();
 
     const handleFilterChange = (name: keyof DocumentsFilterType, value: string) => {
         setFilter((prev) => {
@@ -29,7 +27,7 @@ export function DirectoriesFilter() {
     return (
         <div className="flex items-center gap-2">
             <SelectClearable
-                items={divisions.data?.map((division) => ({
+                items={divisions?.map((division) => ({
                     value: division.id,
                     label: `Div. ${division.name}`,
                 }))}
