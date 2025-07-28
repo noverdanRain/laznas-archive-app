@@ -3,9 +3,10 @@
 import { getUserSession } from "./query/user-session";
 import { getDivisions } from "./query/divisions";
 import { getAllStaff, getStaffById } from "./query/staff";
+import { getDirectories, getTotalDocsInDirectory } from "./query/directories";
 
 // Query
-export { getUserSession, getDivisions, getAllStaff, getStaffById };
+export { getUserSession, getDivisions, getAllStaff, getStaffById, getDirectories, getTotalDocsInDirectory };
 
 // =================================================================================
 

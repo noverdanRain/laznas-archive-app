@@ -4,6 +4,7 @@ import { users } from "@/lib/db/schema";
 import { revalidateTag } from "next/cache";
 import { MutateActionsReturnType } from "@/types";
 import bcrypt from "bcryptjs";
+import { randomUUID } from "crypto";
 
 export interface IAddStaffParams {
     username: string;
@@ -29,9 +30,11 @@ async function addStaff(
                 },
             };
         }
+        const generatedUid = randomUUID()
         const hashedPassword = await bcrypt.hash(password, 10);
         await db.insert(users).values({
-            username,
+            id: generatedUid,
+            username: username.toLocaleLowerCase(),
             password: hashedPassword,
             divisionId,
         });
