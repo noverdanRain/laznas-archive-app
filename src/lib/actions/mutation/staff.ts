@@ -5,6 +5,7 @@ import { revalidateTag } from "next/cache";
 import { MutateActionsReturnType } from "@/types";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
+import { throwActionError } from "../helpers";
 
 export interface IAddStaffParams {
     username: string;
@@ -30,7 +31,7 @@ async function addStaff(
                 },
             };
         }
-        const generatedUid = randomUUID()
+        const generatedUid = randomUUID();
         const hashedPassword = await bcrypt.hash(password, 10);
         await db.insert(users).values({
             id: generatedUid,
@@ -45,11 +46,7 @@ async function addStaff(
         };
     } catch (error) {
         console.error("Error adding staff:", error);
-        throw new Error(
-            `Error: ${
-                error instanceof Error ? error.message : "Something went wrong!"
-            }`
-        );
+        throwActionError(error);
     }
 }
 
@@ -69,11 +66,7 @@ async function disableStaff(id: string): Promise<MutateActionsReturnType> {
         };
     } catch (error) {
         console.error("Error disabling staff:", error);
-        throw new Error(
-            `Error: ${
-                error instanceof Error ? error.message : "Something went wrong!"
-            }`
-        );
+        throwActionError(error);
     }
 }
 
@@ -93,11 +86,7 @@ async function enableStaff(id: string): Promise<MutateActionsReturnType> {
         };
     } catch (error) {
         console.error("Error enabling staff:", error);
-        throw new Error(
-            `Error: ${
-                error instanceof Error ? error.message : "Something went wrong!"
-            }`
-        );
+        throwActionError(error);
     }
 }
 

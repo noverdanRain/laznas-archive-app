@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import db from "@/lib/db";
 import { divisions, users } from "@/lib/db/schema";
 import { unstable_cache } from "next/cache";
-
+import { throwActionError } from "../helpers";
 
 async function getAllStaff() {
     const get = unstable_cache(
@@ -25,13 +25,7 @@ async function getAllStaff() {
                 return staffs;
             } catch (error) {
                 console.error("Error while select all staffs: ", error);
-                throw new Error(
-                    `Error: ${
-                        error instanceof Error
-                            ? error.message
-                            : "Something went wrong!"
-                    }`
-                );
+                throwActionError(error);
             }
         },
         ["all-staff"],
@@ -64,13 +58,7 @@ async function getStaffById(id: string) {
                 return user;
             } catch (error) {
                 console.error("Error select staff by id: ", error);
-                throw new Error(
-                    `Failed to select staff by id: ${
-                        error instanceof Error
-                            ? error.message
-                            : "Something went wrong!"
-                    }`
-                );
+                throwActionError(error);
             }
         },
         [`staff-${id}`],

@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/jwt";
 import { getStaffById } from "./staff";
+import { throwActionError } from "../helpers";
 
 interface IgetUserSessionParams {
     token: string | undefined;
@@ -29,14 +30,8 @@ async function getUserSession(params?: IgetUserSessionParams) {
         return user;
     } catch (error) {
         console.error("Error getting user session:", error);
-        throw new Error(
-            `Failed to get user session: ${
-                error instanceof Error ? error.message : "Unknown error"
-            }`
-        );
+        throwActionError(error);
     }
 }
 
-export {
-    getUserSession,
-}
+export { getUserSession };

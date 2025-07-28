@@ -7,6 +7,7 @@ import { directories } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { MutateActionsReturnType } from "@/types";
 import { revalidateTag } from "next/cache";
+import { throwActionError } from "../helpers";
 
 type AddDirectoryParams = {
     name: string;
@@ -43,12 +44,8 @@ async function addDirectory(
             isSuccess: true,
         };
     } catch (error) {
-        console.error("Error create new directory", error);
-        throw new Error(
-            `Error: ${
-                error instanceof Error ? error.message : "Something went wrong!"
-            }`
-        );
+        console.error("Error create new directory: ", error);
+        throwActionError(error);
     }
 }
 

@@ -3,6 +3,7 @@ import { directories, documents } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 import { getUserSession } from "./user-session";
+import { throwActionError } from "../helpers";
 
 export interface IGetDirectoriesParams {
     token?: string;
@@ -53,11 +54,7 @@ async function getDirectories(params?: IGetDirectoriesParams) {
                 }
             } catch (error) {
                 console.error("Error fetching directories:", error);
-                throw new Error(
-                    `Failed to fetch directories: ${
-                        error instanceof Error ? error.message : "Unknown error"
-                    }`
-                );
+                throwActionError(error);
             }
         },
         [cacheTag],
@@ -83,11 +80,7 @@ async function getTotalDocsInDirectory(directoryId: string) {
                     "Error fetching total documents in directory:",
                     error
                 );
-                throw new Error(
-                    `Failed to fetch total documents in directory: ${
-                        error instanceof Error ? error.message : "Unknown error"
-                    }`
-                );
+                throwActionError(error);
             }
         },
         [cacheTag],

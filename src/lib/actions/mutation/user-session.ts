@@ -5,13 +5,16 @@ import { MutateActionsReturnType } from "@/types";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
+import { throwActionError } from "../helpers";
 
 interface ICreateUserSessionParams {
     username: string;
     password: string;
 }
 
-async function createUserSession(params: ICreateUserSessionParams): Promise<MutateActionsReturnType> {
+async function createUserSession(
+    params: ICreateUserSessionParams
+): Promise<MutateActionsReturnType> {
     try {
         const cookieStore = await cookies();
 
@@ -35,7 +38,10 @@ async function createUserSession(params: ICreateUserSessionParams): Promise<Muta
             };
         }
 
-        const isPasswordValid = await bcrypt.compare(params.password, user.password);
+        const isPasswordValid = await bcrypt.compare(
+            params.password,
+            user.password
+        );
 
         if (!isPasswordValid) {
             return {
@@ -73,11 +79,7 @@ async function createUserSession(params: ICreateUserSessionParams): Promise<Muta
         };
     } catch (error) {
         console.error("Error fetching user:", error);
-        throw new Error(
-            `Error: ${
-                error instanceof Error ? error.message : "Something went wrong!"
-            }`
-        );
+        throwActionError(error);
     }
 }
 
@@ -89,7 +91,7 @@ async function removeUserSession(): Promise<void> {
         }
     } catch (error) {
         console.error("Failed to remove user session:", error);
-        throw new Error("Could not remove user session, something went wrong!");
+        throwActionError(error);
     }
 }
 
