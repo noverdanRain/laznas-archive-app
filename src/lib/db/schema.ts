@@ -79,14 +79,6 @@ export const directories = mysqlTable(
     ]
 );
 
-// export const files = mysqlTable("files", {
-//     id: uuidType("id")
-//         .primaryKey()
-//         .notNull()
-//         .default(sql`(UUID())`),
-//     cid: varchar("cid", { length: 255 }).unique("unique_cid").notNull(),
-//     extension: varchar("extension", { length: 10 }).notNull(),
-// });
 
 export const documents = mysqlTable(
     "documents",
@@ -135,32 +127,50 @@ export const documents = mysqlTable(
     ]
 );
 
-export const fileHistory = mysqlTable(
-    "file_history",
+export const documents_history = mysqlTable(
+    "documents_history",
     {
         id: uuidType("id")
             .primaryKey()
             .notNull()
             .default(sql`(UUID())`),
-        documentId: uuidType("doc_id"),
+        documentId: uuidType("document_id").notNull(),
+        documentTypeId: uuidType("document_type_id").notNull(),
+        directoryId: uuidType("directory_id"),
         userId: uuidType("user_id"),
+        documentNum: varchar("document_num", { length: 255 }),
+        title: varchar("title", { length: 255 }).notNull(),
+        description: text("description"),
         cid: varchar("cid", { length: 255 }).notNull(),
-        changeName: varchar("change_name", { length: 255 }).notNull(),
         fileExt: varchar("file_ext", { length: 10 }).notNull(),
-        createdAt: timestamp("created_at").defaultNow().notNull(),
+        isPrivate: boolean("is_private").notNull(),
+        changeNotes: varchar("change_notes", { length: 255 }),
+        dateChanged: timestamp("date_changed").defaultNow().notNull(),
     },
     (t) => [
         foreignKey({
             columns: [t.documentId],
             foreignColumns: [documents.id],
-            name: "fk_file_history",
+            name: "fk_document_history",
         })
             .onDelete("cascade")
             .onUpdate("cascade"),
         foreignKey({
+            columns: [t.documentTypeId],
+            foreignColumns: [documentTypes.id],
+            name: "fk_document_type_history",
+        }).onUpdate("cascade"),
+        foreignKey({
+            columns: [t.directoryId],
+            foreignColumns: [directories.id],
+            name: "fk_directory_history",
+        })
+            .onDelete("set null")
+            .onUpdate("cascade"),
+        foreignKey({
             columns: [t.userId],
             foreignColumns: [users.id],
-            name: "fk_user_history",
+            name: "fk_user_document_history",
         })
             .onDelete("set null")
             .onUpdate("cascade"),

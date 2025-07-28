@@ -1,12 +1,15 @@
 import { defineConfig } from "drizzle-kit";
+
+const uri = process.env.DB_URI;
+
+if(!uri){
+    throw new Error("Database URI is undefined")
+}
+
 export default defineConfig({
-    schema: "./src/db/schema.ts",
+    schema: "./src/lib/db/schema.ts",
     dialect: "mysql",
     dbCredentials: {
-        host: "mysql-laznas-archive-app-laznas-archive-app.c.aivencloud.com",
-        port: 20735,
-        user: "next-app",
-        password: "AVNS_D_Fk5KSqEYeOyu1U3LT",
-        database: "laznas_archive_app",
+        url: uri,
     },
 });
