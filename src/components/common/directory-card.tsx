@@ -24,11 +24,11 @@ export default function DirectoryCard({
         <TooltipText text={name}>
             <div {...props} className="flex items-center w-full gap-4 p-5 bg-white rounded-2xl border border-gray-200 hover:bg-gray-100 transition cursor-pointer group relative">
                 <MdiFolder
-                    width={40}
-                    height={40}
-                    className="text-amber-400 group-hover:text-amber-500 transition"
+                    width={48}
+                    height={48}
+                    className="text-amber-400 group-hover:text-amber-500 transition "
                 />
-                <div className="grid grid-cols-1">
+                <div className="grid grid-cols-1 w-full">
                     <h3 className="font-medium line-clamp-1">{name}</h3>
                     {
                         docsCount.isSuccess ? (

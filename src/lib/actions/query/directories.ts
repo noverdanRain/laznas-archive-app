@@ -7,6 +7,8 @@ import { getUserSession } from "./user-session";
 export interface IGetDirectoriesParams {
     token?: string;
 }
+export type GetDirectoryCacheTag = `get-dir-${"staff" | "public"}`;
+export type GetTotalDocsInDirectoryCacheTag = `get-total-docs-${string}`;
 
 async function getDirectories(params?: IGetDirectoriesParams) {
     const checkIsLoggedIn = async (): Promise<boolean> => {
@@ -21,6 +23,9 @@ async function getDirectories(params?: IGetDirectoriesParams) {
 
     const isLoggedIn = await checkIsLoggedIn();
 
+    const cacheTag: GetDirectoryCacheTag = `get-dir-${
+        isLoggedIn ? "staff" : "public"
+    }`;
     const cache = unstable_cache(
         async () => {
             try {
@@ -55,15 +60,16 @@ async function getDirectories(params?: IGetDirectoriesParams) {
                 );
             }
         },
-        [`get-dir-${isLoggedIn ? "staff" : "public"}`],
+        [cacheTag],
         {
-            tags: [`get-dir-${isLoggedIn ? "staff" : "public"}`],
+            tags: [cacheTag],
         }
     );
     return cache();
 }
 
 async function getTotalDocsInDirectory(directoryId: string) {
+    const cacheTag: GetTotalDocsInDirectoryCacheTag = `get-total-docs-${directoryId}`;
     const cache = unstable_cache(
         async () => {
             try {
@@ -84,9 +90,9 @@ async function getTotalDocsInDirectory(directoryId: string) {
                 );
             }
         },
-        [`get-total-docs-${directoryId}`],
+        [cacheTag],
         {
-            tags: [`get-total-docs-${directoryId}`],
+            tags: [cacheTag],
         }
     );
     return cache();

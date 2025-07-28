@@ -12,6 +12,7 @@ export { getUserSession, getDivisions, getAllStaff, getStaffById, getDirectories
 
 import { addStaff, disableStaff, enableStaff } from "./mutation/staff";
 import { removeUserSession, createUserSession } from "./mutation/user-session";
+import { addDirectory } from "./mutation/directories";
 
 // Mutation
-export { addStaff, disableStaff, enableStaff, createUserSession, removeUserSession };
+export { addStaff, disableStaff, enableStaff, createUserSession, removeUserSession, addDirectory };

@@ -5,8 +5,8 @@ export interface CustomMutateHooksProps {
 }
 
 export interface MutateActionsReturnType {
-    isSuccess: boolean;
-    isRejected: boolean;
+    isSuccess?: boolean;
+    isRejected?: boolean;
     reject?: {
         message?: string;
     };

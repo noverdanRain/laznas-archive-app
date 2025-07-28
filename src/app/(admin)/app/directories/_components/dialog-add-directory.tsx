@@ -3,22 +3,11 @@
 import { AlertDialogHeader } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { queryKey } from "@/constants";
-import { DirectoryTypes } from "@/types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { useAddDirectory } from "@/hooks/useAddDirectory";
 import { useRef } from "react";
 import { toast } from "sonner";
 
@@ -27,24 +16,13 @@ export default function AddDirectoryDialog({
 }: {
     children?: React.ReactNode;
 }) {
-    const queryClient = useQueryClient();
     const closeRef = useRef<HTMLButtonElement>(null);
 
-    const addDirectories = useMutation({
-        mutationFn: (data: DirectoryTypes) => axios.post("/api/directories", data),
+    const addDirectory = useAddDirectory({
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [queryKey.GET_ALL_DIRECTORIES] });
             closeRef.current?.click();
-            toast.success("Direktori berhasil dibuat", { id: "add-directory" });
-        },
-        onError: (error) => {
-            if (axios.isAxiosError(error)) {
-                toast.error(error.response?.data.message || "Gagal membuat direktori", { id: "add-directory" });
-            } else {
-                toast.error("Terjadi kesalahan saat membuat direktori", { id: "add-directory" });
-            }
         }
-    })
+    });
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -59,9 +37,9 @@ export default function AddDirectoryDialog({
             return;
         }
 
-        addDirectories.mutate({
+        addDirectory.mutate({
             name,
-            description: description || "",
+            description: description || null,
             isPrivate,
         })
         toast.loading("Membuat direktori...", { id: "add-directory" });
@@ -95,7 +73,7 @@ export default function AddDirectoryDialog({
                                 id="dir-name"
                                 name="name"
                                 placeholder="Nama Direktori"
-                                disabled={addDirectories.isPending}
+                                disabled={addDirectory.isPending}
                             />
                         </div>
                         <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-emerald-600 has-[[aria-checked=true]]:bg-emerald-50">
@@ -103,7 +81,7 @@ export default function AddDirectoryDialog({
                                 id="toggle-private"
                                 name="isPrivate"
                                 className="data-[state=checked]:border-emerald-600 data-[state=checked]:bg-emerald-600 data-[state=checked]:text-white"
-                                disabled={addDirectories.isPending}
+                                disabled={addDirectory.isPending}
                             />
                             <div className="grid gap-1.5 font-normal">
                                 <div className="flex items-center gap-2">
@@ -123,7 +101,7 @@ export default function AddDirectoryDialog({
                                 name="description"
                                 placeholder="Deskripsi Direktori"
                                 className="min-h-24"
-                                disabled={addDirectories.isPending}
+                                disabled={addDirectory.isPending}
                             />
                         </div>
 
@@ -132,7 +110,7 @@ export default function AddDirectoryDialog({
                         <DialogClose asChild>
                             <Button ref={closeRef} variant="outline">Batal</Button>
                         </DialogClose>
-                        <Button disabled={addDirectories.isPending} type="submit">Buat Direktori</Button>
+                        <Button disabled={addDirectory.isPending} type="submit">Buat Direktori</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>
