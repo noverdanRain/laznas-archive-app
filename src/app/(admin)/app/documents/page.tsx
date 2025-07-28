@@ -1,33 +1,10 @@
 'use client';
-import { useAtom } from "jotai";
-import { userSessionAtom } from "@/lib/atom";
-import axios, { AxiosError } from "axios";
-import { useQuery } from "@tanstack/react-query";
-import { DivisionTypes } from "@/types";
-import { useEffect } from "react";
-import { FilePlus, Filter, Search } from "lucide-react";
+import { FilePlus, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import SelectClearable from "@/components/common/select-clearable";
 import { DocumentsFilter } from "./_components/documents-filter";
-import { useAddStaff } from "@/hooks/useAddStaff";
-import { toast } from "sonner";
 
 export default function DocumentsPage() {
-
-    const addStaff = useAddStaff({
-        onError: (error) => {
-            toast.error(error.message);
-        }
-    });
-
-    const handleAddStaff = () => {
-        addStaff.mutate({
-            username: "shogun",
-            password: "88888888",
-            divisionId: "5c6a73d3-66cc-11f0-a420-862ccfb04071"
-        })
-    }
 
     return (
         <>
@@ -48,7 +25,7 @@ export default function DocumentsPage() {
                         Ctrl K
                     </Badge>
                 </div>
-                <Button onClick={handleAddStaff} className="rounded-full">
+                <Button className="rounded-full">
                     <FilePlus/>
                     Tambah Dokumen
                 </Button>
