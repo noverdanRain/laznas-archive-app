@@ -1,5 +1,5 @@
 import { addStaff } from "@/lib/actions";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { CustomMutateHooksProps } from "@/types";
 import { useGetStaff } from "./useGetStaff";
@@ -7,15 +7,14 @@ import { useGetStaff } from "./useGetStaff";
 export function useAddStaff(props?: CustomMutateHooksProps) {
     const { onSuccess, onReject, onError } = props || {};
 
-    const queryClient = useQueryClient();
-    const { getStaffKey } = useGetStaff();
+    const { invalidate } = useGetStaff();
 
     const { ...data } = useMutation({
         mutationFn: addStaff,
         onSettled: (data) => {
             const { isSuccess, isRejected, reject } = data || {};
             if (isSuccess) {
-                queryClient.invalidateQueries({ queryKey: getStaffKey })
+                invalidate();
                 if (onSuccess) {
                     onSuccess?.()
                 } else {

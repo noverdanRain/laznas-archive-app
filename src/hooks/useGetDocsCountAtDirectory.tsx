@@ -1,5 +1,5 @@
 import { getTotalDocsInDirectory } from "@/lib/actions";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 
 export function useGetDocsCountInDirectory(directoryId: string) {
@@ -10,5 +10,10 @@ export function useGetDocsCountInDirectory(directoryId: string) {
         queryFn: () => getTotalDocsInDirectory(directoryId),
     });
 
-    return { ...query, queryKey };
+    const queryClient = useQueryClient();
+    const invalidate = () => {
+        queryClient.invalidateQueries({ queryKey });
+    };
+
+    return { ...query, queryKey, invalidate };
 }

@@ -1,5 +1,5 @@
 import { getAllStaff } from "@/lib/actions";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useGetStaff() {
     const getStaffKey = ["get-all-staff"]
@@ -8,5 +8,10 @@ export function useGetStaff() {
         queryFn: getAllStaff
     })
 
-    return { staffs, ...others, getStaffKey }
+    const queryClient = useQueryClient();
+    const invalidate = () => {
+        queryClient.invalidateQueries({ queryKey: getStaffKey });
+    }
+
+    return { staffs, ...others, getStaffKey, invalidate }
 }

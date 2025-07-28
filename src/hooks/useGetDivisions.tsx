@@ -1,5 +1,5 @@
 import { getDivisions } from "@/lib/actions";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useGetDivisions() {
     const queryKey = ["get-all-divisions"];
@@ -7,5 +7,11 @@ export function useGetDivisions() {
         queryKey,
         queryFn: getDivisions,
     })
-    return { divisions, ...others, queryKey };
+
+    const queryClient = useQueryClient();
+    const invalidate = () => {
+        queryClient.invalidateQueries({ queryKey });
+    };
+
+    return { divisions, ...others, queryKey, invalidate };
 }

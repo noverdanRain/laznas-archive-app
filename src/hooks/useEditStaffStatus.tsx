@@ -1,6 +1,6 @@
 import { disableStaff, enableStaff } from "@/lib/actions";
 import { CustomMutateHooksProps } from "@/types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useGetStaff } from "./useGetStaff";
 
@@ -9,8 +9,7 @@ export function useEditStaffStatus(props: CustomMutateHooksProps & { setStatus: 
     const setStatusFn = setStatus === "enable" ? enableStaff : disableStaff;
     const toastId = "mutate-status-staff";
 
-    const queryClient = useQueryClient();
-    const { getStaffKey } = useGetStaff();
+    const { invalidate } = useGetStaff();
 
     const { ...data } = useMutation({
         mutationFn: setStatusFn,
@@ -20,7 +19,7 @@ export function useEditStaffStatus(props: CustomMutateHooksProps & { setStatus: 
         onSettled: (data) => {
             const { isSuccess, isRejected, reject } = data || {};
             if (isSuccess) {
-                queryClient.invalidateQueries({ queryKey: getStaffKey })
+                invalidate();
                 if (onSuccess) {
                     onSuccess?.()
                 } else {
