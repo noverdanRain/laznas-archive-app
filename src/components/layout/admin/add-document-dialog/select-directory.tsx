@@ -1,28 +1,12 @@
 "use client"
 
 import { Check, ChevronsUpDown, Folder } from "lucide-react"
-
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-} from "@/components/ui/command"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, } from "@/components/ui/command"
+import { Popover, PopoverContent, PopoverTrigger, } from "@/components/ui/popover"
 import { useEffect, useState } from "react"
-import { ScrollArea } from "../../../ui/scroll-area"
-import { useQuery } from "@tanstack/react-query"
-import { queryKey } from "@/constants"
-import axios from "axios"
-import { DirectoryTypes } from "@/types"
+import { useGetDirectories } from "@/hooks/useGetDirectories"
 
 export function SelectDirectory({
     defaultValue,
@@ -33,24 +17,22 @@ export function SelectDirectory({
     onValueChange?: (value: string) => void;
     name?: string;
 }) {
+
     const [open, setOpen] = useState(false)
     const [value, setValue] = useState("")
 
-    useEffect(()=>{
+    useEffect(() => {
         if (defaultValue) {
             setValue(defaultValue)
             onValueChange?.(defaultValue)
         }
     }, [defaultValue])
 
-    const getDirectories = useQuery({
-        queryKey: [queryKey.GET_ALL_DIRECTORIES],
-        queryFn: () => axios.get<DirectoryTypes[]>("/api/directories").then(res => res.data),
-    })
+    const { directories, isLoading } = useGetDirectories();
 
-    const handeValueChange = (dir: DirectoryTypes) => {
-        setValue(dir.id === value ? "" : dir.id || "")
-        onValueChange?.(dir.id === value ? "" : dir.id || "")
+    const handleValueChange = (id: string) => {
+        setValue(id === value ? "" : id || "")
+        onValueChange?.(id === value ? "" : id || "")
         setOpen(false)
     }
 
@@ -65,7 +47,7 @@ export function SelectDirectory({
                 >
                     <Folder className={`${value ? "text-amber-500 fill-amber-500" : ""}`} />
                     {value
-                        ? getDirectories.data?.find((directory) => directory.id === value)?.name
+                        ? directories?.find((directory) => directory.id === value)?.name
                         : "Pilih Direktori"}
                     <ChevronsUpDown className="opacity-50 ml-auto" />
                 </Button>
@@ -77,18 +59,18 @@ export function SelectDirectory({
                     <CommandList>
                         <CommandEmpty>
                             {
-                                getDirectories.isLoading
+                                isLoading
                                     ? "Memuat direktori..."
                                     : "Direktori tidak ditemukan."
                             }
                         </CommandEmpty>
                         <div className="h-[200px] w-full overflow-y-auto">
                             <CommandGroup>
-                                {getDirectories.data?.map((dir) => (
+                                {directories?.map((dir) => (
                                     <CommandItem
                                         key={dir.id}
                                         value={dir.name}
-                                        onSelect={() => handeValueChange(dir)}
+                                        onSelect={() => handleValueChange(dir.id)}
                                         className=" h-10"
                                     >
                                         <Folder className="text-amber-500 fill-amber-500" />
