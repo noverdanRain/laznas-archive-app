@@ -1,4 +1,4 @@
-import { getAllStaff } from "@/lib/actions/staff";
+import { getAllStaff } from "@/lib/actions";
 import { useQuery } from "@tanstack/react-query";
 
 export function useGetStaff() {

@@ -1,4 +1,4 @@
-import { disableStaff, enableStaff } from "@/lib/actions/staff";
+import { disableStaff, enableStaff } from "@/lib/actions";
 import { CustomMutateHooksProps } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";

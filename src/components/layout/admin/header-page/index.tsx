@@ -1,7 +1,7 @@
 import { UserRound } from "lucide-react";
 import { cookies } from "next/headers";
 import HeaderTitle from "./header-title";
-import { getUserSession } from "@/lib/actions/user-session";
+import { getUserSession } from "@/lib/actions";
 
 export default async function HeaderPage() {
     const cookieStorage = await cookies()

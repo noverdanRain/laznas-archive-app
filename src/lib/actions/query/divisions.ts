@@ -1,7 +1,5 @@
-"use server";
-
-import db from "../db";
-import { divisions } from "../db/schema";
+import db from "@/lib/db";
+import { divisions } from "@/lib/db/schema";
 
 type GetDivisionReturnType = (typeof divisions.$inferSelect)[];
 

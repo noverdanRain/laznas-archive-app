@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useUserSession } from "@/hooks/useUserSession";
-import { removeUserSession } from "@/lib/actions/user-session";
+import { removeUserSession } from "@/lib/actions";
 
 export default function AppProvider({ children }: { children: React.ReactNode }) {
     const { userSession } = useUserSession();

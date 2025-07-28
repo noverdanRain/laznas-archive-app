@@ -5,7 +5,7 @@ import { Loader, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation"; 
 import { useTransition } from "react";
 import ButtonSidebar from "./button-sidebar";
-import { removeUserSession } from "@/lib/actions/user-session";
+import { removeUserSession } from "@/lib/actions";
 
 export default function AlertLogout() {
     const [isPending, startTransition] = useTransition();

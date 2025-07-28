@@ -1,4 +1,4 @@
-import { getDivisions } from "@/lib/actions/divisions";
+import { getDivisions } from "@/lib/actions";
 import { useQuery } from "@tanstack/react-query";
 
 export function useGetDivisions() {

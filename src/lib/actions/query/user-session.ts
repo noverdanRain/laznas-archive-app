@@ -1,7 +1,5 @@
-"use server";
-
 import { cookies } from "next/headers";
-import { verifyToken } from "../jwt";
+import { verifyToken } from "@/lib/jwt";
 import { getStaffById } from "./staff";
 
 interface IgetUserSessionParams {
@@ -39,14 +37,6 @@ async function getUserSession(params?: IgetUserSessionParams) {
     }
 }
 
-async function removeUserSession(): Promise<void> {
-    const cookieStore = await cookies();
-    if (cookieStore.has("token")) {
-        cookieStore.delete("token");
-    }
-}
-
 export {
     getUserSession,
-    removeUserSession
 }

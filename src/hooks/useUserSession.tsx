@@ -1,4 +1,4 @@
-import { getUserSession, removeUserSession } from "@/lib/actions/user-session";
+import { getUserSession, removeUserSession } from "@/lib/actions";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
