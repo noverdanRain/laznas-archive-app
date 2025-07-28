@@ -1,17 +1,11 @@
 'use client';
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { queryKey } from "@/constants";
-import { TypeOfDocumentTypes } from "@/types";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useGetDocType } from "@/hooks/useGetDocType";
 
 export default function SelectDocType({ ...props }: React.ComponentProps<typeof Select>) {
 
-    const getDocType = useQuery({
-        queryKey: [queryKey.GET_ALL_DOCUMENT_TYPES],
-        queryFn: () => axios.get<TypeOfDocumentTypes[]>("/api/document-types").then(res => res.data),
-    })
+    const { data: documentType, isLoading, isError } = useGetDocType();
 
     return (
         <Select {...props} >
@@ -20,18 +14,18 @@ export default function SelectDocType({ ...props }: React.ComponentProps<typeof 
             </SelectTrigger>
             <SelectContent>
                 {
-                    getDocType.isLoading && (
+                    isLoading && (
                         <p className="text-sm p-2">Memuat ...</p>
                     )
                 }
                 {
-                    getDocType.isError && (
+                    isError && (
                         <p className="text-sm p-2">Error saat mengambil data.</p>
                     )
                 }
                 <SelectGroup>
                     {
-                        getDocType.data?.map((docType) => (
+                        documentType?.map((docType) => (
                             <SelectItem key={docType.id} value={docType.id}>
                                 {docType.name}
                             </SelectItem>

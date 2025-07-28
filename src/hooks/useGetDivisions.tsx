@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useGetDivisions() {
     const queryKey = ["get-all-divisions"];
-    const { data: divisions, ...others } = useQuery({
+    const divisions = useQuery({
         queryKey,
         queryFn: getDivisions,
     })
@@ -13,5 +13,5 @@ export function useGetDivisions() {
         queryClient.invalidateQueries({ queryKey });
     };
 
-    return { divisions, ...others, queryKey, invalidate };
+    return { ...divisions, queryKey, invalidate };
 }

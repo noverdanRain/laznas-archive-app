@@ -3,6 +3,8 @@
 import SelectClearable from "@/components/common/select-clearable";
 import { Button } from "@/components/ui/button";
 import { queryKey } from "@/constants";
+import { useGetDivisions } from "@/hooks/useGetDivisions";
+import { useGetDocType } from "@/hooks/useGetDocType";
 import { DivisionTypes, TypeOfDocumentTypes } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -17,14 +19,8 @@ export type DocumentsFilterType = {
 export function DocumentsFilter() {
     const [filter, setFilter] = useState<DocumentsFilterType>();
 
-    const documentType = useQuery({
-        queryKey: [queryKey.GET_ALL_DOCUMENT_TYPES],
-        queryFn: () => axios.get<TypeOfDocumentTypes[]>("/api/document-types").then(res => res.data),
-    })
-    const divisions = useQuery({
-        queryKey: [queryKey.GET_ALL_DIVISION],
-        queryFn: () => axios.get<DivisionTypes[]>("/api/divisions").then(res => res.data),
-    });
+    const documentType = useGetDocType();
+    const divisions = useGetDivisions();
 
     const handleFilterChange = (name: keyof DocumentsFilterType, value: string) => {
         setFilter((prev) => {

@@ -32,7 +32,7 @@ export default function AddAccountDialog({ children, }: { children?: React.React
         passwordConfirm: "",
     })
 
-    const { divisions } = useGetDivisions();
+    const { data: divisions } = useGetDivisions();
 
     const addStaff = useAddStaff({
         onSuccess: () => {

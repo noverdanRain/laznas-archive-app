@@ -1,11 +1,7 @@
 'use client';
 
 import SelectClearable from "@/components/common/select-clearable";
-import { queryKey } from "@/constants";
 import { useGetDivisions } from "@/hooks/useGetDivisions";
-import { DivisionTypes } from "@/types";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useState } from "react";
 
 export type DocumentsFilterType = {
@@ -16,7 +12,7 @@ export type DocumentsFilterType = {
 export function DirectoriesFilter() {
     const [filter, setFilter] = useState<DocumentsFilterType>();
 
-    const { divisions } = useGetDivisions();
+    const { data: divisions } = useGetDivisions();
 
     const handleFilterChange = (name: keyof DocumentsFilterType, value: string) => {
         setFilter((prev) => {
