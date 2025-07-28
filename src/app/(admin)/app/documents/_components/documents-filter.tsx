@@ -1,13 +1,8 @@
 'use client';
 
 import SelectClearable from "@/components/common/select-clearable";
-import { Button } from "@/components/ui/button";
-import { queryKey } from "@/constants";
 import { useGetDivisions } from "@/hooks/useGetDivisions";
 import { useGetDocType } from "@/hooks/useGetDocType";
-import { DivisionTypes, TypeOfDocumentTypes } from "@/types";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useState } from "react";
 
 export type DocumentsFilterType = {

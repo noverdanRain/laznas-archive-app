@@ -1,12 +1,26 @@
 'use client';
 
-import { useGetDivisions } from "@/hooks/useGetDivisions";
-import { useUserSession } from "@/hooks/useUserSession";
-import Image from "next/image";
+import { getPinataPresignedUrl } from "@/lib/actions";
+
 
 export default function Home() {
 
+
+  const handleClick = () => {
+    getPinataPresignedUrl({
+      fileName: "Coba Mas",
+      visibility: "private"
+    }).then((url) => {
+      console.log("Presigned URL:", url);
+    }).catch((err) => {
+      console.log("Error Get Presigned: ", err);
+    })
+  }
+
   return (
-    <h1>Hello Madefaker</h1>
+    <>
+      <h1>Hello Madefaker</h1>
+      <button onClick={handleClick}>Tes</button>
+    </>
   );
 }
