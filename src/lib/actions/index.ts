@@ -10,7 +10,7 @@ export { getUserSession, getDivisions, getAllStaff, getStaffById };
 // =================================================================================
 
 import { addStaff, disableStaff, enableStaff } from "./mutation/staff";
-import { removeUserSession } from "./mutation/user-session";
+import { removeUserSession, createUserSession } from "./mutation/user-session";
 
 // Mutation
-export { addStaff, disableStaff, enableStaff, removeUserSession };
+export { addStaff, disableStaff, enableStaff, createUserSession, removeUserSession };

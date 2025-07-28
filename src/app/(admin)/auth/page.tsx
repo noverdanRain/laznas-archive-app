@@ -5,37 +5,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Loader } from "lucide-react";
 import { useTransition } from "react";
+import { useLogin } from "@/hooks/useLogin";
 
 export default function AuthPage() {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
 
-    const login = useMutation({
-        mutationFn: async (formData: FormData) => {
-            const response = await fetch("/api/auth", {
-                method: "POST",
-                body: formData,
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Login failed");
-            }
-            return response.json();
-        },
-        onError: (error: Error) => {
-            toast.error(error.message || "Terjadi kesalahan saat login");
-        },
+    const login = useLogin({
         onSuccess: () => {
-            toast.success("Login berhasil");
             startTransition(() => {
                 router.replace("/app");
             });
+            toast.success("Login berhasil");
         }
-    })
+    });
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -48,7 +34,10 @@ export default function AuthPage() {
             return;
         }
 
-        login.mutate(formData)
+        login.mutate({
+            username,
+            password
+        })
     }
 
     return (
