@@ -50,6 +50,7 @@ export function useAddDocument(props?: CustomMutateHooksProps<AddDocumentRespons
             }
         },
         onError: (error) => {
+            setIsSubmitting(false);
             if (onError) {
                 onError(error);
             } else {
@@ -98,7 +99,8 @@ export function useAddDocument(props?: CustomMutateHooksProps<AddDocumentRespons
             setIsSubmitting(false);
             return addDocResponse;
         } catch (error) {
-            console.error("Error in useAddDocument mutate:", error);
+            setIsSubmitting(false);
+            console.log("Error in useAddDocument mutate:", error);
             throwActionError(error);
         }
     }

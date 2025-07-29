@@ -8,6 +8,7 @@ import getFileExt, { cn } from "@/lib/utils";
 import { filesize } from "filesize";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { TooltipText } from "@/components/common/tooltip-text";
 
 export default function FileField({ form }: { form: ReturnType<typeof useForm<z.infer<typeof addDocumentFormSchema>>> }) {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -32,10 +33,12 @@ export default function FileField({ form }: { form: ReturnType<typeof useForm<z.
                                     />
                                 )
                             }
-                            <div className=" w-full">
-                                <p className="line-clamp-1 text-sm">
-                                    {value?.name}
-                                </p>
+                            <div className="w-full">
+                                <TooltipText text={value?.name || "Tidak ada file yang dipilih"}>
+                                    <p className="line-clamp-1 max-w-sm text-sm text-ellipsis">
+                                        {value?.name}
+                                    </p>
+                                </TooltipText>
                                 {
                                     value ? (
                                         <p className="text-gray-500 text-sm">

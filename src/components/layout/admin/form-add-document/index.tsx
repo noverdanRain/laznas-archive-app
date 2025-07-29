@@ -12,16 +12,12 @@ import SelectDocumentTypeField from "./field/select-document-type";
 import DescriptionField from "./field/description";
 import DocumentNumberField from "./field/document-number";
 import VisibilityField from "./field/visibility";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, } from "@/components/ui/dialog";
 import { CloudUpload } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { useAddDocument } from "@/hooks/useAddDocument";
+import { cn } from "@/lib/utils";
 
 export const addDocumentFormSchema = z.object({
     file: z.custom<File | FileWithPath | null>().refine((file) => !!file, {
@@ -48,7 +44,9 @@ export const addDocumentFormSchema = z.object({
 
 type FormAddDocumentProps = {
     defaultFile?: File | FileWithPath;
+    className?: string;
     onCancel?: () => void;
+    onSubmited?: () => void;
 };
 export default function FormAddDocument(props?: FormAddDocumentProps) {
     const form = useForm<z.infer<typeof addDocumentFormSchema>>({
@@ -72,6 +70,9 @@ export default function FormAddDocument(props?: FormAddDocumentProps) {
                 duration: 5000,
             });
             console.log("Document added successfully:", data);
+            if (props?.onSubmited) {
+                props.onSubmited();
+            }
         },
     });
 
@@ -95,13 +96,18 @@ export default function FormAddDocument(props?: FormAddDocumentProps) {
         }
     };
 
+    console.log("Is loading:", addDocument.isLoading);
+
 
     return (
         <>
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-6"
+                    className={cn(
+                        "space-y-6",
+                        props?.className,
+                    )}
                 >
                     <FileField form={form} />
                     <SelectDirectoryField form={form} />
@@ -124,7 +130,7 @@ export default function FormAddDocument(props?: FormAddDocumentProps) {
                 </form>
             </Form>
             <Dialog open={addDocument.isLoading}>
-                <DialogContent className="flex p-6 bg-white rounded-2xl shadow-lg transition-all duration-300 w-full [&>button:last-child]:hidden">
+                <DialogContent className="w-lg flex p-6 bg-white rounded-2xl shadow-lg transition-all duration-300 [&>button:last-child]:hidden">
                     <DialogTitle hidden>Proses Upload Dokumen</DialogTitle>
                     <DialogDescription hidden>
                         Proses upload dokumen sedang berlangsung
