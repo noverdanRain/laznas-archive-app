@@ -3,21 +3,21 @@ import { throwActionError } from "../helpers";
 
 export type PinataPresignedUrlParams = {
     fileName: string;
-    visibility: "public" | "private";
+    isPrivate?: boolean;
 };
 
 async function getPinataPresignedUrl(params: PinataPresignedUrlParams) {
-    const { fileName, visibility } = params;
+    const { fileName, isPrivate } = params;
     try {
         let url: string;
 
-        if (visibility === "public") {
-            url = await pinata.upload.public.createSignedURL({
+        if (isPrivate) {
+            url = await pinata.upload.private.createSignedURL({
                 expires: 600,
                 name: fileName,
             });
         } else {
-            url = await pinata.upload.private.createSignedURL({
+            url = await pinata.upload.public.createSignedURL({
                 expires: 600,
                 name: fileName,
             });

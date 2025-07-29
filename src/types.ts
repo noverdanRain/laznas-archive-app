@@ -1,7 +1,8 @@
-export interface CustomMutateHooksProps {
-    onSuccess?: () => void;
+export interface CustomMutateHooksProps<T = any> {
+    onSuccess?: (data?: T) => void;
     onReject?: (message: string) => void;
     onError?: (error: Error) => void;
+    onMutate?: (params: any) => void;
 }
 
 export interface MutateActionsReturnType {

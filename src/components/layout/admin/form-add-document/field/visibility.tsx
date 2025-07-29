@@ -24,6 +24,7 @@ export default function VisibilityField({ form }: { form: ReturnType<typeof useF
                         defaultValue={field.value}
                         onValueChange={(value) => field.onChange(value as Visibility)}
                         className="flex w-full"
+                        value={field.value}
                     >
                         <div className="flex items-center space-x-2 w-full">
                             <RadioGroupItem value={"private"} id="option-private" hidden />

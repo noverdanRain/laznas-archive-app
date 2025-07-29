@@ -25,6 +25,7 @@ export {
 import { addStaff, disableStaff, enableStaff, } from "./mutation/staff";
 import { removeUserSession, createUserSession, } from "./mutation/user-session";
 import { addDirectory, } from "./mutation/directories";
+import { addDocument, addDocumentHistory } from "./mutation/documents";
 
 export {
     addStaff,
@@ -33,4 +34,6 @@ export {
     createUserSession,
     removeUserSession,
     addDirectory,
+    addDocument,
+    addDocumentHistory,
 };

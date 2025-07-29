@@ -23,6 +23,7 @@ export default function DocumentNumberField({ form }: { form: ReturnType<typeof 
                             />
                         </FormControl>
                         <Button
+                            type="button"
                             variant={"outline"}
                             onClick={() => form.setValue("documentNum", generateRandomCode())}
                         >

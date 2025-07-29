@@ -97,7 +97,7 @@ export const documents = mysqlTable(
         cid: varchar("cid", { length: 255 }).notNull(),
         fileExt: varchar("file_ext", { length: 10 }).notNull(),
         viewsCount: int("views_count").default(0).notNull(),
-        isPrivate: boolean("is_private").default(true).notNull(),
+        isPrivate: boolean("is_private").notNull(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
         updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
     },
@@ -144,7 +144,7 @@ export const documents_history = mysqlTable(
         cid: varchar("cid", { length: 255 }).notNull(),
         fileExt: varchar("file_ext", { length: 10 }).notNull(),
         isPrivate: boolean("is_private").notNull(),
-        changeNotes: varchar("change_notes", { length: 255 }),
+        changeNotes: varchar("change_notes", { length: 255 }).notNull(),
         dateChanged: timestamp("date_changed").defaultNow().notNull(),
     },
     (t) => [
