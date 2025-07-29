@@ -32,7 +32,7 @@ export default function DocumentIcon(props: DocumentIconProps) {
                     pptExt.includes(props.type) ? "text-orange-600" :
                         imageExt.includes(props.type) ? "text-gray-600" :
                             videoExt.includes(props.type) ? "text-gray-600" :
-                                "text-gray-500";
+                                "text-amber-500";
     return (
         <Icon
             icon={icon}
