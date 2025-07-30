@@ -1,4 +1,3 @@
-import TableItem from "./table-item";
 
 type Props = {
     children?: React.ReactNode;

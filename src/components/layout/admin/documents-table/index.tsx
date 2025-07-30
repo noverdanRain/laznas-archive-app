@@ -1,6 +1,7 @@
 "use client";
 
 import TableContent from "./table-content";
+import TableFooter from "./table-footer";
 import TableHeader from "./table-header";
 import TableItem from "./table-item";
 
@@ -11,10 +12,11 @@ export default function StaffDocumentsTable() {
             <TableHeader />
             <TableContent>
                 {
-                    Array.from({ length: 30 }).map((_, index) => (
+                    Array.from({ length: 12 }).map((_, index) => (
                         <TableItem key={index} />
                     ))
                 }
+                <TableFooter/>
             </TableContent>
         </div>
     )
