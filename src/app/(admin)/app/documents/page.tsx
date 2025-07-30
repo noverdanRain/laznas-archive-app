@@ -4,8 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DocumentsFilter } from "./_components/documents-filter";
 import StaffDocumentsTable from "@/components/layout/admin/documents-table";
+import { useGetDocuments } from "@/hooks/useGetDocuments";
 
 export default function DocumentsPage() {
+
 
     return (
         <>
@@ -27,13 +29,13 @@ export default function DocumentsPage() {
                     </Badge>
                 </div>
                 <Button className="rounded-full">
-                    <FilePlus/>
+                    <FilePlus />
                     Tambah Dokumen
                 </Button>
             </section>
             <section className="p-4">
-                <DocumentsFilter/>
-                <StaffDocumentsTable/>
+                <DocumentsFilter />
+                <StaffDocumentsTable />
             </section>
         </>
     )

@@ -10,7 +10,7 @@ import {
 import { throwActionError } from "../helpers";
 import { eq, sql, gte, and, type SQL, asc, desc } from "drizzle-orm";
 
-type GetAllDocumentsParams = {
+export type GetDocumentsParams = {
     filter?: {
         documentType?: string;
         addedBy?: string;
@@ -24,8 +24,10 @@ type GetAllDocumentsParams = {
         field: "createdAt" | "updatedAt" | "title";
         order: "asc" | "desc";
     };
-    page?: number;
-    pageSize?: number;
+    paginate?: {
+        page?: number;
+        pageSize?: number;
+    };
 };
 
 const docHistoryQuery = () => {
@@ -46,7 +48,12 @@ const docHistoryQuery = () => {
         .as("documentHistory");
 };
 
-const docsQuery = async (filters: SQL[], sort?: SQL, page = 1, pageSize = 10) => {
+const docsQuery = async (
+    filters: SQL[],
+    sort?: SQL,
+    page = 1,
+    pageSize = 10
+) => {
     const docHistory = docHistoryQuery();
     return await db
         .select({
@@ -56,10 +63,11 @@ const docsQuery = async (filters: SQL[], sort?: SQL, page = 1, pageSize = 10) =>
             documentNum: documents.documentNum,
             description: documents.description,
             documentType: documentTypes.name,
-            viewCount: documents.viewsCount,
+            viewsCount: documents.viewsCount,
             isPrivate: documents.isPrivate,
             createdAt: documents.createdAt,
             updatedAt: documents.updatedAt,
+            fileExt: documents.fileExt,
             directory: {
                 id: directories.id,
                 name: directories.name,
@@ -86,7 +94,7 @@ const docsQuery = async (filters: SQL[], sort?: SQL, page = 1, pageSize = 10) =>
         .offset((page - 1) * pageSize);
 };
 
-const handleFilter = (filter?: GetAllDocumentsParams["filter"]) => {
+const handleFilter = (filter?: GetDocumentsParams["filter"]) => {
     const {
         addedBy,
         documentType,
@@ -154,7 +162,7 @@ const handleFilter = (filter?: GetAllDocumentsParams["filter"]) => {
     return filters;
 };
 
-const handleSort = (sort?: GetAllDocumentsParams["sort"]) => {
+const handleSort = (sort?: GetDocumentsParams["sort"]) => {
     if (!sort) return desc(documents.createdAt);
     const { field, order } = sort;
     if (field === "createdAt") {
@@ -172,12 +180,17 @@ const handleSort = (sort?: GetAllDocumentsParams["sort"]) => {
     }
 };
 
-async function getAllDocuments(params?: GetAllDocumentsParams) {
-    const { filter, sort, page, pageSize } = params || {};
+async function getAllDocuments(params?: GetDocumentsParams) {
+    const { filter, sort, paginate } = params || {};
     try {
         const filters = handleFilter(filter);
         const orderBy = handleSort(sort);
-        const result = await docsQuery(filters, orderBy, page, pageSize);
+        const result = await docsQuery(
+            filters,
+            orderBy,
+            paginate?.page,
+            paginate?.pageSize
+        );
         return result;
     } catch (error) {
         console.log("Error in getAllDocuments:", error);

@@ -4,22 +4,28 @@ import SelectClearable from "@/components/common/select-clearable";
 import { useGetDivisions } from "@/hooks/useGetDivisions";
 import { useGetDocType } from "@/hooks/useGetDocType";
 import { useState } from "react";
+import { GetDocumentsParams } from "@/lib/actions/query/documents";
+import { useGetDocuments } from "@/hooks/useGetDocuments";
+import { documentsPageQueryKey } from "@/components/layout/admin/documents-table";
 
-export type DocumentsFilterType = {
-    type: string;
-    addedBy: string;
-    visibility: string;
-}
+type FilterT = GetDocumentsParams["filter"];
+type FilterKeyT = keyof NonNullable<GetDocumentsParams["filter"]>;
 
 export function DocumentsFilter() {
-    const [filter, setFilter] = useState<DocumentsFilterType>();
+    const [filter, setFilter] = useState<FilterT>();
+
+    console.log("Current filter state:", filter);
 
     const documentType = useGetDocType();
     const divisions = useGetDivisions();
+    const documents = useGetDocuments({ key: documentsPageQueryKey });
 
-    const handleFilterChange = (name: keyof DocumentsFilterType, value: string) => {
+    const handleFilterChange = (name: FilterKeyT, value: string) => {
         setFilter((prev) => {
-            return { ...prev, [name]: value } as DocumentsFilterType;
+            return { ...prev, [name]: value ? value : undefined };
+        });
+        documents.setQuery({
+            filter: { ...filter, [name]: value ? value : undefined },
         });
     };
 
@@ -31,7 +37,7 @@ export function DocumentsFilter() {
                     label: type.name,
                 }))}
                 placeholder="Jenis Dokumen"
-                onValueChange={(value) => handleFilterChange("type", value)}
+                onValueChange={(value) => handleFilterChange("documentType", value)}
             />
             <SelectClearable
                 items={divisions.data?.map((division) => ({
@@ -39,7 +45,7 @@ export function DocumentsFilter() {
                     label: `Div. ${division.name}`,
                 }))}
                 placeholder="Ditambahkan Oleh"
-                onValueChange={(value) => handleFilterChange("addedBy", value)}
+                onValueChange={(value) => handleFilterChange("addedByDivision", value)}
             />
             <SelectClearable
                 items={[

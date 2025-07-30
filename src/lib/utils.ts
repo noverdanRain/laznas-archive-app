@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
+import moment from "moment-timezone";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -27,4 +28,26 @@ export function generateRandomCode() {
 
     const formattedCode = `${day}${month}/${year}/${randomPart}`;
     return formattedCode;
+}
+
+export function cidElipsis(
+    cid: string,
+    startLength: number = 5,
+    endLength: number = 5
+): string {
+    if (cid.length <= startLength + endLength) {
+        return cid;
+    }
+
+    return `${cid.substring(0, startLength)}....${cid.substring(
+        cid.length - endLength
+    )}`;
+}
+
+export function formatDate(date: Date | string): string {
+    const formattedDate = moment(date)
+        .locale("id")
+        .tz("Asia/Jakarta")
+        .format("DD MMM YYYY, HH:mm");
+    return `${formattedDate} WIB`;
 }

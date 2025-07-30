@@ -8,7 +8,7 @@ export default function TableFooter() {
                 <ChevronLeft />
                 Sebelumnya
             </Button>
-            <p className="text-sm font-medium text-neutral-400">Halaman 1 dari 12</p>
+            <p className="text-sm font-medium text-neutral-400 transition-opacity opacity-100 duration-400">Halaman 1 dari 12</p>
             <Button variant={"outline"}>
                 Selanjutnya
                 <ChevronRight />

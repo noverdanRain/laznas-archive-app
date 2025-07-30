@@ -7,6 +7,7 @@ import { getAllStaff, getStaffById, } from "./query/staff";
 import { getDirectories, getTotalDocsInDirectory, } from "./query/directories";
 import { getDocumentTypes, } from "./query/document-type";
 import { getPinataPresignedUrl, } from "./query/pinata-presigned-url";
+import { getAllDocuments } from "./query/documents";
 
 export {
     getUserSession,
@@ -17,6 +18,7 @@ export {
     getTotalDocsInDirectory,
     getDocumentTypes,
     getPinataPresignedUrl,
+    getAllDocuments,
 };
 
 // =================================================================================
