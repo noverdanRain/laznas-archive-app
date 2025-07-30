@@ -8,7 +8,7 @@ export default function HeaderTitle() {
     const isAccountsPage = pathname === "/app/accounts";
 
     return (
-        <h1 className="text-2xl font-bold">{
+        <h1 className="text-xl font-bold">{
             isDocumentsPage && "Dokumen" ||
             isDirectoriesPage && "Direktori" ||
             isAccountsPage && "Daftar Akun Staf"||

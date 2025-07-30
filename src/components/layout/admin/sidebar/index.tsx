@@ -21,7 +21,7 @@ export default async function Sidebar() {
                         height={48}
                     />
                 </div>
-                <SidebarSheet />
+                {/* <SidebarSheet /> */}
 
                 <nav className="mt-6 flex flex-col gap-6">
                     <ButtonSidebar

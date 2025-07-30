@@ -99,7 +99,7 @@ export const documents = mysqlTable(
         viewsCount: int("views_count").default(0).notNull(),
         isPrivate: boolean("is_private").notNull(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
-        updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+        updatedAt: timestamp("updated_at").defaultNow().notNull(),
     },
     (t) => [
         foreignKey({
@@ -127,7 +127,7 @@ export const documents = mysqlTable(
     ]
 );
 
-export const documents_history = mysqlTable(
+export const documentsHistory = mysqlTable(
     "documents_history",
     {
         id: uuidType("id")

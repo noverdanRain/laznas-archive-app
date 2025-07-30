@@ -1,4 +1,4 @@
-import { documents, documents_history } from "@/lib/db/schema";
+import { documents, documentsHistory } from "@/lib/db/schema";
 import { throwActionError } from "../helpers";
 import { randomUUID } from "crypto";
 import db from "@/lib/db";
@@ -7,7 +7,7 @@ import { cookies } from "next/headers";
 import { getUserSession } from "../query/user-session";
 
 export type AddDocumentParams = typeof documents.$inferInsert;
-type AddDocumentHistoryParams = typeof documents_history.$inferInsert;
+type AddDocumentHistoryParams = typeof documentsHistory.$inferInsert;
 
 export type AddDocumentResponse = {
     id: string;
@@ -35,6 +35,7 @@ async function addDocument(
         await db.insert(documents).values({
             id: docId,
             createdAt: dateNow,
+            updatedAt: dateNow,
             userId: useSession.id,
             ...params,
         });
@@ -49,7 +50,7 @@ async function addDocument(
             description: params.description,
             directoryId: params.directoryId,
             documentNum: params.documentNum,
-            changeNotes: "Dokumen ditambahkan",
+            changeNotes: "Menambahkan dokumen",
         });
         return {
             isSuccess: true,
@@ -80,7 +81,7 @@ async function addDocumentHistory(
             };
         }
         const historyId = randomUUID() as string;
-        await db.insert(documents_history).values({
+        await db.insert(documentsHistory).values({
             ...params,
             id: historyId,
             userId: useSession.id,

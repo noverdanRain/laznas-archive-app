@@ -3,6 +3,7 @@ import { FilePlus, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DocumentsFilter } from "./_components/documents-filter";
+import StaffDocumentsTable from "@/components/layout/admin/documents-table";
 
 export default function DocumentsPage() {
 
@@ -32,6 +33,7 @@ export default function DocumentsPage() {
             </section>
             <section className="p-4">
                 <DocumentsFilter/>
+                <StaffDocumentsTable/>
             </section>
         </>
     )

@@ -7,7 +7,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import FormAddDocument from "../form-add-document";
+import FormAddDocument from "./form-add-document";
 import { FileWithPath } from "react-dropzone";
 
 type AddDocumentDialogProps = {
@@ -26,6 +26,7 @@ export default function AddDocumentDialog(props: AddDocumentDialogProps) {
             <DialogContent
                 className="p-0 overflow-clip"
                 onOpenAutoFocus={(e) => e.preventDefault()}
+                onInteractOutside={(e) => e.preventDefault()}
             >
                 <div className="h-[calc(100vh-2rem)] px-5 pb-5 w-full overflow-y-scroll">
                     <DialogHeader className="pb-4 pt-5 border-b-2 border-gray-200 border-dashed sticky top-0 bg-white z-10">
