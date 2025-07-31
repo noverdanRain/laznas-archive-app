@@ -5,6 +5,8 @@ import db from "@/lib/db";
 import { MutateActionsReturnType } from "@/types";
 import { cookies } from "next/headers";
 import { getUserSession } from "../query/user-session";
+import { GetTotalDocsInDirectoryCacheTag } from "../query/directories";
+import { revalidateTag } from "next/cache";
 
 export type AddDocumentParams = typeof documents.$inferInsert;
 type AddDocumentHistoryParams = typeof documentsHistory.$inferInsert;
@@ -17,6 +19,9 @@ export type AddDocumentResponse = {
 async function addDocument(
     params: AddDocumentParams
 ): Promise<MutateActionsReturnType & { data?: AddDocumentResponse }> {
+        const cacheTagsToRevalidate: { getDirCount: GetTotalDocsInDirectoryCacheTag } = {
+        getDirCount: `get-total-docs-${params.directoryId}`
+    };
     try {
         const cookieStorage = await cookies();
         const token = cookieStorage.get("token")?.value;
@@ -52,6 +57,9 @@ async function addDocument(
             documentNum: params.documentNum,
             changeNotes: "Menambahkan dokumen",
         });
+        for (const tag of Object.values(cacheTagsToRevalidate)) {
+            revalidateTag(tag);
+        }
         return {
             isSuccess: true,
             data: {
@@ -68,6 +76,9 @@ async function addDocument(
 async function addDocumentHistory(
     params: AddDocumentHistoryParams
 ): Promise<MutateActionsReturnType> {
+    const cacheTagsToRevalidate: { getDirCount: GetTotalDocsInDirectoryCacheTag } = {
+        getDirCount: `get-total-docs-${params.directoryId}`
+    };
     try {
         const cookieStorage = await cookies();
         const token = cookieStorage.get("token")?.value;
@@ -86,6 +97,9 @@ async function addDocumentHistory(
             id: historyId,
             userId: useSession.id,
         });
+        for (const tag of Object.values(cacheTagsToRevalidate)) {
+            revalidateTag(tag);
+        }
         return {
             isSuccess: true,
         };

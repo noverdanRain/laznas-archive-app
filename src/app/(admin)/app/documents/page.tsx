@@ -4,10 +4,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DocumentsFilter } from "./_components/documents-filter";
 import StaffDocumentsTable from "@/components/layout/admin/documents-table";
-import { useGetDocuments } from "@/hooks/useGetDocuments";
+import AddDocumentDialog from "@/components/layout/admin/add-document-dialog";
+import { useState } from "react";
+import { UseGetDocumentsParams } from "@/hooks/useGetDocuments";
+
+// Variable
+export const documentsPage_useGetDocumentsKey = ["documents-page"];
+export const documentsPage_useGetDocumentsParams: UseGetDocumentsParams = {
+    key: documentsPage_useGetDocumentsKey
+}
 
 export default function DocumentsPage() {
-
+    const [openDialog, setOpenDialog] = useState(false);
 
     return (
         <>
@@ -28,7 +36,7 @@ export default function DocumentsPage() {
                         Ctrl K
                     </Badge>
                 </div>
-                <Button className="rounded-full">
+                <Button onClick={() => setOpenDialog(true)} className="rounded-full">
                     <FilePlus />
                     Tambah Dokumen
                 </Button>
@@ -37,6 +45,7 @@ export default function DocumentsPage() {
                 <DocumentsFilter />
                 <StaffDocumentsTable />
             </section>
+            <AddDocumentDialog open={openDialog} onOpenChange={setOpenDialog} />
         </>
     )
 }

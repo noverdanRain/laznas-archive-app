@@ -4,10 +4,23 @@ import { GetDocumentsParams } from "@/lib/actions/query/documents";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export function useGetDocuments(params: GetDocumentsParams & { key: string[] }) {
-    const [isMutating, setIsMutating] = useState(false);
+export interface UseGetDocumentsParams extends GetDocumentsParams {
+    key: string[];
+};
+
+export type UseGetDocumentsReturnType = Awaited<ReturnType<typeof getAllDocuments>>;
+
+export function useGetDocuments(params: UseGetDocumentsParams) {
+    const [isMutating, setIsMutating] = useState<boolean>();
     const queryClient = useQueryClient();
     const queryKey = params.key;
+    const [currentPaginate, setCurrentPaginate] = useState<UseGetDocumentsParams["paginate"]>({
+        page: params.paginate?.page || 1,
+        pageSize: params.paginate?.pageSize || 12
+    });
+    const [currentFilter, setCurrentFilter] = useState<UseGetDocumentsParams["filter"]>(params.filter);
+    const [currentSort, setCurrentSort] = useState<UseGetDocumentsParams["sort"]>(params.sort);
+
     const documents = useQuery({
         queryKey,
         queryFn: () => getAllDocuments(params)
@@ -17,7 +30,7 @@ export function useGetDocuments(params: GetDocumentsParams & { key: string[] }) 
         queryClient.invalidateQueries({ queryKey });
     }
 
-    const { mutate: setQuery } = useMutation({
+    const { mutate: mutateDocuments, isPending: setQueryPending } = useMutation({
         mutationFn: (queryParams: GetDocumentsParams) => getAllDocuments({ ...params, ...queryParams }),
         onMutate: () => {
             setIsMutating(true);
@@ -27,13 +40,36 @@ export function useGetDocuments(params: GetDocumentsParams & { key: string[] }) 
             setIsMutating(false);
         },
         onError: (error) => {
-            console.log("Error setting filter:", error);
-            toast.error("Gagal mengatur filter dokumen, silakan coba lagi.");
+            console.log("Error setting filter/sort/paginate:", error);
+            toast.error("Ada kesalahan saat mengatur data dokumen");
             setIsMutating(false);
         }
     })
 
-    const isLoading = documents.isLoading || isMutating;
+    function setQuery(queryParams: GetDocumentsParams) {
+        const { filter, sort, paginate } = queryParams;
+        if (paginate?.page) {
+            setCurrentPaginate(paginate);
+        }
+        if (filter) {
+            setCurrentPaginate((prev) => ({ ...prev, page: 1 }));
+            setCurrentFilter((prev) => ({
+                ...prev,
+                ...filter
+            }));
+        }
+        if (sort) {
+            setCurrentPaginate((prev) => ({ ...prev, page: 1 }));
+            setCurrentSort((prev) => ({
+                ...prev,
+                ...sort
+            }));
+        }
+        mutateDocuments(queryParams)
+    }
 
-    return { ...documents, queryKey, invalidate, setQuery, isLoading }
+    const totalPage = Math.ceil((documents.data?.totalCount || 0) / (params.paginate?.pageSize || 12));
+    const isLoading = documents.isLoading || isMutating || setQueryPending;
+
+    return { ...documents, queryKey, invalidate, setQuery, isLoading, isMutating, currentPaginate, currentFilter, currentSort, totalPage };
 }

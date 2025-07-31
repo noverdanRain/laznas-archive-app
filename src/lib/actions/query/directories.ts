@@ -3,6 +3,7 @@ import { directories, documents } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 import { getUserSession } from "./user-session";
+import { revalidateTag } from "next/cache";
 import { throwActionError } from "../helpers";
 
 export interface IGetDirectoriesParams {
@@ -63,6 +64,11 @@ async function getDirectories(params?: IGetDirectoriesParams) {
         }
     );
     return cache();
+}
+
+async function shu() {
+    const asu = await getDirectories();
+    console.log( )
 }
 
 async function getTotalDocsInDirectory(directoryId: string) {

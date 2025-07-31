@@ -8,7 +8,8 @@ import {
     documentsHistory,
 } from "@/lib/db/schema";
 import { throwActionError } from "../helpers";
-import { eq, sql, gte, and, type SQL, asc, desc } from "drizzle-orm";
+import { eq, sql, gte, and, type SQL, asc, desc, count } from "drizzle-orm";
+import { MySqlColumn } from "drizzle-orm/mysql-core";
 
 export type GetDocumentsParams = {
     filter?: {
@@ -52,9 +53,10 @@ const docsQuery = async (
     filters: SQL[],
     sort?: SQL,
     page = 1,
-    pageSize = 10
+    pageSize = 12,
 ) => {
     const docHistory = docHistoryQuery();
+
     return await db
         .select({
             id: documents.id,
@@ -115,7 +117,7 @@ const handleFilter = (filter?: GetDocumentsParams["filter"]) => {
     }
     addedByDivision &&
         filters.push(
-            sql`${users.divisionId} IN (SELECT id FROM divisions WHERE id = ${addedByDivision})`
+            sql<MySqlColumn>`${users.divisionId} IN (SELECT id FROM divisions WHERE id = ${addedByDivision})`
         );
     if (lastAdded) {
         const date = new Date();
@@ -191,7 +193,14 @@ async function getAllDocuments(params?: GetDocumentsParams) {
             paginate?.page,
             paginate?.pageSize
         );
-        return result;
+        const documentsCount = await db
+            .select({ count: count() })
+            .from(documents)
+            .leftJoin(users, eq(documents.userId, users.id))
+            .leftJoin(divisions, eq(users.divisionId, divisions.id))
+            .where(and(...filters))
+            .then(res => Number(res[0]?.count) || 0);
+        return {list: result, totalCount: documentsCount};
     } catch (error) {
         console.log("Error in getAllDocuments:", error);
         throwActionError(error);

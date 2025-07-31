@@ -1,40 +1,9 @@
-import { getAllDocuments } from "@/lib/actions/query/documents";
-import moment from "moment-timezone";
+import { getDirectories } from "@/lib/actions";
 
-// describe("Get All Documents", () => {
-//     test("Last Added 30 days ago", async () => {
-//         const result = await getAllDocuments({
-//             sort: {
-//                 field: "title",
-//                 order: "desc",
-//             },
-//         });
-//         console.log("Get All Documents :", result);
-//     });
-// });
+test("Revalidate Tags Docs Count", async () => {
+    const dirs = await getDirectories({
+        token: "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InZhcmlvbiIsInJvbGUiOiJzdGFmZiIsImlkIjoiNDI0OTZmZDctNmIxMC0xMWYwLWE0MjAtODYyY2NmYjA0MDcxIiwiZXhwIjoxNzUzOTc2MDE3LCJpYXQiOjE3NTM5MzI4MTd9.Rf7i7HPmJXI1Vok9Kp1FFCOeb-MD0XenaNWQnNnDS6c",
+    });
 
-// describe("Test Pagination", () => {
-//     test("Pagination", async () => {
-//         const result = await getAllDocuments({
-//             sort: {
-//                 field: "title",
-//                 order: "desc",
-//             },
-//             paginate: {
-//                 page: 1,
-//                 pageSize: 10,
-//             }
-//         });
-//         console.log("Test Pagination:", result);
-//     });
-// });
-
-test("Moment Timezone", () => {
-    const date = new Date("2025-08-12T10:23:00Z");
-    const formattedDate = moment(date)
-        .locale("id")
-        .tz("Asia/Jakarta")
-        .format("DD MMM YYYY, HH:mm");
-    console.log("Formatted Date:", formattedDate);
-    // expect(formattedDate).toBe("12 Jun 2025, 17:23");
+    console.log("Directories:", dirs);
 });

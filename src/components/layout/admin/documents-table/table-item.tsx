@@ -102,9 +102,9 @@ function OthersInfo({
                     Div.{props.createdBy.divisions}{" "}
                     <span className="text-neutral-500">({props.createdBy.username})</span>
                 </p>
-                <p className="text-neutral-500">Berkas diubah pada</p>
+                <p className="text-neutral-500">Dimodifikasi pada</p>
                 <p>{formatDate(props.updatedAt)}</p>
-                <p className="text-neutral-500">Diubah oleh</p>
+                <p className="text-neutral-500">Dimodifikasi oleh</p>
                 <p>
                     Div.{props.updatedBy?.divisions}{" "}
                     <span className="text-neutral-500">({props.updatedBy?.username})</span>

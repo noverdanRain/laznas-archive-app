@@ -8,9 +8,15 @@ import { useState } from "react";
 import { FileWithPath } from "react-dropzone";
 import { throwActionError } from "@/lib/actions/helpers";
 import { AddDocumentResponse } from "@/lib/actions/mutation/documents";
+import { useGetDocuments } from "./useGetDocuments";
+import { pinata } from "@/lib/pinata-config";
+import { UploadResponse } from "pinata";
+import { MutateActionsReturnType } from "@/types";
+import { documentsPage_useGetDocumentsParams } from "@/app/(admin)/app/documents/page";
 
 export function useAddDocument(props?: CustomMutateHooksProps<AddDocumentResponse>) {
     const { onSuccess, onReject, onError, onMutate } = props || {};
+    const getDocuments = useGetDocuments(documentsPage_useGetDocumentsParams);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [progress, setProgress] = useState({
@@ -30,6 +36,7 @@ export function useAddDocument(props?: CustomMutateHooksProps<AddDocumentRespons
             if (isSuccess) {
                 setIsSubmitting(true);
                 setProgress({ value: 100, message: "Dokumen berhasil ditambahkan." });
+                getDocuments.invalidate();
                 if (onSuccess) {
                     onSuccess(data);
                 } else {
@@ -113,10 +120,6 @@ export function useAddDocument(props?: CustomMutateHooksProps<AddDocumentRespons
         isLoading,
     };
 }
-
-import { pinata } from "@/lib/pinata-config";
-import { UploadResponse } from "pinata";
-import { MutateActionsReturnType } from "@/types";
 
 type PinataUploadParams = {
     file: File | FileWithPath;

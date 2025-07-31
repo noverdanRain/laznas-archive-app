@@ -343,9 +343,9 @@ function OthersInfo({
                     Div. Kelembagaan{" "}
                     <span className="text-neutral-500">(nur)</span>
                 </p>
-                <p className="text-neutral-500">Berkas diubah pada</p>
+                <p className="text-neutral-500">Dimodifikasi</p>
                 <p>24 Jun 2025, 10:31 WIB</p>
-                <p className="text-neutral-500">Diubah oleh</p>
+                <p className="text-neutral-500">Dimodifikasi oleh</p>
                 <p>
                     Div. Fundraising{" "}
                     <span className="text-neutral-500">(budi)</span>

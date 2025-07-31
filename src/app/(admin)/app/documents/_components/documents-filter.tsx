@@ -3,22 +3,30 @@
 import SelectClearable from "@/components/common/select-clearable";
 import { useGetDivisions } from "@/hooks/useGetDivisions";
 import { useGetDocType } from "@/hooks/useGetDocType";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GetDocumentsParams } from "@/lib/actions/query/documents";
 import { useGetDocuments } from "@/hooks/useGetDocuments";
-import { documentsPageQueryKey } from "@/components/layout/admin/documents-table";
+import { documentsPage_useGetDocumentsParams } from "../page";
+import { useTopLoader } from "nextjs-toploader";
 
 type FilterT = GetDocumentsParams["filter"];
 type FilterKeyT = keyof NonNullable<GetDocumentsParams["filter"]>;
 
 export function DocumentsFilter() {
     const [filter, setFilter] = useState<FilterT>();
-
-    console.log("Current filter state:", filter);
+    const topLoader = useTopLoader();
 
     const documentType = useGetDocType();
     const divisions = useGetDivisions();
-    const documents = useGetDocuments({ key: documentsPageQueryKey });
+    const documents = useGetDocuments(documentsPage_useGetDocumentsParams);
+
+    useEffect(() => {
+        if (documents.isLoading) {
+            topLoader.start();
+        } else {
+            topLoader.done();
+        }
+    }, [documents.isLoading]);
 
     const handleFilterChange = (name: FilterKeyT, value: string) => {
         setFilter((prev) => {
@@ -26,6 +34,7 @@ export function DocumentsFilter() {
         });
         documents.setQuery({
             filter: { ...filter, [name]: value ? value : undefined },
+            paginate: { page: 1, pageSize: documents.currentPaginate?.pageSize }
         });
     };
 
