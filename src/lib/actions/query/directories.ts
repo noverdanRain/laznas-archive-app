@@ -12,19 +12,20 @@ export interface IGetDirectoriesParams {
 }
 export type GetDirectoryCacheTag = `get-dir-${"staff" | "public"}`;
 export type GetTotalDocsInDirectoryCacheTag = `get-total-docs-${string}`;
+export type GetDirectoryByIdParams = { id: string; token?: string };
+
+const checkIsLoggedIn = async (token?: string): Promise<boolean> => {
+  if (token) {
+    const user = await getUserSession({ token });
+    return !!user;
+  } else {
+    const user = await getUserSession();
+    return !!user;
+  }
+};
 
 async function getDirectories(params?: IGetDirectoriesParams) {
-  const checkIsLoggedIn = async (): Promise<boolean> => {
-    if (params?.token) {
-      const user = await getUserSession({ token: params.token });
-      return !!user;
-    } else {
-      const user = await getUserSession();
-      return !!user;
-    }
-  };
-
-  const isLoggedIn = await checkIsLoggedIn();
+  const isLoggedIn = await checkIsLoggedIn(params?.token);
 
   const cacheTag: GetDirectoryCacheTag = `get-dir-${
     isLoggedIn ? "staff" : "public"
@@ -90,11 +91,9 @@ async function getTotalDocsInDirectory(directoryId: string) {
   return cache();
 }
 
-async function getDirectoryById(id: string): Promise<DirectoryTypes | null> {
+async function getDirectoryById(params: GetDirectoryByIdParams) {
   try {
-    if (!id) {
-      return null;
-    }
+    const { id, token } = params;
 
     const [directory] = await db
       .select()
@@ -102,6 +101,12 @@ async function getDirectoryById(id: string): Promise<DirectoryTypes | null> {
       .where(eq(directories.id, id));
     if (!directory) {
       return null;
+    }
+    if (directory.isPrivate) {
+      const isLoggedIn = await checkIsLoggedIn(token);
+      if (!isLoggedIn) {
+        return null;
+      }
     }
     return directory;
   } catch (error) {
