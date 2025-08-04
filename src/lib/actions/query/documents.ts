@@ -41,6 +41,10 @@ export type GetDocumentHistoriesByIdParams = {
   documentId: string;
 };
 
+export type GetDocumentHistoryByIdParams = {
+  id: string;
+};
+
 const docHistoryQuery = () => {
   return db
     .select({
@@ -304,6 +308,30 @@ async function getDocumentHistories(params: GetDocumentHistoriesByIdParams) {
   }
 }
 
+async function getDocumentHistoryById(params: GetDocumentHistoryByIdParams) {
+  try {
+    const { id } = params;
+
+    if (!id) {
+      return null;
+    }
+
+    const history = await db
+      .select()
+      .from(documentsHistory)
+      .where(eq(documentsHistory.id, id));
+
+    if (history.length === 0) {
+      return null;
+    }
+
+    return history[0];
+  } catch (error) {
+    console.log("Error in getDocumentHistoryById:", error);
+    throwActionError(error);
+  }
+}
+
 async function getPublicDocuments() {}
 
 export {
@@ -311,4 +339,5 @@ export {
   getPublicDocuments,
   getDocumentById,
   getDocumentHistories,
+  getDocumentHistoryById,
 };
