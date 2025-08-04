@@ -8,6 +8,7 @@ import { eq } from "drizzle-orm";
 import { MutateActionsReturnType } from "@/types";
 import { revalidateTag } from "next/cache";
 import { throwActionError } from "../helpers";
+import { randomUUID } from "crypto";
 
 type AddDirectoryParams = {
   name: string;
@@ -19,6 +20,9 @@ type EditDirectoryParams = {
   name?: string;
   description?: string | null;
   isPrivate?: boolean;
+};
+type DeleteDirectoryParams = {
+  id: string;
 };
 
 async function addDirectory(
@@ -39,7 +43,9 @@ async function addDirectory(
         },
       };
     }
+    const id = randomUUID() as string;
     await db.insert(directories).values({
+      id,
       name,
       description,
       isPrivate,
@@ -129,4 +135,45 @@ async function editDirectory(
   }
 }
 
-export { addDirectory, editDirectory };
+async function deleteDirectory(
+  params: DeleteDirectoryParams
+): Promise<MutateActionsReturnType> {
+  const { id } = params;
+
+  if (!id) {
+    return {
+      isRejected: true,
+      reject: {
+        message: "ID direktori tidak boleh kosong.",
+      },
+    };
+  }
+
+  try {
+    const [existingDirectory] = await db
+      .select()
+      .from(directories)
+      .where(eq(directories.id, id));
+
+    if (!existingDirectory) {
+      return {
+        isRejected: true,
+        reject: {
+          message: `Direktori dengan id ${id} tidak ditemukan.`,
+        },
+      };
+    }
+
+    await db.delete(directories).where(eq(directories.id, id));
+    revalidateTag("get-dir-public" as GetDirectoryCacheTag);
+    revalidateTag("get-dir-staff" as GetDirectoryCacheTag);
+    return {
+      isSuccess: true,
+    };
+  } catch (error) {
+    console.error("Error delete directory: ", error);
+    throwActionError(error);
+  }
+}
+
+export { addDirectory, editDirectory, deleteDirectory };
