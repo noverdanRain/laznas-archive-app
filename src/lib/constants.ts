@@ -6,3 +6,5 @@ export const queryKey = {
     GET_ALL_DOCUMENTS: "get-all-documents",
     GET_ALL_DIRECTORIES: "get-all-directories",
 }
+
+export const gatewayUrl = process.env.NEXT_PUBLIC_PINATA_GATEWAY_URL || "https://gateway.pinata.cloud/ipfs";

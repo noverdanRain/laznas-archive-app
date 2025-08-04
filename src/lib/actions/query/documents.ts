@@ -319,7 +319,8 @@ async function getDocumentHistories(params: GetDocumentHistoriesByIdParams) {
             .from(documentsHistory)
             .leftJoin(users, eq(users.id, documentsHistory.userId))
             .leftJoin(divisions, eq(users.divisionId, divisions.id))
-            .where(eq(documentsHistory.documentId, documentId));
+            .where(eq(documentsHistory.documentId, documentId))
+            .orderBy(desc(documentsHistory.dateChanged));
 
         if (histories.length === 0) {
             return null;
@@ -347,10 +348,12 @@ async function getDocumentHistoryById(params: GetDocumentHistoryByIdParams) {
                     username: users.username,
                     divisions: divisions.name,
                 },
+                directoryName: directories.name,
             })
             .from(documentsHistory)
             .leftJoin(users, eq(users.id, documentsHistory.userId))
             .leftJoin(divisions, eq(users.divisionId, divisions.id))
+            .leftJoin(directories, eq(documentsHistory.directoryId, directories.id))
             .where(eq(documentsHistory.id, id));
 
         if (history.length === 0) {

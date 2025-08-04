@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    domains: ['blush-hidden-anglerfish-733.mypinata.cloud', 'gateway.pinata.cloud'],
+  },
 };
 
 export default nextConfig;

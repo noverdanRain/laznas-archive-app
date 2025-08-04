@@ -5,7 +5,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { InputWithIcon } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SelectComponent } from "@/components/ui/select";
-import { queryKey } from "@/constants";
+import { queryKey } from "@/lib/constants";
 import { useAddStaff } from "@/hooks/useAddStaff";
 import { useGetDivisions } from "@/hooks/useGetDivisions";
 import { useQueryClient } from "@tanstack/react-query";

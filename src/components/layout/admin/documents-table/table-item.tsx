@@ -12,15 +12,16 @@ import { getAllDocuments } from "@/lib/actions";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useRouter } from "nextjs-toploader/app";
 
 type PropsType = Awaited<ReturnType<typeof getAllDocuments>>["list"][0];
 
 export default function TableItem(props: PropsType) {
+    const router = useRouter();
     const [elipsisOpen, setEllipsisOpen] = useState(false);
 
     const handleDoubleClick = () => {
-        // Handle double click event, e.g., navigate to document details
-        console.log("Document item double clicked");
+        router.push(`/app/documents/${props.id}`);
     };
     return (
         <div

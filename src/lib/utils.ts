@@ -51,3 +51,34 @@ export function formatDate(date: Date | string): string {
         .format("DD MMM YYYY, HH:mm");
     return `${formattedDate} WIB`;
 }
+
+export async function copyToClipboard(textToCopy: string) {
+    try {
+        await navigator.clipboard.writeText(textToCopy);
+        console.log("Text copied to clipboard successfully!");
+    } catch (err) {
+        console.error("Failed to copy text: ", err);
+    }
+}
+
+export function downloadFileFromURI(uri: string, fileName: string) {
+    fetch(uri)
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = fileName || "download";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(err => console.error("Download failed:", err));
+}
+
+export const urlToFile = async (url: string, filename: string, mimeType: string) => {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return new File([blob], filename, { type: mimeType });
+};
