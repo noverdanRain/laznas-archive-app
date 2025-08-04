@@ -1,6 +1,6 @@
 import {
   addDirectory,
-  deleteDirectory,
+  deleteDirectoryById,
 } from "@/lib/actions/mutation/directories";
 import db from "@/lib/db";
 import { directories } from "@/lib/db/schema";
@@ -34,9 +34,7 @@ test("Delete Directory - Success", async () => {
   });
 
   // Test: Call deleteDirectory with the test directory ID
-  const result = await deleteDirectory({
-    id: "test",
-  });
+  const result = await deleteDirectoryById("test");
   await revalidateTag("get-dir-public");
   await revalidateTag("get-dir-staff");
   expect(result).toEqual({
@@ -45,9 +43,7 @@ test("Delete Directory - Success", async () => {
 });
 
 test("Delete Directory - Not Found", async () => {
-  const result = await deleteDirectory({
-    id: "ora nana",
-  });
+  const result = await deleteDirectoryById("ora nana");
   expect(result).toEqual({
     isRejected: true,
     reject: {
@@ -57,9 +53,7 @@ test("Delete Directory - Not Found", async () => {
 });
 
 test("Delete Directory - Empty ID", async () => {
-  const result = await deleteDirectory({
-    id: "",
-  });
+  const result = await deleteDirectoryById("");
   expect(result).toEqual({
     isRejected: true,
     reject: {
