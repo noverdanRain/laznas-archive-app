@@ -10,6 +10,7 @@ import {
 import { throwActionError } from "../helpers";
 import { eq, sql, gte, and, type SQL, asc, desc, count } from "drizzle-orm";
 import { MySqlColumn } from "drizzle-orm/mysql-core";
+import { getUserSession } from "./user-session";
 
 export type GetDocumentsParams = {
   filter?: {
@@ -31,6 +32,11 @@ export type GetDocumentsParams = {
   };
 };
 
+export type GetDocumentByIdParams = {
+  id: string;
+  token?: string;
+};
+
 const docHistoryQuery = () => {
   return db
     .select({
@@ -47,6 +53,16 @@ const docHistoryQuery = () => {
     .rightJoin(documents, eq(documents.id, documentsHistory.documentId))
     .where(eq(documents.updatedAt, documentsHistory.dateChanged))
     .as("documentHistory");
+};
+
+const checkIsLoggedIn = async (token?: string): Promise<boolean> => {
+  if (token) {
+    const user = await getUserSession({ token });
+    return !!user;
+  } else {
+    const user = await getUserSession();
+    return !!user;
+  }
 };
 
 const docsQuery = async (
@@ -207,8 +223,9 @@ async function getAllDocuments(params?: GetDocumentsParams) {
   }
 }
 
-async function getDocumentById(id: string) {
+async function getDocumentById(params: GetDocumentByIdParams) {
   try {
+    const { id, token } = params;
     const docHistory = docHistoryQuery();
     const document = await db
       .select({
@@ -244,6 +261,13 @@ async function getDocumentById(id: string) {
       .leftJoin(divisions, eq(users.divisionId, divisions.id))
       .leftJoinLateral(docHistory, eq(documents.id, docHistory.documentId))
       .where(eq(documents.id, id));
+
+    if (document[0]?.isPrivate) {
+      const isLoggedIn = await checkIsLoggedIn(token);
+      if (!isLoggedIn) {
+        return null;
+      }
+    }
 
     return document[0] || null;
   } catch (error) {

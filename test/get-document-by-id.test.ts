@@ -1,7 +1,18 @@
 import { getDocumentById } from "@/lib/actions/query/documents";
+import { signToken } from "@/lib/jwt";
 
 test("Get Documents by ID - Success", async () => {
-  const result = await getDocumentById("f16c0a7e-2ba1-4ab2-b43c-d7a2900ef9f0");
+  // Get token for authentication
+  const token = await signToken({
+    username: "revo",
+    role: "staff",
+    id: "fd2a5552-66cc-11f0-a420-862ccfb04071",
+  });
+
+  const result = await getDocumentById({
+    id: "f16c0a7e-2ba1-4ab2-b43c-d7a2900ef9f0",
+    token,
+  });
   expect(result).toMatchObject({
     id: "f16c0a7e-2ba1-4ab2-b43c-d7a2900ef9f0",
     title: "Skripsi Draft Mahasiswa Magang",
@@ -25,11 +36,33 @@ test("Get Documents by ID - Success", async () => {
 });
 
 test("Get Document by ID - Not Found", async () => {
-  const result = await getDocumentById("ora nana");
+  // Generate a token for authentication
+  const token = await signToken({
+    username: "revo",
+    role: "staff",
+    id: "fd2a5552-66cc-11f0-a420-862ccfb04071",
+  });
+
+  // Attempt to fetch a document that does not exist
+  const result = await getDocumentById({
+    id: "ora ana",
+    token,
+  });
   expect(result).toBeNull();
 });
 
 test("Get Document by ID - Empty ID", async () => {
-  const result = await getDocumentById("");
+  // Generate a token for authentication
+  const token = await signToken({
+    username: "revo",
+    role: "staff",
+    id: "fd2a5552-66cc-11f0-a420-862ccfb04071",
+  });
+
+  // Attempt to fetch document with empty ID
+  const result = await getDocumentById({
+    id: "",
+    token,
+  });
   expect(result).toBeNull();
 });
