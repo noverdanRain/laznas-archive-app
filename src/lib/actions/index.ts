@@ -1,13 +1,23 @@
 "use server";
 
 // Query
-import { getUserSession, } from "./query/user-session";
-import { getDivisions, } from "./query/divisions";
-import { getAllStaff, getStaffById, } from "./query/staff";
-import { getDirectories, getTotalDocsInDirectory, } from "./query/directories";
-import { getDocumentTypes, } from "./query/document-type";
-import { getPinataPresignedUrl, } from "./query/pinata-presigned-url";
-import { getAllDocuments } from "./query/documents";
+import { getUserSession } from "./query/user-session";
+import { getDivisions } from "./query/divisions";
+import { getAllStaff, getStaffById } from "./query/staff";
+import {
+    getDirectories,
+    getTotalDocsInDirectory,
+    getDirectoryById,
+} from "./query/directories";
+import { getDocumentTypes } from "./query/document-type";
+import { getPinataPresignedUrl } from "./query/pinata-presigned-url";
+import {
+    getAllDocuments,
+    getDocumentById,
+    getDocumentHistories,
+    getDocumentHistoryById,
+    getPublicDocuments,
+} from "./query/documents";
 
 export {
     getUserSession,
@@ -19,14 +29,23 @@ export {
     getDocumentTypes,
     getPinataPresignedUrl,
     getAllDocuments,
+    getDocumentById,
+    getDocumentHistories,
+    getDocumentHistoryById,
+    getPublicDocuments,
+    getDirectoryById,
 };
 
 // =================================================================================
 
 // Mutation
-import { addStaff, disableStaff, enableStaff, } from "./mutation/staff";
-import { removeUserSession, createUserSession, } from "./mutation/user-session";
-import { addDirectory, } from "./mutation/directories";
+import { addStaff, disableStaff, enableStaff } from "./mutation/staff";
+import { removeUserSession, createUserSession } from "./mutation/user-session";
+import {
+    addDirectory,
+    editDirectory,
+    deleteDirectoryById,
+} from "./mutation/directories";
 import { addDocument, addDocumentHistory } from "./mutation/documents";
 
 export {
@@ -36,6 +55,8 @@ export {
     createUserSession,
     removeUserSession,
     addDirectory,
+    editDirectory,
+    deleteDirectoryById,
     addDocument,
     addDocumentHistory,
 };
