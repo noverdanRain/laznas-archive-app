@@ -1,16 +1,14 @@
-const { createDefaultPreset } = require("ts-jest");
+import { createDefaultPreset } from "ts-jest";
 
 const tsJestTransformCfg = createDefaultPreset().transform;
 
 /** @type {import("jest").Config} **/
-module.exports = {
-  testEnvironment: "node",
-  setupFiles: ["<rootDir>/.jest/setEnvVars.js"],
-  globalTeardown: '<rootDir>/.jest/teardown.js',
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-  },
-  transform: {
-    ...tsJestTransformCfg,
-  },
+export const testEnvironment = "node";
+export const setupFiles = ["<rootDir>/.jest/setEnvVars.js"];
+export const globalTeardown = '<rootDir>/.jest/teardown.js';
+export const moduleNameMapper = {
+  '^@/(.*)$': '<rootDir>/src/$1',
+};
+export const transform = {
+  ...tsJestTransformCfg,
 };

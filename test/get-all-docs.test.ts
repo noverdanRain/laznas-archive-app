@@ -1,9 +1,31 @@
+import { SignJWT } from "jose";
+import { getDivisions } from "@/lib/actions";
 import { getDirectories } from "@/lib/actions";
 
-test("Revalidate Tags Docs Count", async () => {
-    const dirs = await getDirectories({
-        token: "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InZhcmlvbiIsInJvbGUiOiJzdGFmZiIsImlkIjoiNDI0OTZmZDctNmIxMC0xMWYwLWE0MjAtODYyY2NmYjA0MDcxIiwiZXhwIjoxNzUzOTc2MDE3LCJpYXQiOjE3NTM5MzI4MTd9.Rf7i7HPmJXI1Vok9Kp1FFCOeb-MD0XenaNWQnNnDS6c",
-    });
 
-    console.log("Directories:", dirs);
+test("Sign JWT", async () => {
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+    const payload = {
+        username: "testuser",
+        role: "administrator",
+        id: "12345"
+    };
+    const token = await new SignJWT(payload)
+        .setProtectedHeader({ alg: "HS256" })
+        .setExpirationTime("12h")
+        .setIssuedAt()
+        .sign(secret);
+    console.log("JWT Token:", token);
+});
+
+test("Get Divisions", async () => {
+    const divisions = await getDivisions();
+    console.log("Divisions:", divisions);
+});
+
+test("Get Directories", async () => {
+    const directories = await getDirectories({
+        token: "test-token"
+    });
+    console.log("Directories:", directories);
 });
