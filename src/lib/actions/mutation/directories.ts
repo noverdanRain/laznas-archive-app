@@ -5,7 +5,7 @@ import {
 } from "../query/directories";
 import { directories } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { MutateActionsReturnType } from "@/types";
+import { DirectoryTypes, MutateActionsReturnType } from "@/types";
 import { revalidateTag } from "next/cache";
 import { throwActionError } from "../helpers";
 import { randomUUID } from "crypto";
@@ -20,9 +20,6 @@ type EditDirectoryParams = {
   name?: string;
   description?: string | null;
   isPrivate?: boolean;
-};
-type DeleteDirectoryParams = {
-  id: string;
 };
 
 async function addDirectory(
@@ -135,11 +132,9 @@ async function editDirectory(
   }
 }
 
-async function deleteDirectory(
-  params: DeleteDirectoryParams
+async function deleteDirectoryById(
+  id: string
 ): Promise<MutateActionsReturnType> {
-  const { id } = params;
-
   if (!id) {
     return {
       isRejected: true,
@@ -176,4 +171,4 @@ async function deleteDirectory(
   }
 }
 
-export { addDirectory, editDirectory, deleteDirectory };
+export { addDirectory, editDirectory, deleteDirectoryById };
