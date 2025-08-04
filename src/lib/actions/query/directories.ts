@@ -66,11 +66,6 @@ async function getDirectories(params?: IGetDirectoriesParams) {
     return cache();
 }
 
-async function shu() {
-    const asu = await getDirectories();
-    console.log( )
-}
-
 async function getTotalDocsInDirectory(directoryId: string) {
     const cacheTag: GetTotalDocsInDirectoryCacheTag = `get-total-docs-${directoryId}`;
     const cache = unstable_cache(
