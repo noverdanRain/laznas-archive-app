@@ -1,7 +1,7 @@
 import { pinata } from "@/lib/pinata-config";
 import { throwActionError } from "../helpers";
 
-export type PinataPresignedUrlParams = {
+type PinataPresignedUrlParams = {
     fileName: string;
     isPrivate?: boolean;
 };

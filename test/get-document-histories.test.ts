@@ -3,14 +3,20 @@ import {
   getDocumentHistories,
 } from "@/lib/actions/query/documents";
 
+
 test("Get Document Histories by Document ID - Success", async () => {
   // Get token for authentication
   const result = await getDocumentHistories({
     documentId: "baead896-7e69-4312-a52d-61a99f4a706b",
   });
+  console.log("Document Histories Result: ", result);
   expect(result).toHaveLength(2);
   expect(result).toMatchObject([
     {
+      updatedBy: {
+        username: expect.any(String),
+        divisions: expect.any(String),
+      },
       id: "d1bf0a1d-e3bd-41a4-b231-bd7a6246b222",
       documentId: "baead896-7e69-4312-a52d-61a99f4a706b",
       documentTypeId: "c86b3f57-6702-11f0-a420-862ccfb04071",
@@ -26,6 +32,10 @@ test("Get Document Histories by Document ID - Success", async () => {
       dateChanged: new Date("2025-07-30T11:21:35.000Z"),
     },
     {
+      updatedBy: {
+        username: expect.any(String),
+        divisions: expect.any(String),
+      },
       id: "ddff862d-6d37-11f0-a420-862ccfb04071",
       documentId: "baead896-7e69-4312-a52d-61a99f4a706b",
       documentTypeId: "c86b3f57-6702-11f0-a420-862ccfb04071",
