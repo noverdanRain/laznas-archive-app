@@ -39,7 +39,7 @@ export {
 // =================================================================================
 
 // Mutation
-import { addStaff, disableStaff, enableStaff } from "./mutation/staff";
+import { addStaff, disableStaff, enableStaff, updateStaffById } from "./mutation/staff";
 import { removeUserSession, createUserSession } from "./mutation/user-session";
 import {
     addDirectory,
@@ -59,4 +59,5 @@ export {
     deleteDirectoryById,
     addDocument,
     addDocumentHistory,
+    updateStaffById,
 };
