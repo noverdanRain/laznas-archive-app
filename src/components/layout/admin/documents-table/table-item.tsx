@@ -5,20 +5,27 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { cidElipsis, cn, formatDate } from "@/lib/utils";
+import { cidElipsis, cn, downloadFileFromURI, formatDate } from "@/lib/utils";
 import { ArrowDownToLine, Ellipsis, Eye, EyeOff, Folder, Pencil, Trash } from "lucide-react";
 import Link from "next/link";
-import { getAllDocuments } from "@/lib/actions";
+import { getAllDocuments, pinataPrivateFile, pinataPublicFile } from "@/lib/actions";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "nextjs-toploader/app";
+import EditDocumentDialog from "../edit-document-dialog";
 
 type PropsType = Awaited<ReturnType<typeof getAllDocuments>>["list"][0];
 
 export default function TableItem(props: PropsType) {
     const router = useRouter();
     const [elipsisOpen, setEllipsisOpen] = useState(false);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+
+    const handleDownload = async () => {
+        const uri = props.isPrivate ? await pinataPrivateFile(props.cid) : await pinataPublicFile(props.cid);
+        await downloadFileFromURI(uri, props.title);
+    }
 
     const handleDoubleClick = () => {
         router.push(`/app/documents/${props.id}`);
@@ -81,6 +88,8 @@ export default function TableItem(props: PropsType) {
             <OthersInfo
                 open={elipsisOpen}
                 onOpenChange={setEllipsisOpen}
+                onEdit={() => setOpenEditDialog(true)}
+                onDownload={handleDownload}
                 {...props}
             >
                 <div
@@ -90,17 +99,31 @@ export default function TableItem(props: PropsType) {
                     <Ellipsis size={18} />
                 </div>
             </OthersInfo>
+            <EditDocumentDialog
+                defaultFile={`${props.cid}.${props.fileExt}`}
+                open={openEditDialog}
+                onOpenChange={setOpenEditDialog}
+                {...props}
+            />
+
         </div>
     );
 }
+
 
 function OthersInfo({
     open,
     onOpenChange,
     children,
+    onEdit,
+    onDelete,
+    onDownload,
     ...props
 }: {
     open?: boolean;
+    onEdit?: () => void;
+    onDelete?: () => void;
+    onDownload?: () => void;
     onOpenChange?: (open: boolean) => void;
     children?: React.ReactNode;
 } & PropsType) {
@@ -143,17 +166,17 @@ function OthersInfo({
                 </p>
                 <div className="col-span-2 flex items-center gap-2 justify-end">
 
-                    <Button variant={"outline"} size={"icon"} className="bg-transparent">
+                    <Button onClick={onDownload} variant={"outline"} size={"icon"} className="bg-transparent">
                         <ArrowDownToLine />
                     </Button>
                     <Separator orientation="vertical" />
                     <TooltipText text="Edit">
-                        <Button variant={"outline"} size={"icon"} className="bg-transparent">
+                        <Button onClick={onEdit} variant={"outline"} size={"icon"} className="bg-transparent" >
                             <Pencil />
                         </Button>
                     </TooltipText>
                     <TooltipText text="Hapus Dokumen">
-                        <Button variant={"outline"} size={"icon"} className="bg-transparent text-red-600 hover:bg-red-50 hover:text-red-600">
+                        <Button onClick={onDelete} variant={"outline"} size={"icon"} className="bg-transparent text-red-600 hover:bg-red-50 hover:text-red-600">
                             <Trash />
                         </Button>
                     </TooltipText>

@@ -10,8 +10,8 @@ import {
     getDirectoryById,
     getDirectoriesCount,
 } from "./query/directories";
-import { getDocumentTypes } from "./query/document-type";
-import { getPinataPresignedUrl } from "./query/pinata-presigned-url";
+import { getDocumentTypes, } from "./query/document-type";
+import { getPinataPresignedUrl, } from "./query/pinata-presigned-url";
 import {
     getAllDocuments,
     getDocumentById,
@@ -22,7 +22,7 @@ import {
     getDocumentsCountByUserId,
 } from "./query/documents";
 
-import { pinataPrivateFile, pinataPublicFile } from "./query/pinata";
+import { pinataPrivateFile, pinataPublicFile, } from "./query/pinata";
 
 export {
     getUserSession,
@@ -49,14 +49,14 @@ export {
 // =================================================================================
 
 // Mutation
-import { addStaff, disableStaff, enableStaff, updateStaffById } from "./mutation/staff";
-import { removeUserSession, createUserSession } from "./mutation/user-session";
+import { addStaff, disableStaff, enableStaff, updateStaffById ,} from "./mutation/staff";
+import { removeUserSession, createUserSession, } from "./mutation/user-session";
 import {
     addDirectory,
     editDirectory,
-    deleteDirectoryById,
+    deleteDirectoryById, 
 } from "./mutation/directories";
-import { addDocument, addDocumentHistory } from "./mutation/documents";
+import { addDocument, addDocumentHistory,deleteDocumentById, editDocumentById } from "./mutation/documents";
 
 export {
     addStaff,
@@ -70,4 +70,6 @@ export {
     addDocument,
     addDocumentHistory,
     updateStaffById,
+    deleteDocumentById,
+    editDocumentById,
 };

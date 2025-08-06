@@ -128,12 +128,10 @@ function IdentitySection({ documentData }: { documentData: DocumentType }) {
                 <div className="flex items-center gap-4">
                     <p>{formatDate(documentData?.updatedAt || "")}</p>
                     <Separator orientation="vertical" />
-                    <TooltipText text="Lihat histori dokumen">
-                        <ButtonSeeHistory
-                            docId={documentData?.id || ""}
-                            docName={documentData?.title || ""}
-                        />
-                    </TooltipText>
+                    <ButtonSeeHistory
+                        docId={documentData?.id || ""}
+                        docName={documentData?.title || ""}
+                    />
                 </div>
 
                 <p className="text-neutral-500">Diubah oleh</p>
