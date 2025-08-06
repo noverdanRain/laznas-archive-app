@@ -10,15 +10,15 @@ export default function DirectoryCard({
     id,
     name,
     isPrivate,
+    docsCount,
     ...props
 }: {
     id: string;
     name: string;
     isPrivate?: boolean;
+    docsCount: number;
 } & React.HTMLAttributes<HTMLDivElement>
 ) {
-
-    const docsCount = useGetDocsCountInDirectory(id);
 
     return (
         <TooltipText text={name}>
@@ -30,13 +30,7 @@ export default function DirectoryCard({
                 />
                 <div className="grid grid-cols-1 w-full">
                     <h3 className="font-medium line-clamp-1">{name}</h3>
-                    {
-                        docsCount.isSuccess ? (
-                            <p className="text-sm text-gray-500">{docsCount.data} Dokumen</p>
-                        ) : (
-                            <Skeleton className="h-[8px] w-[80px] rounded-full bg-gray-200 mt-1.5" />
-                        )
-                    }
+                    <p className="text-sm text-gray-500">{docsCount} Dokumen</p>
                 </div>
                 {
                     isPrivate && (

@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import {
-    ArrowDownToLine,
     Copy,
     Eye,
     FileX,
@@ -25,6 +24,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { gatewayUrl } from "@/lib/constants";
 import { ButtonDownload } from "./_components/button-download";
+import FileSection from "./_components/file-section";
 
 type Params = Promise<{ docId: string }>;
 
@@ -79,71 +79,6 @@ export default async function DetailsDocumentPage(props: { params: Params }) {
     );
 }
 
-function FileSection({ documentData }: { documentData: DocumentType }) {
-    return (
-        <section>
-            <div className="w-full h-72 border border-gray-200 rounded-xl overflow-hidden relative">
-                <div className="flex justify-between items-center p-4 gap-4">
-                    <p className="text-sm">File</p>
-                    <ButtonDownload
-                        uri={`${gatewayUrl}/${documentData?.cid}`}
-                        fileName={`${documentData?.title || "dokumen"}.${documentData?.fileExt || ""}`}
-                    />
-                    <TooltipText text="Buka dokumen di Tab Baru">
-                        <Link
-                            href={`${gatewayUrl}/${documentData?.cid}`}
-                            target="_blank"
-                        >
-                            <button className="cursor-pointer hover:text-emerald-600 transition-colors">
-                                <SquareArrowOutUpRight size={16} />
-                            </button>
-                        </Link>
-                    </TooltipText>
-                </div>
-                <div className="w-[calc(100%+2px)] h-[calc(100%-3rem)] border border-gray-200 rounded-t-[20px] absolute -left-[1px] -bottom-0.5 bg-white overflow-hidden">
-                    <div className="h-[calc(100%-4.5rem)] w-full flex items-center justify-center text-gray-400">
-                        <div className="flex flex-col items-center justify-center gap-1 w-full h-full">
-                            <Image
-                                src={`${gatewayUrl}/${documentData?.cid}`}
-                                alt="Preview Dokumen"
-                                width={200}
-                                height={200}
-                                className="w-full h-full object-cover object-center"
-                            />
-                            {/* <DocumentIcon
-                                size={30}
-                                className="text-gray-300"
-                                type={documentData?.fileExt || ""}
-                            />
-                            <p>Tidak ada preview</p> */}
-                        </div>
-                    </div>
-                    <div className="flex items-center mt-auto p-4 gap-2 bg-white shadow-[0px_-26px_50px_-2px_rgba(0,_0,_0,_0.08)] border-t border-gray-200">
-                        <DocumentIcon type={documentData?.fileExt || ""} />
-                        <div className="w-full flex flex-col">
-                            <p className="text-sm line-clamp-1">
-                                {documentData?.title}
-                            </p>
-                            <Link
-                                href={`${gatewayUrl}/${documentData?.cid}`}
-                                target="_blank"
-                                className="text-xs text-gray-500 hover:underline"
-                            >
-                                {cidElipsis(documentData?.cid || "", 10, 10)}.
-                                {documentData?.fileExt || ""}
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="bg-gray-200 px-2 py-1 rounded-full w-fit mt-4 flex items-center gap-1 text-xs">
-                <Eye size={16} className="" />
-                <p className="text-xs ">{documentData?.viewsCount} Dilihat</p>
-            </div>
-        </section>
-    );
-}
-
 function IdentitySection({ documentData }: { documentData: DocumentType }) {
     return (
         <div className="w-full">
@@ -160,6 +95,11 @@ function IdentitySection({ documentData }: { documentData: DocumentType }) {
                     </button>
                     <p className="line-clamp-1 text-ellipsis">{documentData?.cid}</p>
                 </div>
+
+                <p className="text-neutral-500">Jenis Dokumen</p>
+                <p className="line-clamp-1">
+                    {documentData?.documentType}
+                </p>
 
                 <p className="text-neutral-500">Ditambahkan pada</p>
                 <p className="line-clamp-1">

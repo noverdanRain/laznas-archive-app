@@ -30,7 +30,7 @@ export const addDocumentFormSchema = z.object({
         .string()
         .min(3, "Masukan nama atau judul dokumen minimal 3 karakter")
         .max(255, "Nama maksimal 255 karakter"),
-    documentTypeId: z.string().min(36, "Pilih jenis dokumen"),
+    documentTypeId: z.string().min(1, "Pilih jenis dokumen"),
     description: z.string().optional(),
     documentNum: z
         .string()

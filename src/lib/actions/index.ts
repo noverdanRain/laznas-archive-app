@@ -8,6 +8,7 @@ import {
     getDirectories,
     getTotalDocsInDirectory,
     getDirectoryById,
+    getDirectoriesCount,
 } from "./query/directories";
 import { getDocumentTypes } from "./query/document-type";
 import { getPinataPresignedUrl } from "./query/pinata-presigned-url";
@@ -17,7 +18,11 @@ import {
     getDocumentHistories,
     getDocumentHistoryById,
     getPublicDocuments,
+    getDocumentsCount,
+    getDocumentsCountByUserId,
 } from "./query/documents";
+
+import { pinataPrivateFile, pinataPublicFile } from "./query/pinata";
 
 export {
     getUserSession,
@@ -34,6 +39,11 @@ export {
     getDocumentHistoryById,
     getPublicDocuments,
     getDirectoryById,
+    pinataPrivateFile,
+    pinataPublicFile,
+    getDirectoriesCount,
+    getDocumentsCount,
+    getDocumentsCountByUserId,
 };
 
 // =================================================================================

@@ -6,19 +6,20 @@ import { useGetDocType } from "@/hooks/useGetDocType";
 import { useEffect, useState } from "react";
 import { GetDocumentsParams } from "@/lib/actions/query/documents";
 import { useGetDocuments } from "@/hooks/useGetDocuments";
-import { documentsPage_useGetDocumentsParams } from "../page";
 import { useTopLoader } from "nextjs-toploader";
+
+type GetDocProps = ReturnType<typeof useGetDocuments>;
 
 type FilterT = GetDocumentsParams["filter"];
 type FilterKeyT = keyof NonNullable<GetDocumentsParams["filter"]>;
 
-export function DocumentsFilter() {
+export function DocumentsFilter({ getDocsData }: { getDocsData: GetDocProps }) {
     const [filter, setFilter] = useState<FilterT>();
     const topLoader = useTopLoader();
 
     const documentType = useGetDocType();
     const divisions = useGetDivisions();
-    const documents = useGetDocuments(documentsPage_useGetDocumentsParams);
+    const documents = getDocsData
 
     useEffect(() => {
         if (documents.isLoading) {

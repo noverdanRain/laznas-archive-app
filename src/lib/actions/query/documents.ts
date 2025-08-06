@@ -23,6 +23,7 @@ import { MySqlColumn } from "drizzle-orm/mysql-core";
 import { getUserSession } from "./user-session";
 
 export type GetDocumentsParams = {
+    query?: string;
     filter?: {
         documentType?: string;
         addedBy?: string;
@@ -86,6 +87,7 @@ const checkIsLoggedIn = async (token?: string): Promise<boolean> => {
 const docsQuery = async (
     filters: SQL[],
     sort?: SQL,
+    query?: SQL,
     page = 1,
     pageSize = 12
 ) => {
@@ -124,10 +126,15 @@ const docsQuery = async (
         .leftJoin(users, eq(documents.userId, users.id))
         .leftJoin(divisions, eq(users.divisionId, divisions.id))
         .leftJoinLateral(docHistory, eq(documents.id, docHistory.documentId))
-        .where(and(...filters))
+        .where(and(query, ...filters))
         .orderBy(sort || desc(documents.createdAt))
         .limit(pageSize)
         .offset((page - 1) * pageSize);
+};
+const handleQuerySearch = (query?: string) => {
+    if (!query) return undefined;
+    const search = sql`MATCH(${documents.title}, ${documents.description}, ${documents.documentNum}, ${documents.cid}) AGAINST(${query} IN NATURAL LANGUAGE MODE)`;
+    return search;
 };
 
 const handleFilter = (filter?: GetDocumentsParams["filter"]) => {
@@ -217,13 +224,15 @@ const handleSort = (sort?: GetDocumentsParams["sort"]) => {
 };
 
 async function getAllDocuments(params?: GetDocumentsParams) {
-    const { filter, sort, paginate } = params || {};
+    const { filter, sort, paginate, query } = params || {};
     try {
         const filters = handleFilter(filter);
         const orderBy = handleSort(sort);
+        const searchQuery = handleQuerySearch(query);
         const result = await docsQuery(
             filters,
             orderBy,
+            searchQuery,
             paginate?.page,
             paginate?.pageSize
         );
@@ -353,7 +362,10 @@ async function getDocumentHistoryById(params: GetDocumentHistoryByIdParams) {
             .from(documentsHistory)
             .leftJoin(users, eq(users.id, documentsHistory.userId))
             .leftJoin(divisions, eq(users.divisionId, divisions.id))
-            .leftJoin(directories, eq(documentsHistory.directoryId, directories.id))
+            .leftJoin(
+                directories,
+                eq(documentsHistory.directoryId, directories.id)
+            )
             .where(eq(documentsHistory.id, id));
 
         if (history.length === 0) {
@@ -369,10 +381,35 @@ async function getDocumentHistoryById(params: GetDocumentHistoryByIdParams) {
 
 async function getPublicDocuments() {}
 
+async function getDocumentsCount() {
+    try {
+        const documentCount = await db.$count(documents);
+        return documentCount;
+    } catch (error) {
+        console.log("Error in getDocumentsCount:", error);
+        throwActionError(error);
+    }
+}
+
+async function getDocumentsCountByUserId({ userId }: { userId: string }) {
+    try {
+        const documentCount = await db.$count(
+            documents,
+            eq(documents.userId, userId)
+        );
+        return documentCount;
+    } catch (error) {
+        console.log("Error in getDocumentsCount:", error);
+        throwActionError(error);
+    }
+}
+
 export {
     getAllDocuments,
     getPublicDocuments,
     getDocumentById,
     getDocumentHistories,
     getDocumentHistoryById,
+    getDocumentsCount,
+    getDocumentsCountByUserId,
 };

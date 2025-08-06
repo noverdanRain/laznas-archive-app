@@ -20,6 +20,7 @@ export function useGetDocuments(params: UseGetDocumentsParams) {
     });
     const [currentFilter, setCurrentFilter] = useState<UseGetDocumentsParams["filter"]>(params.filter);
     const [currentSort, setCurrentSort] = useState<UseGetDocumentsParams["sort"]>(params.sort);
+    const [currentQuery, setCurrentQuery] = useState<UseGetDocumentsParams["query"]>(params.query);
 
     const documents = useQuery({
         queryKey,
@@ -65,11 +66,12 @@ export function useGetDocuments(params: UseGetDocumentsParams) {
                 ...sort
             }));
         }
-        mutateDocuments(queryParams)
+
+        mutateDocuments(queryParams);
     }
 
     const totalPage = Math.ceil((documents.data?.totalCount || 0) / (params.paginate?.pageSize || 12));
     const isLoading = documents.isLoading || isMutating || setQueryPending;
 
-    return { ...documents, queryKey, invalidate, setQuery, isLoading, isMutating, currentPaginate, currentFilter, currentSort, totalPage };
+    return { ...documents, queryKey, invalidate, setQuery, isLoading, isMutating, currentPaginate, currentFilter, currentSort, totalPage, currentQuery };
 }

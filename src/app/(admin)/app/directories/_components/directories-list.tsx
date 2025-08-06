@@ -22,6 +22,7 @@ export default function DirectoriesList() {
                         id={directory.id}
                         name={directory.name}
                         isPrivate={directory.isPrivate}
+                        docsCount={directory.documentsCount}
                     />
                 )) || (
                     <div className="col-span-4 text-center text-gray-500">

@@ -1,34 +1,15 @@
-"use client";
+import PublicDocumentsTable from "@/components/layout/public/documents-table";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ChartNoAxesGantt } from "lucide-react";
 
-import { ChartNoAxesGantt, } from "lucide-react";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
-import StaffDocumentsTable from "@/components/layout/admin/documents-table";
-import { useGetDocuments } from "@/hooks/useGetDocuments";
-
-export const lastAddedTabHome_queryKey = ["last-added-documents"];
-
-export default function LastAddedTabContent() {
-    const getDocuments = useGetDocuments({
-        key: lastAddedTabHome_queryKey, filter: {
-            lastAdded: "30days"
-        }
-    });
-
-    const handleSelectChange = (value: "7days" | "30days" | "6month" | "1year") => {
-        getDocuments.setQuery({
-            filter: {
-                lastAdded: value,
-            },
-        })
-    }
-
+export default function PublicHomeLastModified() {
     return (
         <>
-            <div className="flex items-center gap-4 pb-1 justify-between">
+            <div className="flex items-center gap-4 justify-between">
                 <p className="font-semibold ml-2">
-                    Terakhir ditambahkan ke arsip
+                    Dokumen terakhir dimodifikasi
                 </p>
-                <Select onValueChange={handleSelectChange} defaultValue="30days">
+                <Select defaultValue="30days">
                     <SelectTrigger className="w-3xs shadow-none rounded-full border-none bg-gray-100 text-sm h-8 py-0 focus-within:ring-0">
                         <div className="flex items-center gap-2">
                             <ChartNoAxesGantt strokeWidth={2.5} />
@@ -43,7 +24,7 @@ export default function LastAddedTabContent() {
                             <SelectItem value="30days">
                                 30 Hari Terakhir
                             </SelectItem>
-                            <SelectItem value="6month">
+                            <SelectItem value="6months">
                                 6 Bulan terakhir
                             </SelectItem>
                             <SelectItem value="1year">
@@ -53,7 +34,7 @@ export default function LastAddedTabContent() {
                     </SelectContent>
                 </Select>
             </div>
-            <StaffDocumentsTable getDocsData={getDocuments} />
+            <PublicDocumentsTable />
         </>
-    );
+    )
 }

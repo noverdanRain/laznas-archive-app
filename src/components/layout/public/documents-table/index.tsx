@@ -5,23 +5,35 @@ import TableContent from "./table-content";
 import TableHeader from "./table-header";
 import TableItem from "./table-item";
 import { Loader2 } from "lucide-react";
+// import { documentsPage_useGetDocumentsParams } from "@/app/(admin)/app/documents/page";
+import { UseGetDocumentsParams } from "@/hooks/useGetDocuments";
+export const publicDocumentsPage_useGetDocumentsParams: UseGetDocumentsParams = {
+    key: ["public-documents"],
+    filter: {
+        visibility: "public",
+        lastAdded: "30days"
+    },
+    sort: {
+        field: "createdAt",
+        order: "desc"
+    }
+};
 
-type GetDocProps = ReturnType<typeof useGetDocuments>;
+export default function PublicDocumentsTable() {
+    const { data: documents, isLoading } = useGetDocuments(publicDocumentsPage_useGetDocumentsParams);
 
-export default function StaffDocumentsTable({ getDocsData }: { getDocsData: GetDocProps }) {
-    const { data: documents, isLoading } = getDocsData;
 
     return (
-        <div>
-            <div className="h-4 w-full sticky top-[150px] bg-white z-10 after:content-[''] after:absolute after:w-full after:h-8 after:bg-white" />
+        <>
+            <div className="h-4 w-full sticky top-[140px] z-10 after:content-[''] after:absolute after:w-full after:h-8 after:bg-white" />
             <TableHeader />
-            <TableContent getDocsData={getDocsData}>
+            <TableContent>
                 {isLoading && (
                     <div className="col-span-6 flex justify-center items-center h-[calc(100vh-370px)] text-emerald-600">
                         <Loader2 size={29} className="animate-spin" />
                     </div>
                 )}
-                {!isLoading && documents?.list?.map((document) => (
+                {documents?.list?.map((document) => (
                     <TableItem key={document.id} {...document} />
                 ))}
                 {documents && documents.list.length === 0 && (
@@ -30,6 +42,6 @@ export default function StaffDocumentsTable({ getDocsData }: { getDocsData: GetD
                     </div>
                 )}
             </TableContent>
-        </div>
+        </>
     );
 }

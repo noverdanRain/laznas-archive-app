@@ -1,22 +1,22 @@
 "use client";
 
 import { addDocument, getPinataPresignedUrl } from "@/lib/actions";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { CustomMutateHooksProps } from "@/types";
 import { useState } from "react";
 import { FileWithPath } from "react-dropzone";
 import { throwActionError } from "@/lib/actions/helpers";
 import { AddDocumentResponse } from "@/lib/actions/mutation/documents";
-import { useGetDocuments } from "./useGetDocuments";
 import { pinata } from "@/lib/pinata-config";
 import { UploadResponse } from "pinata";
 import { MutateActionsReturnType } from "@/types";
-import { documentsPage_useGetDocumentsParams } from "@/app/(admin)/app/documents/page";
+import { documentsPage_useGetDocumentsKey } from "@/app/(admin)/app/documents/page";
+import { lastAddedTabHome_queryKey } from "@/app/(admin)/app/_components/tab-contents/last-added";
 
 export function useAddDocument(props?: CustomMutateHooksProps<AddDocumentResponse>) {
     const { onSuccess, onReject, onError, onMutate } = props || {};
-    const getDocuments = useGetDocuments(documentsPage_useGetDocumentsParams);
+    const queryClient = useQueryClient();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [progress, setProgress] = useState({
@@ -36,7 +36,8 @@ export function useAddDocument(props?: CustomMutateHooksProps<AddDocumentRespons
             if (isSuccess) {
                 setIsSubmitting(true);
                 setProgress({ value: 100, message: "Dokumen berhasil ditambahkan." });
-                getDocuments.invalidate();
+                queryClient.invalidateQueries({ queryKey: documentsPage_useGetDocumentsKey });
+                queryClient.invalidateQueries({ queryKey: lastAddedTabHome_queryKey });
                 if (onSuccess) {
                     onSuccess(data);
                 } else {

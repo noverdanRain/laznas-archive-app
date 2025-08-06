@@ -1,13 +1,12 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useGetDocuments, } from "@/hooks/useGetDocuments";
+import { useGetDocuments} from "@/hooks/useGetDocuments";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { publicDocumentsPage_useGetDocumentsParams } from ".";
 import { useEffect } from "react";
 import { useTopLoader } from "nextjs-toploader";
 
-type GetDocProps = ReturnType<typeof useGetDocuments>;
-
-export default function TableFooter({ getDocsData }: { getDocsData: GetDocProps }) {
+export default function TableFooter() {
     const topLoader = useTopLoader();
 
 
@@ -16,7 +15,7 @@ export default function TableFooter({ getDocsData }: { getDocsData: GetDocProps 
         setQuery,
         currentPaginate,
         totalPage
-    } = getDocsData;
+    } = useGetDocuments(publicDocumentsPage_useGetDocumentsParams);
 
     useEffect(() => {
         if (isLoading) {

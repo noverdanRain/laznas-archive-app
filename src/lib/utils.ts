@@ -61,20 +61,21 @@ export async function copyToClipboard(textToCopy: string) {
     }
 }
 
-export function downloadFileFromURI(uri: string, fileName: string) {
-    fetch(uri)
-        .then(response => response.blob())
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = fileName || "download";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-        })
-        .catch(err => console.error("Download failed:", err));
+export async function downloadFileFromURI(uri: string, fileName: string) {
+    try {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = fileName || "download";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    } catch (err) {
+        console.error("Download failed:", err);
+    }
 }
 
 export const urlToFile = async (url: string, filename: string, mimeType: string) => {

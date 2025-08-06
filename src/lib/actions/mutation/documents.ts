@@ -5,7 +5,7 @@ import db from "@/lib/db";
 import { MutateActionsReturnType } from "@/types";
 import { cookies } from "next/headers";
 import { getUserSession } from "../query/user-session";
-import { GetTotalDocsInDirectoryCacheTag } from "../query/directories";
+import { GetDirectoryCacheTag, GetTotalDocsInDirectoryCacheTag } from "../query/directories";
 import { revalidateTag } from "next/cache";
 import { eq } from "drizzle-orm";
 
@@ -35,11 +35,7 @@ const checkIsLoggedIn = async (token?: string): Promise<boolean> => {
 async function addDocument(
   params: AddDocumentParams
 ): Promise<MutateActionsReturnType & { data?: AddDocumentResponse }> {
-  const cacheTagsToRevalidate: {
-    getDirCount: GetTotalDocsInDirectoryCacheTag;
-  } = {
-    getDirCount: `get-total-docs-${params.directoryId}`,
-  };
+  
   try {
     const cookieStorage = await cookies();
     const token = cookieStorage.get("token")?.value;
@@ -75,9 +71,8 @@ async function addDocument(
       documentNum: params.documentNum,
       changeNotes: "Menambahkan dokumen",
     });
-    for (const tag of Object.values(cacheTagsToRevalidate)) {
-      revalidateTag(tag);
-    }
+    revalidateTag("get-dir-public" as GetDirectoryCacheTag);
+    revalidateTag("get-dir-staff" as GetDirectoryCacheTag);
     return {
       isSuccess: true,
       data: {
