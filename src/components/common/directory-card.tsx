@@ -3,8 +3,6 @@
 import { Lock } from "lucide-react";
 import { MdiFolder } from "../ui/icon";
 import { TooltipText } from "./tooltip-text";
-import { useGetDocsCountInDirectory } from "@/hooks/useGetDocsCountAtDirectory";
-import { Skeleton } from "../ui/skeleton";
 
 export default function DirectoryCard({
     id,

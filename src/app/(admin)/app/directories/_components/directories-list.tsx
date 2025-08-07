@@ -3,9 +3,12 @@
 import DirectoryCard from "@/components/common/directory-card";
 import { useGetDirectories } from "@/hooks/useGetDirectories";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "nextjs-toploader/app";
+
 
 export default function DirectoriesList() {
     const { directories, isLoading } = useGetDirectories()
+    const router = useRouter();
 
     if (isLoading) {
         return (
@@ -23,6 +26,7 @@ export default function DirectoriesList() {
                         name={directory.name}
                         isPrivate={directory.isPrivate}
                         docsCount={directory.documentsCount}
+                        onClick={() => router.push(`/app/directories/${directory.id}`)}
                     />
                 )) || (
                     <div className="col-span-4 text-center text-gray-500">

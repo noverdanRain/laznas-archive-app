@@ -85,7 +85,7 @@ export default function TableItem(props: PropsType) {
             {/* Direktori */}
             <div className="flex items-center gap-2">
                 <Folder size={18} className="text-amber-600 min-w-fit" />
-                <Link href={"/"} className="line-clamp-1 hover:underline">
+                <Link href={`/app/directories/${props.directory?.id}`} className="line-clamp-1 hover:underline">
                     {props.directory?.name || "Tidak ada direktori"}
                 </Link>
             </div>
