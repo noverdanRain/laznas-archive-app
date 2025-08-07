@@ -18,29 +18,7 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { useAddDocument } from "@/hooks/useAddDocument";
 import { cn } from "@/lib/utils";
-
-export const addDocumentFormSchema = z.object({
-    file: z.custom<File | FileWithPath | null>().refine((file) => !!file, {
-        message: "Mohon pilih file dokumen yang ingin diunggah",
-    }),
-    directoryId: z
-        .string()
-        .min(36, "Pilih direktori dimana dokumen akan disimpan"),
-    title: z
-        .string()
-        .min(3, "Masukan nama atau judul dokumen minimal 3 karakter")
-        .max(255, "Nama maksimal 255 karakter"),
-    documentTypeId: z.string().min(1, "Pilih jenis dokumen"),
-    description: z.string().optional(),
-    documentNum: z
-        .string()
-        .max(32, "Nomor dokumen maksimal 32 karakter")
-        .optional()
-        .refine((value) => !value || value.length > 2, {
-            message: "Nomor dokumen minimal 3 karakter",
-        }),
-    visibility: z.enum(["private", "public"]).default("private").optional(),
-});
+import { addDocumentFormSchema } from "@/types";
 
 type FormAddDocumentProps = {
     defaultFile?: File | FileWithPath;

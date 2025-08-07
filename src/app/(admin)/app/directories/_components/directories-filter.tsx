@@ -2,12 +2,8 @@
 
 import SelectClearable from "@/components/common/select-clearable";
 import { useGetDivisions } from "@/hooks/useGetDivisions";
+import { DocumentsFilterType } from "@/types";
 import { useState } from "react";
-
-export type DocumentsFilterType = {
-    addedBy: string;
-    visibility: string;
-}
 
 export function DirectoriesFilter() {
     const [filter, setFilter] = useState<DocumentsFilterType>();

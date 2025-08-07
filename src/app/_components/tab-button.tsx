@@ -1,11 +1,11 @@
 "use client";
 
 import { TooltipText } from "@/components/common/tooltip-text";
+import { activePublicTabAtom } from "@/lib/atom";
 import { cn } from "@/lib/utils";
 import { atom, useAtom } from "jotai";
 
 type TabName = "last-added" | "last-modified" | "directory";
-export const activePublicTabAtom = atom<TabName>("last-added");
 
 export default function PublicHomeTabButton() {
     const [activeTab, setActiveTab] = useAtom(activePublicTabAtom);

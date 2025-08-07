@@ -1,6 +1,6 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { editDocumentFormSchema } from "..";
+import { editDocumentFormSchema } from "@/types";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { generateRandomCode } from "@/lib/utils";

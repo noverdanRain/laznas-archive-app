@@ -2,7 +2,7 @@
 
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useAtom } from "jotai";
-import { activePublicTabAtom } from "./tab-button";
+import { activePublicTabAtom } from "@/lib/atom";
 import PublicHomeLastAdded from "./tab-content/last-added";
 import PublicHomeLastModified from "./tab-content/last-modified";
 import PublicHomeDirectories from "./tab-content/directory";

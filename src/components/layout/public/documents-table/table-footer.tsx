@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { useGetDocuments} from "@/hooks/useGetDocuments";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { publicDocumentsPage_useGetDocumentsParams } from ".";
+import { publicDocumentsPage_useGetDocumentsParams } from "@/lib/constants";
 import { useEffect } from "react";
 import { useTopLoader } from "nextjs-toploader";
 

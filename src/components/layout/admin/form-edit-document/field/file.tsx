@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { editDocumentFormSchema } from "..";
+import { editDocumentFormSchema } from "@/types";
 import { useRef } from "react";
 import {
     FormControl,

@@ -4,8 +4,8 @@ import { ChartNoAxesGantt, } from "lucide-react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
 import StaffDocumentsTable from "@/components/layout/admin/documents-table";
 import { useGetDocuments } from "@/hooks/useGetDocuments";
+import { lastAddedTabHome_queryKey } from "@/lib/constants";
 
-export const lastAddedTabHome_queryKey = ["last-added-documents"];
 
 export default function LastAddedTabContent() {
     const getDocuments = useGetDocuments({

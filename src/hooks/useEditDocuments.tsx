@@ -11,7 +11,7 @@ import { editDocumentById } from "@/lib/actions";
 import { pinata } from "@/lib/pinata-config";
 import { UploadResponse } from "pinata";
 import { MutateActionsReturnType } from "@/types";
-import { lastAddedTabHome_queryKey } from "@/app/(admin)/app/_components/tab-contents/last-added";
+import { lastAddedTabHome_queryKey } from "@/lib/constants";
 import getFileExt from "@/lib/utils";
 import { documentsPage_useGetDocumentsKey } from "@/lib/constants";
 

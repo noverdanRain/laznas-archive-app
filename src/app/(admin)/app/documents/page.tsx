@@ -4,21 +4,28 @@ import { Button } from "@/components/ui/button";
 import { DocumentsFilter } from "./_components/documents-filter";
 import StaffDocumentsTable from "@/components/layout/admin/documents-table";
 import AddDocumentDialog from "@/components/layout/admin/add-document-dialog";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useGetDocuments } from "@/hooks/useGetDocuments";
 import { InputWithIcon } from "@/components/ui/input";
 import { useSearchParams, useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { documentsPage_useGetDocumentsKey } from "@/lib/constants";
 
 export default function DocumentsPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <DocumentsPageContent />
+        </Suspense>
+    )
+}
+
+function DocumentsPageContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const searchQuery = searchParams.get('search');
 
     const [searchInput, setSearchInput] = useState("");
-
     const [openDialog, setOpenDialog] = useState(false);
+    
     const getDocuments = useGetDocuments({
         key: documentsPage_useGetDocumentsKey,
         query: searchQuery || undefined,

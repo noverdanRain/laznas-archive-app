@@ -4,7 +4,7 @@ import { useGetDocuments } from "@/hooks/useGetDocuments";
 import { useUserSession } from "@/hooks/useUserSession";
 import { ChartNoAxesGantt } from "lucide-react";
 
-export const addedByMeTabHome_queryKey = ["addByMe-documents"];
+const addedByMeTabHome_queryKey = ["addByMe-documents"];
 
 export default function AddedByMeTabContent() {
 

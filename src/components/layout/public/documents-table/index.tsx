@@ -7,17 +7,7 @@ import TableItem from "./table-item";
 import { Loader2 } from "lucide-react";
 // import { documentsPage_useGetDocumentsParams } from "@/app/(admin)/app/documents/page";
 import { UseGetDocumentsParams } from "@/hooks/useGetDocuments";
-export const publicDocumentsPage_useGetDocumentsParams: UseGetDocumentsParams = {
-    key: ["public-documents"],
-    filter: {
-        visibility: "public",
-        lastAdded: "30days"
-    },
-    sort: {
-        field: "createdAt",
-        order: "desc"
-    }
-};
+import { publicDocumentsPage_useGetDocumentsParams } from "@/lib/constants";
 
 export default function PublicDocumentsTable() {
     const { data: documents, isLoading } = useGetDocuments(publicDocumentsPage_useGetDocumentsParams);

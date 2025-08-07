@@ -1,5 +1,5 @@
 import { FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { addDocumentFormSchema } from "..";
+import { addDocumentFormSchema } from "@/types";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";

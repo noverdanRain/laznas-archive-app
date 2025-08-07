@@ -2,7 +2,7 @@
 
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useAtom } from "jotai";
-import { activeTabAtom } from "./tab-button";
+import { activeTabAtom } from "@/lib/atom";
 import LastAddedTabContent from "./tab-contents/last-added";
 import LastModifiedTabContent from "./tab-contents/last-modified";
 import AddedByMeTabContent from "./tab-contents/addded-by-me";

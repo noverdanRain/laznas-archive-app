@@ -1,5 +1,5 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { editDocumentFormSchema } from "..";
+import { editDocumentFormSchema } from "@/types";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { Textarea } from "@/components/ui/textarea";

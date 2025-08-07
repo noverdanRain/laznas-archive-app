@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { useGetDocuments } from "@/hooks/useGetDocuments";
 import { ChartNoAxesGantt } from "lucide-react";
 
-export const lastModifiedTabHome_queryKey = ["last-modified-documents"];
+const lastModifiedTabHome_queryKey = ["last-modified-documents"];
 
 export default function LastModifiedTabContent() {
     const getDocuments = useGetDocuments({

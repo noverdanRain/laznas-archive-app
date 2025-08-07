@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { addDocumentFormSchema } from "..";
+import { addDocumentFormSchema } from "@/types";
 import { useRef } from "react";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import DocumentIcon from "@/components/common/document-Icon";
