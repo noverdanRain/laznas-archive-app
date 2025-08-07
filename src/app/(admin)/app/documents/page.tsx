@@ -9,10 +9,7 @@ import { useGetDocuments } from "@/hooks/useGetDocuments";
 import { InputWithIcon } from "@/components/ui/input";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-
-// Variable
-export const documentsPage_useGetDocumentsKey = ["documents-page"];
-
+import { documentsPage_useGetDocumentsKey } from "@/lib/constants";
 
 export default function DocumentsPage() {
     const searchParams = useSearchParams();

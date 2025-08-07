@@ -11,9 +11,9 @@ import { editDocumentById } from "@/lib/actions";
 import { pinata } from "@/lib/pinata-config";
 import { UploadResponse } from "pinata";
 import { MutateActionsReturnType } from "@/types";
-import { documentsPage_useGetDocumentsKey } from "@/app/(admin)/app/documents/page";
 import { lastAddedTabHome_queryKey } from "@/app/(admin)/app/_components/tab-contents/last-added";
 import getFileExt from "@/lib/utils";
+import { documentsPage_useGetDocumentsKey } from "@/lib/constants";
 
 export function useEditDocument(props?: CustomMutateHooksProps) {
     const { onSuccess, onReject, onError, onMutate } = props || {};

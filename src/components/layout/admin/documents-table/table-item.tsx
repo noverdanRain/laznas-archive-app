@@ -16,9 +16,9 @@ import { useRouter } from "nextjs-toploader/app";
 import EditDocumentDialog from "../edit-document-dialog";
 import { AlertDialogComponent } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { documentsPage_useGetDocumentsKey } from "@/app/(admin)/app/documents/page";
 import { lastAddedTabHome_queryKey } from "@/app/(admin)/app/_components/tab-contents/last-added";
 import { useQueryClient } from "@tanstack/react-query";
+import { documentsPage_useGetDocumentsKey } from "@/lib/constants";
 
 type PropsType = Awaited<ReturnType<typeof getAllDocuments>>["list"][0];
 
