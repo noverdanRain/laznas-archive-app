@@ -142,7 +142,7 @@ export default function FormAddDocument(props?: FormAddDocumentProps) {
                         <p className="font-medium ">
                             Mengunggah{" "}
                             <span className="font-semibold">
-                                "{addDocument.variables?.title}"
+                                {addDocument.variables?.title}
                             </span>
                         </p>
                         <p className="text-sm text-neutral-500">

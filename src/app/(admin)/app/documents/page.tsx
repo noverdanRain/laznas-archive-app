@@ -82,7 +82,7 @@ export default function DocumentsPage() {
                 {
                     searchQuery && (
                         <div className="flex  gap-2items-center mb-4">
-                            <p className="ml-1 font-medium">Hasil Pencarian "{searchQuery}"</p>
+                            <p className="ml-1 font-medium">Hasil Pencarian {`"${searchQuery}"`}</p>
                             <button
                                 onClick={handleClearSearch}
                                 className="size-6 flex items-center justify-center rounded-full bg-gray-100 ml-2 cursor-pointer hover:bg-gray-200 transition-colors">

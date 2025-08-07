@@ -138,7 +138,7 @@ export default function FormEditDocument(props: FormEditDocumentProps) {
                         <p className="font-medium ">
                             Mengunggah{" "}
                             <span className="font-semibold">
-                                "{editDocument.variables?.data.title || "dokumen"}"
+                                {editDocument.variables?.data.title || "dokumen"}
                             </span>
                         </p>
                         <p className="text-sm text-neutral-500">
