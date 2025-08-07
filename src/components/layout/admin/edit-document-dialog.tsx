@@ -6,24 +6,43 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import FormEditDocument from "./form-edit-document";
 import { getAllDocuments } from "@/lib/actions";
-type PropsType = Awaited<ReturnType<typeof getAllDocuments>>["list"][0];
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
+import { DialogClose } from "@radix-ui/react-dialog";
+import { useRef } from "react";
+type DocumentDetail = Awaited<ReturnType<typeof getAllDocuments>>["list"][0];
 
 type EditDocumentDialogProps = {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
     defaultFile: string;
-} & PropsType;
+    withTrigger?: boolean;
+    defaultValues: DocumentDetail;
+};
 
 export default function EditDocumentDialog(props: EditDocumentDialogProps) {
     const { open, onOpenChange, defaultFile } = props;
+    const closeRef = useRef<HTMLButtonElement>(null);
+    const handleClose = () => {
+        onOpenChange?.(false);
+        closeRef.current?.click();
+    };
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            {/* <DialogTrigger asChild>
-                    <Button variant="outline">Open Dialog</Button>
-                </DialogTrigger> */}
+            {
+                props.withTrigger && (
+                    <DialogTrigger asChild>
+                        <Button variant="outline" size="icon">
+                            <Pencil />
+                        </Button>
+                    </DialogTrigger>
+                )
+            }
             <DialogContent
                 className="p-0 overflow-clip"
                 onOpenAutoFocus={(e) => e.preventDefault()}
@@ -38,20 +57,24 @@ export default function EditDocumentDialog(props: EditDocumentDialogProps) {
                     </DialogHeader>
                     <FormEditDocument
                         className="mt-4"
-                        onCancel={() => onOpenChange(false)}
+                        onCancel={handleClose}
                         defaultFile={defaultFile}
-                        onSubmited={() => onOpenChange(false)}
+                        onSubmited={handleClose}
+                        documentId={props.defaultValues.id}
                         defaultValues={{
                             file: null,
-                            directoryId: props.directory?.id || "",
-                            documentTypeId: props.documentTypeId || "",
-                            title: props.title || "",
-                            description: props.description || "",
-                            documentNum: props.documentNum || "",
-                            visibility: props.isPrivate ? "private" : "public",
+                            directoryId: props.defaultValues.directory?.id || "",
+                            documentTypeId: props.defaultValues.documentTypeId || "",
+                            title: props.defaultValues.title || "",
+                            description: props.defaultValues.description || "",
+                            documentNum: props.defaultValues.documentNum || "",
+                            visibility: props.defaultValues.isPrivate ? "private" : "public",
                         }}
                     />
                 </div>
+                <DialogClose hidden asChild>
+                    <button>Close</button>
+                </DialogClose>
             </DialogContent>
         </Dialog>
     );

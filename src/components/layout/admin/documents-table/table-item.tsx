@@ -8,23 +8,48 @@ import {
 import { cidElipsis, cn, downloadFileFromURI, formatDate } from "@/lib/utils";
 import { ArrowDownToLine, Ellipsis, Eye, EyeOff, Folder, Pencil, Trash } from "lucide-react";
 import Link from "next/link";
-import { getAllDocuments, pinataPrivateFile, pinataPublicFile } from "@/lib/actions";
+import { deleteDocumentById, getAllDocuments, pinataPrivateFile, pinataPublicFile } from "@/lib/actions";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "nextjs-toploader/app";
 import EditDocumentDialog from "../edit-document-dialog";
+import { AlertDialogComponent } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import { documentsPage_useGetDocumentsKey } from "@/app/(admin)/app/documents/page";
+import { lastAddedTabHome_queryKey } from "@/app/(admin)/app/_components/tab-contents/last-added";
+import { useQueryClient } from "@tanstack/react-query";
 
 type PropsType = Awaited<ReturnType<typeof getAllDocuments>>["list"][0];
 
 export default function TableItem(props: PropsType) {
+    const queryClient = useQueryClient();
     const router = useRouter();
     const [elipsisOpen, setEllipsisOpen] = useState(false);
     const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [openAlert, setOpenAlert] = useState(false);
 
     const handleDownload = async () => {
         const uri = props.isPrivate ? await pinataPrivateFile(props.cid) : await pinataPublicFile(props.cid);
         await downloadFileFromURI(uri, props.title);
+    }
+
+    const handleDelete = async () => {
+        setEllipsisOpen(false);
+        try {
+            toast.loading("Menghapus dokumen...", { id: "delete-doc" });
+            const result = await deleteDocumentById({ id: props.id });
+            if (result.isRejected) {
+                toast.error(result.reject?.message, { id: "delete-doc" });
+                return;
+            }
+            queryClient.invalidateQueries({ queryKey: documentsPage_useGetDocumentsKey });
+            queryClient.invalidateQueries({ queryKey: lastAddedTabHome_queryKey });
+            toast.success("Dokumen berhasil dihapus.", { id: "delete-doc" });
+        } catch (error) {
+            toast.error("Gagal menghapus dokumen.", { id: "delete-doc" });
+            return;
+        }
     }
 
     const handleDoubleClick = () => {
@@ -90,6 +115,7 @@ export default function TableItem(props: PropsType) {
                 onOpenChange={setEllipsisOpen}
                 onEdit={() => setOpenEditDialog(true)}
                 onDownload={handleDownload}
+                onDelete={() => setOpenAlert(true)}
                 {...props}
             >
                 <div
@@ -103,9 +129,15 @@ export default function TableItem(props: PropsType) {
                 defaultFile={`${props.cid}.${props.fileExt}`}
                 open={openEditDialog}
                 onOpenChange={setOpenEditDialog}
-                {...props}
+                defaultValues={props}
             />
-
+            <AlertDialogComponent
+                open={openAlert}
+                onOpenChange={setOpenAlert}
+                title="Hapus Dokumen"
+                description={`Apakah Anda yakin ingin menghapus dokumen "${props.title}"?`}
+                onConfirm={handleDelete}
+            />
         </div>
     );
 }
@@ -171,7 +203,11 @@ function OthersInfo({
                     </Button>
                     <Separator orientation="vertical" />
                     <TooltipText text="Edit">
-                        <Button onClick={onEdit} variant={"outline"} size={"icon"} className="bg-transparent" >
+                        <Button onClick={() => {
+                            onEdit?.();
+                            onOpenChange?.(false);
+                        }}
+                            variant={"outline"} size={"icon"} className="bg-transparent" >
                             <Pencil />
                         </Button>
                     </TooltipText>

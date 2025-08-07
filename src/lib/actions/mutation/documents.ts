@@ -35,7 +35,6 @@ export type AddDocumentResponse = {
 
 export type DeleteDocumentByIdParams = {
     id: string;
-    token: string;
 };
 
 const checkIsLoggedIn = async (token?: string): Promise<boolean> => {
@@ -113,7 +112,7 @@ async function editDocumentById(
         data.directoryId ? "direktori, " : ""
     }${data.isPrivate !== undefined ? "visibilitas dokumen, " : ""}${
         data.cid ? "file dokumen" : ""
-    }.`;
+    }`;
 
     try {
         const cookieStorage = await cookies();
@@ -202,21 +201,12 @@ async function deleteDocumentById(
     params: DeleteDocumentByIdParams
 ): Promise<MutateActionsReturnType> {
     try {
-        const { id, token } = params;
-        const isLoggedIn = await checkIsLoggedIn(token);
+        const { id } = params;
         if (!id) {
             return {
                 isRejected: true,
                 reject: {
                     message: "ID dokumen tidak boleh kosong.",
-                },
-            };
-        }
-        if (!isLoggedIn) {
-            return {
-                isRejected: true,
-                reject: {
-                    message: "User belum login.",
                 },
             };
         }

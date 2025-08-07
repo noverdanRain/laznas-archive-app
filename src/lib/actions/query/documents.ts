@@ -263,6 +263,7 @@ async function getDocumentById(params: GetDocumentByIdParams) {
                 documentNum: documents.documentNum,
                 description: documents.description,
                 documentType: documentTypes.name,
+                documentTypeId: documents.documentTypeId,
                 viewsCount: documents.viewsCount,
                 isPrivate: documents.isPrivate,
                 createdAt: documents.createdAt,

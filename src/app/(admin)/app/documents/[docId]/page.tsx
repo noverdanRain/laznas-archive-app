@@ -1,5 +1,3 @@
-import DocumentIcon from "@/components/common/document-Icon";
-import { TooltipText } from "@/components/common/tooltip-text";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -14,17 +12,16 @@ import {
     Eye,
     FileX,
     Folder,
-    SquareArrowOutUpRight,
+    Pencil,
 } from "lucide-react";
 import Link from "next/link";
 import { ButtonSeeHistory } from "./_components/button-see-history";
 import { getDocumentById } from "@/lib/actions";
-import { cidElipsis, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
-import Image from "next/image";
-import { gatewayUrl } from "@/lib/constants";
-import { ButtonDownload } from "./_components/button-download";
 import FileSection from "./_components/file-section";
+import { Button } from "@/components/ui/button";
+import EditDocumentDialog from "@/components/layout/admin/edit-document-dialog";
 
 type Params = Promise<{ docId: string }>;
 
@@ -52,25 +49,32 @@ export default async function DetailsDocumentPage(props: { params: Params }) {
 
     return (
         <div className="p-4">
-            <Breadcrumb>
-                <BreadcrumbList>
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href="/app">Beranda</BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href="/app/documents">
-                            Dokumen
-                        </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem className="max-w-lg">
-                        <BreadcrumbPage className="line-clamp-1">
-                            Detail Dokumen
-                        </BreadcrumbPage>
-                    </BreadcrumbItem>
-                </BreadcrumbList>
-            </Breadcrumb>
+            <div className="flex items-center justify-between">
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="/app">Beranda</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="/app/documents">
+                                Dokumen
+                            </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem className="max-w-lg">
+                            <BreadcrumbPage className="line-clamp-1">
+                                Detail Dokumen
+                            </BreadcrumbPage>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
+                <EditDocumentDialog
+                    withTrigger={true}
+                    defaultValues={documentData}
+                    defaultFile={`${documentData?.cid}.${documentData?.fileExt}`}
+                />
+            </div>
             <div className="grid grid-cols-[1.1fr_2fr] gap-6 mt-6">
                 <FileSection documentData={documentData} />
                 <IdentitySection documentData={documentData} />

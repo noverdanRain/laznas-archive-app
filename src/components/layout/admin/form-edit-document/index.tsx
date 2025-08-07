@@ -16,8 +16,8 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle, } from "@/compon
 import { CloudUpload } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { useAddDocument } from "@/hooks/useAddDocument";
 import { cn } from "@/lib/utils";
+import { useEditDocument } from "@/hooks/useEditDocuments";
 
 export const editDocumentFormSchema = z.object({
     file: z.custom<File | FileWithPath | null>(),
@@ -46,6 +46,7 @@ type FormEditDocumentProps = {
     onCancel?: () => void;
     onSubmited?: () => void;
     defaultValues: z.infer<typeof editDocumentFormSchema>;
+    documentId: string;
 };
 export default function FormEditDocument(props: FormEditDocumentProps) {
     const form = useForm<z.infer<typeof editDocumentFormSchema>>({
@@ -53,11 +54,10 @@ export default function FormEditDocument(props: FormEditDocumentProps) {
         defaultValues: props.defaultValues,
     });
 
-    const addDocument = useAddDocument({
+    const editDocument = useEditDocument({
         onSuccess: (data) => {
             form.reset();
-            toast.success("Dokumen berhasil ditambahkan.", {
-                description: `Dokumen telah berhasil ditambahkan.`,
+            toast.success("Dokumen berhasil diedit.", {
                 duration: 5000,
             });
             console.log("Document added successfully:", data);
@@ -68,17 +68,22 @@ export default function FormEditDocument(props: FormEditDocumentProps) {
     });
 
     function onSubmit(values: z.infer<typeof editDocumentFormSchema>) {
-        console.log("Submitting form with values:", values);
-        // addDocument.mutate({
-        //     file: values.file!,
-        //     directoryId: values.directoryId,
-        //     documentTypeId: values.documentTypeId,
-        //     title: values.title,
-        //     description: values.description || null,
-        //     fileExt: values.file?.name.split(".").pop() || "",
-        //     documentNum: values.documentNum || null,
-        //     isPrivate: values.visibility === "private",
-        // });
+        console.log("Submitting form with values:", {
+            data: values,
+            documentId: props.documentId,
+        });
+        editDocument.mutate({
+            documentId: props.documentId,
+            data: {
+                isPrivate: values.visibility !== props.defaultValues?.visibility ? values.visibility === "private" : undefined,
+                title: values.title !== props.defaultValues?.title ? values.title : undefined,
+                description: values.description !== props.defaultValues?.description ? values.description : undefined,
+                documentNum: values.documentNum !== props.defaultValues?.documentNum ? values.documentNum : undefined,
+                directoryId: values.directoryId !== props.defaultValues?.directoryId ? values.directoryId : undefined,
+                documentTypeId: values.documentTypeId !== props.defaultValues?.documentTypeId ? values.documentTypeId : undefined,
+                file: values.file
+            },
+        })
     }
 
     const handleCancel = () => {
@@ -120,7 +125,7 @@ export default function FormEditDocument(props: FormEditDocumentProps) {
                     </div>
                 </form>
             </Form>
-            <Dialog open={addDocument.isLoading}>
+            <Dialog open={editDocument.isLoading}>
                 <DialogContent className="w-lg flex p-6 bg-white rounded-2xl shadow-lg transition-all duration-300 [&>button:last-child]:hidden">
                     <DialogTitle hidden>Proses Upload Dokumen</DialogTitle>
                     <DialogDescription hidden>
@@ -133,19 +138,19 @@ export default function FormEditDocument(props: FormEditDocumentProps) {
                         <p className="font-medium ">
                             Mengunggah{" "}
                             <span className="font-semibold">
-                                "{addDocument.variables?.title}"
+                                "{editDocument.variables?.data.title || "dokumen"}"
                             </span>
                         </p>
                         <p className="text-sm text-neutral-500">
-                            {addDocument.progress.message}
+                            {editDocument.progress.message}
                         </p>
                         <div className="flex items-center gap-2 mt-2">
                             <Progress
                                 progressClassName="bg-emerald-600 animate-[pulse_1s_ease-in-out_infinite]"
-                                value={addDocument.progress.value}
+                                value={editDocument.progress.value}
                             />
                             <p className="text-neutral-500 text-sm">
-                                {addDocument.progress.value}%
+                                {editDocument.progress.value}%
                             </p>
                         </div>
                     </div>
