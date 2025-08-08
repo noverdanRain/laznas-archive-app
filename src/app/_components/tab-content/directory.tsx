@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 
 export default function PublicHomeDirectories() {
 
-    const { directories, isLoading, isSuccess } = useGetDirectories({visibility: "public"})
+    const { directories, isLoading, isSuccess } = useGetDirectories({ filter: { isPrivate: false } });
 
     return (
         <>

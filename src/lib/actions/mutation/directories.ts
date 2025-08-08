@@ -1,12 +1,7 @@
 import db from "@/lib/db";
-import {
-  type GetDirectoryCacheTag,
-  type GetTotalDocsInDirectoryCacheTag,
-} from "../query/directories";
 import { directories } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
-import { DirectoryTypes, MutateActionsReturnType } from "@/types";
-import { revalidateTag } from "next/cache";
+import { MutateActionsReturnType } from "@/types";
 import { throwActionError } from "../helpers";
 import { randomUUID } from "crypto";
 
@@ -47,8 +42,6 @@ async function addDirectory(
       description,
       isPrivate,
     });
-    revalidateTag("get-dir-public" as GetDirectoryCacheTag);
-    revalidateTag("get-dir-staff" as GetDirectoryCacheTag);
     return {
       isSuccess: true,
     };
@@ -121,8 +114,6 @@ async function editDirectory(
         .where(eq(directories.id, id));
     }
 
-    revalidateTag("get-dir-public" as GetDirectoryCacheTag);
-    revalidateTag("get-dir-staff" as GetDirectoryCacheTag);
     return {
       isSuccess: true,
     };
@@ -160,8 +151,6 @@ async function deleteDirectoryById(
     }
 
     await db.delete(directories).where(eq(directories.id, id));
-    revalidateTag("get-dir-public" as GetDirectoryCacheTag);
-    revalidateTag("get-dir-staff" as GetDirectoryCacheTag);
     return {
       isSuccess: true,
     };

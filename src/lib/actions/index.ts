@@ -6,7 +6,6 @@ import { getDivisions } from "./query/divisions";
 import { getAllStaff, getStaffById } from "./query/staff";
 import {
     getDirectories,
-    getTotalDocsInDirectory,
     getDirectoryById,
     getDirectoriesCount,
 } from "./query/directories";
@@ -30,7 +29,6 @@ export {
     getAllStaff,
     getStaffById,
     getDirectories,
-    getTotalDocsInDirectory,
     getDocumentTypes,
     getPinataPresignedUrl,
     getAllDocuments,

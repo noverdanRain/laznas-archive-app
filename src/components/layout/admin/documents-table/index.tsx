@@ -8,13 +8,13 @@ import { Loader2 } from "lucide-react";
 
 type GetDocProps = ReturnType<typeof useGetDocuments>;
 
-export default function StaffDocumentsTable({ getDocsData }: { getDocsData: GetDocProps }) {
+export default function StaffDocumentsTable({ getDocsData, className, stickyTop = 164 }: { getDocsData: GetDocProps, className?: string, stickyTop?: number }) {
     const { data: documents, isLoading } = getDocsData;
 
     return (
         <div>
-            <div className="h-4 w-full sticky top-[150px] bg-white z-10 after:content-[''] after:absolute after:w-full after:h-8 after:bg-white" />
-            <TableHeader />
+            <div className={`h-4 w-full sticky top-[${stickyTop - 14}px] bg-white z-10 after:content-[''] after:absolute after:w-full after:h-8 after:bg-white`} />
+            <TableHeader stickyTop={stickyTop} />
             <TableContent getDocsData={getDocsData}>
                 {isLoading && (
                     <div className="col-span-6 flex justify-center items-center h-[calc(100vh-370px)] text-emerald-600">

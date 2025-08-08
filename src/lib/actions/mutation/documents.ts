@@ -5,11 +5,6 @@ import db from "@/lib/db";
 import { MutateActionsReturnType } from "@/types";
 import { cookies } from "next/headers";
 import { getUserSession } from "../query/user-session";
-import {
-    GetDirectoryCacheTag,
-    GetTotalDocsInDirectoryCacheTag,
-} from "../query/directories";
-import { revalidateTag } from "next/cache";
 import { eq } from "drizzle-orm";
 
 export type AddDocumentParams = typeof documents.$inferInsert;
@@ -85,8 +80,6 @@ async function addDocument(
             documentNum: params.documentNum,
             changeNotes: "Menambahkan dokumen",
         });
-        revalidateTag("get-dir-public" as GetDirectoryCacheTag);
-        revalidateTag("get-dir-staff" as GetDirectoryCacheTag);
         return {
             isSuccess: true,
             data: {
@@ -164,11 +157,6 @@ async function editDocumentById(
 async function addDocumentHistory(
     params: AddDocumentHistoryParams
 ): Promise<MutateActionsReturnType> {
-    const cacheTagsToRevalidate: {
-        getDirCount: GetTotalDocsInDirectoryCacheTag;
-    } = {
-        getDirCount: `get-total-docs-${params.directoryId}`,
-    };
     try {
         const cookieStorage = await cookies();
         const token = cookieStorage.get("token")?.value;
@@ -187,7 +175,6 @@ async function addDocumentHistory(
             id: historyId,
             userId: useSession.id,
         });
-        revalidateTag(cacheTagsToRevalidate.getDirCount);
         return {
             isSuccess: true,
         };

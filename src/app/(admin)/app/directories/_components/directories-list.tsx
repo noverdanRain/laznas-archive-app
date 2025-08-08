@@ -4,10 +4,16 @@ import DirectoryCard from "@/components/common/directory-card";
 import { useGetDirectories } from "@/hooks/useGetDirectories";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "nextjs-toploader/app";
+import { useAtom } from "jotai";
+import { dirFilterAtom } from "@/lib/atom";
 
 
 export default function DirectoriesList() {
-    const { directories, isLoading } = useGetDirectories()
+    const [dirFilter] = useAtom(dirFilterAtom);
+    const { directories, isLoading } = useGetDirectories({
+        key: ["dir-staff"],
+        ...dirFilter
+    })
     const router = useRouter();
 
     if (isLoading) {

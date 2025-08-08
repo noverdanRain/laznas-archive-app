@@ -1,16 +1,17 @@
 import db from "@/lib/db";
 import { directories, documents } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq, sql, SQL } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 import { getUserSession } from "./user-session";
 import { throwActionError } from "../helpers";
 
 export interface IGetDirectoriesParams {
     token?: string;
-    visibility?: "public" | "private";
+    filter?: {
+        isPrivate?: boolean;
+        query?: string;
+    };
 }
-export type GetDirectoryCacheTag = `get-dir-${"staff" | "public"}`;
-export type GetTotalDocsInDirectoryCacheTag = `get-total-docs-${string}`;
 export type GetDirectoryByIdParams = { id: string; token?: string };
 
 const checkIsLoggedIn = async (token?: string): Promise<boolean> => {
@@ -23,98 +24,43 @@ const checkIsLoggedIn = async (token?: string): Promise<boolean> => {
     }
 };
 
+const handleFilter = (params: IGetDirectoriesParams["filter"]) => {
+    const { isPrivate, query } = params || {};
+    const filters: SQL[] = [];
+
+    if (isPrivate !== undefined) {
+        filters.push(eq(directories.isPrivate, isPrivate));
+    }
+    if (query) {
+        filters.push(
+            sql`MATCH(${directories.name}, ${directories.description}) AGAINST(${query} IN NATURAL LANGUAGE MODE)`
+        );
+    }
+    return filters;
+};
+
 async function getDirectories(params?: IGetDirectoriesParams) {
-    const isPublic = params?.visibility === "public";
-    const isLoggedIn = await checkIsLoggedIn(params?.token);
+    const { filter } = params || {};
 
-    const cacheTag: GetDirectoryCacheTag = `get-dir-${
-        isLoggedIn && !isPublic ? "staff" : "public"
-    }`;
-    const cache = unstable_cache(
-        async () => {
-            try {
-                if (isPublic) {
-                    const publicDirectories = await db
-                        .select({
-                            id: directories.id,
-                            name: directories.name,
-                            description: directories.description,
-                            isPrivate: directories.isPrivate,
-                            documentsCount: db.$count(
-                                documents,
-                                eq(documents.directoryId, directories.id)
-                            ),
-                        })
-                        .from(directories)
-                        .where(eq(directories.isPrivate, false));
-                    return publicDirectories;
-                } else if (isLoggedIn) {
-                    const allDirectories = await db
-                        .select({
-                            id: directories.id,
-                            name: directories.name,
-                            description: directories.description,
-                            isPrivate: directories.isPrivate,
-                            documentsCount: db.$count(
-                                documents,
-                                eq(documents.directoryId, directories.id)
-                            ),
-                        })
-                        .from(directories);
-                    return allDirectories;
-                } else {
-                    const publicDirectories = await db
-                        .select({
-                            id: directories.id,
-                            name: directories.name,
-                            description: directories.description,
-                            isPrivate: directories.isPrivate,
-                            documentsCount: db.$count(
-                                documents,
-                                eq(documents.directoryId, directories.id)
-                            ),
-                        })
-                        .from(directories)
-                        .where(eq(directories.isPrivate, false));
-                    return publicDirectories;
-                }
-            } catch (error) {
-                console.error("Error fetching directories:", error);
-                throwActionError(error);
-            }
-        },
-        [cacheTag],
-        {
-            tags: [cacheTag],
-        }
-    );
-    return cache();
-}
-
-async function getTotalDocsInDirectory(directoryId: string) {
-    const cacheTag: GetTotalDocsInDirectoryCacheTag = `get-total-docs-${directoryId}`;
-    const cache = unstable_cache(
-        async () => {
-            try {
-                const count = await db.$count(
+    try {
+        const result = await db
+            .select({
+                id: directories.id,
+                name: directories.name,
+                description: directories.description,
+                isPrivate: directories.isPrivate,
+                documentsCount: db.$count(
                     documents,
-                    eq(documents.directoryId, directoryId)
-                );
-                return count;
-            } catch (error) {
-                console.error(
-                    "Error fetching total documents in directory:",
-                    error
-                );
-                throwActionError(error);
-            }
-        },
-        [cacheTag],
-        {
-            tags: [cacheTag],
-        }
-    );
-    return cache();
+                    eq(documents.directoryId, directories.id)
+                ),
+            })
+            .from(directories)
+            .where(and(...handleFilter(filter)));
+        return result;
+    } catch (error) {
+        console.error("Error fetching directories:", error);
+        throwActionError(error);
+    }
 }
 
 async function getDirectoryById(params: GetDirectoryByIdParams) {
@@ -151,4 +97,8 @@ async function getDirectoriesCount() {
     }
 }
 
-export { getDirectories, getTotalDocsInDirectory, getDirectoryById, getDirectoriesCount };
+export {
+    getDirectories,
+    getDirectoryById,
+    getDirectoriesCount,
+};
