@@ -1,8 +1,17 @@
 import PublicDocumentsTable from "@/components/layout/public/documents-table";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useGetDocuments } from "@/hooks/useGetDocuments";
 import { ChartNoAxesGantt } from "lucide-react";
 
 export default function PublicHomeLastAdded() {
+
+    const documents = useGetDocuments({
+        key: ["public-home-last-added"],
+        sort: {
+            field: "createdAt",
+            order: "desc"
+        }
+    })
     return (
         <>
             <div className="flex items-center gap-4 justify-between mb-4">
@@ -34,7 +43,7 @@ export default function PublicHomeLastAdded() {
                     </SelectContent>
                 </Select>
             </div>
-            <PublicDocumentsTable />
+            <PublicDocumentsTable getDocsData={documents} />
         </>
     )
 }

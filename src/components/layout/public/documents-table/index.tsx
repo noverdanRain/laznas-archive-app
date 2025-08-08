@@ -9,8 +9,8 @@ import { Loader2 } from "lucide-react";
 import { publicDocumentsPage_useGetDocumentsParams } from "@/lib/constants";
 type GetDocProps = ReturnType<typeof useGetDocuments>;
 
-export default function PublicDocumentsTable({ getDocsData,  }: { getDocsData?: GetDocProps }) {
-    const { data: documents, isLoading } = getDocsData || useGetDocuments(publicDocumentsPage_useGetDocumentsParams);
+export default function PublicDocumentsTable({ getDocsData,  }: { getDocsData: GetDocProps }) {
+    const { data: documents, isLoading } = getDocsData;
 
 
     return (
