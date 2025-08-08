@@ -13,12 +13,14 @@ export default function DirectoryCard({
     name,
     isPrivate,
     docsCount,
+    isPublicPage = false,
     ...props
 }: {
     id: string;
     name: string;
     isPrivate?: boolean;
     docsCount: number;
+    isPublicPage?: boolean;
 } & React.HTMLAttributes<HTMLDivElement>
 ) {
 
@@ -47,15 +49,19 @@ export default function DirectoryCard({
                             <Lock size={14} className="absolute top-2 right-2 text-gray-300" />
                         )
                     }
-                    <MyPopOver
-                        open={popOverOpen}
-                        onOpenChange={setPopoverOpen}
-                        name={name}
-                    >
-                        <button onClick={handleEipsis} className="p-1 cursor-pointer">
-                            <EllipsisVertical size={16} className="text-gray-500" />
-                        </button>
-                    </MyPopOver>
+                    {
+                        !isPublicPage && (
+                            <MyPopOver
+                                open={popOverOpen}
+                                onOpenChange={setPopoverOpen}
+                                name={name}
+                            >
+                                <button onClick={handleEipsis} className="p-1 cursor-pointer">
+                                    <EllipsisVertical size={16} className="text-gray-500" />
+                                </button>
+                            </MyPopOver>
+                        )
+                    }
                 </div>
             </TooltipText>
 

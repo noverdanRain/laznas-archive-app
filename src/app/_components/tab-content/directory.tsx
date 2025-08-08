@@ -1,9 +1,10 @@
 import DirectoryCard from "@/components/common/directory-card";
 import { useGetDirectories } from "@/hooks/useGetDirectories";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "nextjs-toploader/app";
 
 export default function PublicHomeDirectories() {
-
+    const router = useRouter();
     const { directories, isLoading, isSuccess } = useGetDirectories({ filter: { isPrivate: false } });
 
     return (
@@ -29,6 +30,8 @@ export default function PublicHomeDirectories() {
                             name={directory.name}
                             isPrivate={directory.isPrivate}
                             docsCount={directory.documentsCount}
+                            isPublicPage
+                            onClick={() => router.push(`/directory/${directory.id}`)}
                         />
                     )) || (
                         <div className="col-span-4 text-center text-gray-500">

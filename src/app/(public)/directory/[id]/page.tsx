@@ -1,22 +1,22 @@
-"use client"
-
+"use client";
 import SelectClearable from "@/components/common/select-clearable";
-import StaffDocumentsTable from "@/components/layout/admin/documents-table";
+import PublicDocumentsTable from "@/components/layout/public/documents-table";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useGetDirectoryById } from "@/hooks/useGetDirectoryById";
+import { useGetDocType } from "@/hooks/useGetDocType";
 import { useGetDocuments } from "@/hooks/useGetDocuments";
-import { dir } from "console";
 import { Folder } from "lucide-react";
-import { useParams } from 'next/navigation'
+import { useParams } from "next/navigation";
 
-
-export default function DetailsDirectoryPage() {
-    const { dirId } = useParams<{ dirId: string }>()
-    const directory = useGetDirectoryById({ id: dirId })
+export default function PublicDirectoryDetailPage() {
+    const { id } = useParams<{ id: string }>()
+    const docType = useGetDocType();
+    const directory = useGetDirectoryById({ id })
     const document = useGetDocuments({
-        key: ["documents", dirId],
+        key: ["documents", id],
         filter: {
-            directory: dirId
+            directory: id,
+            visibility: "public"
         }
     })
 
@@ -26,11 +26,11 @@ export default function DetailsDirectoryPage() {
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
-                            <BreadcrumbLink href="/app">Beranda</BreadcrumbLink>
+                            <BreadcrumbLink href="/">Beranda</BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <BreadcrumbLink href="/app/directories">
+                            <BreadcrumbLink href="/">
                                 Direktori
                             </BreadcrumbLink>
                         </BreadcrumbItem>
@@ -51,29 +51,12 @@ export default function DetailsDirectoryPage() {
                 <p className="text-sm text-muted-foreground mt-1 max-w-3xl">{directory.data?.description}</p>
                 <div className="flex items-center gap-2 mt-6">
                     <SelectClearable
-                        items={[
-                            {label: "Semua Dokumen", value: "all"},
-                            {label: "Dokumen Pribadi", value: "private"},
-                        ]}
+                        items={docType.data?.map((type) => ({ label: type.name, value: type.id }))}
                         placeholder="Jenis Dokumen"
                     />
-                    <SelectClearable
-                        items={[
-                            {label: "Semua Dokumen", value: "all"},
-                            {label: "Dokumen Pribadi", value: "private"},
-                        ]}
-                        placeholder="Dirambahkan Oleh"
-                    />
-                    <SelectClearable
-                        items={[
-                            {label: "Semua Dokumen", value: "all"},
-                            {label: "Dokumen Pribadi", value: "private"},
-                        ]}
-                        placeholder="Visibilitas"
-                    />
                 </div>
-                <StaffDocumentsTable stickyTop={100} getDocsData={document} />
+                <PublicDocumentsTable getDocsData={document} />
             </div>
         </div>
-    )
+    );
 }

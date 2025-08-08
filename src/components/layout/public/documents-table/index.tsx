@@ -6,16 +6,15 @@ import TableHeader from "./table-header";
 import TableItem from "./table-item";
 import { Loader2 } from "lucide-react";
 // import { documentsPage_useGetDocumentsParams } from "@/app/(admin)/app/documents/page";
-import { UseGetDocumentsParams } from "@/hooks/useGetDocuments";
 import { publicDocumentsPage_useGetDocumentsParams } from "@/lib/constants";
+type GetDocProps = ReturnType<typeof useGetDocuments>;
 
-export default function PublicDocumentsTable() {
-    const { data: documents, isLoading } = useGetDocuments(publicDocumentsPage_useGetDocumentsParams);
+export default function PublicDocumentsTable({ getDocsData,  }: { getDocsData?: GetDocProps }) {
+    const { data: documents, isLoading } = getDocsData || useGetDocuments(publicDocumentsPage_useGetDocumentsParams);
 
 
     return (
         <>
-            <div className="h-4 w-full sticky top-[140px] z-10 after:content-[''] after:absolute after:w-full after:h-8 after:bg-white" />
             <TableHeader />
             <TableContent>
                 {isLoading && (

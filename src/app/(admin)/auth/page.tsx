@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { Loader } from "lucide-react";
 import { useTransition } from "react";
 import { useLogin } from "@/hooks/useLogin";
+import Link from "next/link";
 
 export default function AuthPage() {
     const router = useRouter();
@@ -61,6 +62,9 @@ export default function AuthPage() {
                         }
                     </Button>
                 </form>
+                <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 mt-4 block text-center">
+                    Kembali ke Beranda
+                </Link>
             </div>
         </main>
     )

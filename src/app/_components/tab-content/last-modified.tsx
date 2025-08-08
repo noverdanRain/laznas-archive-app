@@ -5,7 +5,7 @@ import { ChartNoAxesGantt } from "lucide-react";
 export default function PublicHomeLastModified() {
     return (
         <>
-            <div className="flex items-center gap-4 justify-between">
+            <div className="flex items-center gap-4 justify-between mb-4">
                 <p className="font-semibold ml-2">
                     Dokumen terakhir dimodifikasi
                 </p>
