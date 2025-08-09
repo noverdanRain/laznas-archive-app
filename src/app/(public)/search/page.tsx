@@ -19,13 +19,11 @@ export default function SearchPage() {
 function SearchPageContent() {
     const searchParams = useSearchParams();
     const searchQuery = searchParams.get('query') || '';
-    if(!searchQuery) {
-        return <div className="p-4">Tidak ada hasil pencarian.</div>;
-    }
+
     const documents = useGetDocuments({
         key: ['search-documents', searchQuery],
         query: searchQuery,
-        filter:{
+        filter: {
             visibility: 'public',
         }
     })
@@ -40,6 +38,9 @@ function SearchPageContent() {
         })
     }
 
+    if (!searchQuery) {
+        return <div className="p-4">Tidak ada hasil pencarian.</div>;
+    }
     return (
         <div className="p-4">
             <h1 className="text-xl font-bold mb-4">Hasil Pencarian Dari {`"${searchQuery}"`}</h1>
