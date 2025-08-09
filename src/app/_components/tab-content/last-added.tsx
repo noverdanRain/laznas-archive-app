@@ -7,6 +7,9 @@ export default function PublicHomeLastAdded() {
 
     const documents = useGetDocuments({
         key: ["public-home-last-added"],
+        filter:{
+            visibility: "public",
+        },
         sort: {
             field: "createdAt",
             order: "desc"

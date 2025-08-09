@@ -49,12 +49,13 @@ export default function PublicDirectoryDetailPage() {
                     <h1 className="font-semibold text-lg">{directory.data?.name}</h1>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1 max-w-3xl">{directory.data?.description}</p>
-                <div className="flex items-center gap-2 mt-6">
+                {/* <div className="flex items-center gap-2 mt-6 mb-2">
                     <SelectClearable
                         items={docType.data?.map((type) => ({ label: type.name, value: type.id }))}
                         placeholder="Jenis Dokumen"
                     />
-                </div>
+                </div> */}
+                <div className="mt-6"/>
                 <PublicDocumentsTable getDocsData={document} />
             </div>
         </div>

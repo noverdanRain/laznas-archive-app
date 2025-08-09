@@ -2,7 +2,7 @@
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useGetDocumentById } from "@/hooks/useGetDocumentById";
-import { Copy, FileX, Folder } from "lucide-react";
+import { Copy, FileX, Folder, Loader2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import FileSection from "./_components/file-section";
 import { getDocumentById } from "@/lib/actions";
@@ -14,7 +14,7 @@ export default function PublicDocumentPage() {
 
     const documentData = useGetDocumentById({ id });
     console.log("Document Data:", documentData.data);
-    if (!documentData.data) {
+    if (!documentData.data && !documentData.isLoading) {
         return (
             <div className="flex flex-col items-center justify-center h-[calc(100vh-5rem)] gap-2">
                 <FileX className="text-gray-400" size={30} />
@@ -23,6 +23,13 @@ export default function PublicDocumentPage() {
                 </h3>
             </div>
         );
+    }
+    if (documentData.isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center bg-white h-[calc(100vh-5rem)]">
+                <Loader2 className="animate-spin text-emerald-600" size={40} />
+            </div>
+        )
     }
 
     return (
@@ -49,8 +56,8 @@ export default function PublicDocumentPage() {
                 </Breadcrumb>
             </div>
             <div className="grid grid-cols-[1.1fr_2fr] gap-6 mt-6">
-                <FileSection documentData={documentData.data} />
-                <IdentitySection documentData={documentData.data} />
+                <FileSection documentData={documentData.data || null} />
+                <IdentitySection documentData={documentData.data || null} />
             </div>
         </div>
     );

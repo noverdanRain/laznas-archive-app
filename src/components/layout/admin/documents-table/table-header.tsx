@@ -22,13 +22,13 @@ export default function TableHeader({ stickyTop = 164 }: { stickyTop?: number })
                     onClick={() => setIsSearchOpen(!isSearchOpen)}
                     className="font-medium  flex items-center justify-center cursor-pointer hover:text-neutral-500"
                 >
-                    <TooltipText
+                    {/* <TooltipText
                         delay={300}
                         text="Urutkan"
                         bgColorTw="bg-gray-200 text-black"
                     >
                         <ListFilter size={15} strokeWidth={2} />
-                    </TooltipText>
+                    </TooltipText> */}
                 </button>
             </div>
         </header>

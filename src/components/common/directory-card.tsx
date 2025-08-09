@@ -7,6 +7,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useState } from "react";
 import { set } from "zod";
 import { Button } from "../ui/button";
+import { deleteDirectoryById } from "@/lib/actions";
+import { toast } from "sonner";
 
 export default function DirectoryCard({
     id,
@@ -55,6 +57,7 @@ export default function DirectoryCard({
                                 open={popOverOpen}
                                 onOpenChange={setPopoverOpen}
                                 name={name}
+                                id={id}
                             >
                                 <button onClick={handleEipsis} className="p-1 cursor-pointer">
                                     <EllipsisVertical size={16} className="text-gray-500" />
@@ -70,26 +73,44 @@ export default function DirectoryCard({
 }
 
 function MyPopOver(
-    { open, onOpenChange, children, name }: {
+    { open, onOpenChange, children, name, id }: {
         open: boolean;
         onOpenChange: (open: boolean) => void;
         children: React.ReactNode;
         name: string;
+        id: string;
     }
 ) {
+const handleDelete = async ()=>{
+    try {
+        toast.loading("Menghapus direktori...", {id: "delete-directory" });
+        const deleted = await deleteDirectoryById(id)
+        if(deleted.isSuccess) {
+            toast.success("Direktori berhasil dihapus", {id: "delete-directory" });
+        } else {
+            toast.error("Gagal menghapus direktori", {id: "delete-directory" });
+        }
+        onOpenChange(false);
+
+    } catch (error) {   
+        console.error("Failed to delete directory:", error);
+        toast.error("Gagal menghapus direktori", {id: "delete-directory" });
+    }
+}
+
     return (
         <Popover open={open} onOpenChange={onOpenChange} modal={true}>
             <PopoverTrigger asChild>
                 {children}
             </PopoverTrigger>
-            <PopoverContent>
+            <PopoverContent onClick={(e) => e.stopPropagation()} className="w-48 p-2">
                 <div className="flex items-start justify-between gap-2">
                     <h1>{name}</h1>
                     <Button variant={"outline"}>
                         <ArrowUpRightFromSquare />
                     </Button>
                 </div>
-                <Button variant={"outline"}>
+                <Button onClick={handleDelete} variant={"outline"}>
                     <Trash2 />
                 </Button>
                 <Button className="ml-2" variant={"outline"}>

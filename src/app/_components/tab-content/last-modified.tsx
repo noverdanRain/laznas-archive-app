@@ -6,6 +6,9 @@ import { ChartNoAxesGantt } from "lucide-react";
 export default function PublicHomeLastModified() {
     const documents = useGetDocuments({
         key: ["public-home-last-modified"],
+        filter: {
+            visibility: "public",
+        },
         sort: {
             field: "updatedAt",
             order: "desc"
