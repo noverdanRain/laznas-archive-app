@@ -27,17 +27,32 @@ import { Button } from "@/components/ui/button";
 import EditDocumentDialog from "@/components/layout/admin/edit-document-dialog";
 import { useParams } from "next/navigation";
 import { useGetDocumentById } from "@/hooks/useGetDocumentById";
+import { useState } from "react";
+import { useUserSession } from "@/hooks/useUserSession";
 
 type DocumentType = Awaited<ReturnType<typeof getDocumentById>>;
 
 export default function DetailsDocumentPage() {
     const { docId } = useParams<{ docId: string }>()
 
+    const { userSession } = useUserSession()
     let { data: documentData, ...getDoc } = useGetDocumentById({
         id: docId,
     });
 
-    if(getDoc.isLoading) {
+    const isHavePermission = userSession?.divisionId === documentData?.createdBy.divisionId || userSession?.role === "administrator";
+
+    const [openDialogEdit, setOpenDialogEdit] = useState(false);
+
+    const handleClickEdit = () => {
+        if (!isHavePermission) {
+            toast.error("Anda tidak memiliki izin untuk mengedit dokumen ini. (divisi berbeda)");
+            return;
+        }
+        setOpenDialogEdit(true);
+    };
+
+    if (getDoc.isLoading) {
         return (
             <div className="flex flex-col items-center justify-center h-[calc(100vh-5rem)] gap-2">
                 <Loader2 className="text-emerald-600 animate-spin" size={30} />
@@ -78,8 +93,12 @@ export default function DetailsDocumentPage() {
                         </BreadcrumbItem>
                     </BreadcrumbList>
                 </Breadcrumb>
+                <Button onClick={handleClickEdit} variant="outline" size="icon">
+                    <Pencil />
+                </Button>
                 <EditDocumentDialog
-                    withTrigger={true}
+                    open={openDialogEdit}
+                    onOpenChange={setOpenDialogEdit}
                     defaultValues={documentData}
                     defaultFile={`${documentData?.cid}.${documentData?.fileExt}`}
                 />

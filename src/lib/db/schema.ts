@@ -70,15 +70,22 @@ export const directories = mysqlTable(
         name: varchar("name", { length: 255 }).notNull(),
         description: text("description"),
         isPrivate: boolean("is_private").default(false).notNull(),
+        divisionId: uuidType("division_id"),
         createdAt: timestamp("created_at").defaultNow().notNull(),
         updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
     },
-    () => [
+    (t) => [
+        foreignKey({
+            columns: [t.divisionId],
+            foreignColumns: [divisions.id],
+            name: "fk_division_directory",
+        })
+            .onDelete("set null")
+            .onUpdate("cascade"),
         // INI GAK TERBACA! PERLU DIBUAT MANUAL UNTUK FULLTEXT INDEX
         sql`FULLTEXT directories_fulltext (name)`,
     ]
 );
-
 
 export const documents = mysqlTable(
     "documents",
@@ -87,8 +94,9 @@ export const documents = mysqlTable(
             .primaryKey()
             .notNull()
             .default(sql`(UUID())`),
-        documentNum: varchar("document_num", { length: 255 })
-            .unique("unique_document_num"),
+        documentNum: varchar("document_num", { length: 255 }).unique(
+            "unique_document_num"
+        ),
         documentTypeId: uuidType("document_type_id").notNull(),
         directoryId: uuidType("directory_id").notNull(),
         userId: uuidType("user_id"),

@@ -1,6 +1,6 @@
 import db from "@/lib/db";
-import { directories, documents } from "@/lib/db/schema";
-import { and, eq, sql, SQL } from "drizzle-orm";
+import { directories, divisions, documents } from "@/lib/db/schema";
+import { and, eq, getTableColumns, sql, SQL } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 import { getUserSession } from "./user-session";
 import { throwActionError } from "../helpers";
@@ -49,12 +49,15 @@ async function getDirectories(params?: IGetDirectoriesParams) {
                 name: directories.name,
                 description: directories.description,
                 isPrivate: directories.isPrivate,
+                divisionId: directories.divisionId,
+                divisionName: divisions.name,
                 documentsCount: db.$count(
                     documents,
                     eq(documents.directoryId, directories.id)
                 ),
             })
             .from(directories)
+            .leftJoin(divisions, eq(directories.divisionId, divisions.id))
             .where(and(...handleFilter(filter)));
         return result;
     } catch (error) {
@@ -68,8 +71,12 @@ async function getDirectoryById(params: GetDirectoryByIdParams) {
         const { id, token } = params;
 
         const [directory] = await db
-            .select()
+            .select({
+                ...getTableColumns(directories),
+                divisionName: divisions.name,
+            })
             .from(directories)
+            .leftJoin(divisions, eq(directories.divisionId, divisions.id))
             .where(eq(directories.id, id));
         if (!directory) {
             return null;

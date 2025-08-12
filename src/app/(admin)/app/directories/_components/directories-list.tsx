@@ -28,6 +28,8 @@ export default function DirectoriesList({ directories }: { directories: Director
                         description={directory.description ?? undefined}
                         isPrivate={directory.isPrivate}
                         docsCount={directory.documentsCount}
+                        divisionId={directory.divisionId}
+                        divisionName={directory.divisionName}
                         onClick={(e) => {
                             e.stopPropagation();
                             router.push(`/app/directories/${directory.id}`);

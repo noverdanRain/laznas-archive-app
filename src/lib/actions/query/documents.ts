@@ -114,6 +114,7 @@ const docsQuery = async (
             createdBy: {
                 username: users.username,
                 divisions: divisions.name,
+                divisionId: users.divisionId,
             },
             updatedBy: {
                 username: docHistory.updatedBy.username,
@@ -276,6 +277,7 @@ async function getDocumentById(params: GetDocumentByIdParams) {
                 createdBy: {
                     username: users.username,
                     divisions: divisions.name,
+                    divisionId: users.divisionId,
                 },
                 updatedBy: {
                     username: docHistory.updatedBy.username,

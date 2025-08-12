@@ -6,7 +6,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { cidElipsis, cn, downloadFileFromURI, formatDate } from "@/lib/utils";
-import { ArrowDownToLine, Ellipsis, Eye, EyeOff, Folder, Pencil, Trash } from "lucide-react";
+import { ArrowDownToLine, Ellipsis, Eye, EyeOff, Folder, Lock, Pencil, Trash } from "lucide-react";
 import Link from "next/link";
 import { deleteDocumentById, getAllDocuments, pinataPrivateFile, pinataPublicFile } from "@/lib/actions";
 import { useState } from "react";
@@ -19,19 +19,40 @@ import { toast } from "sonner";
 import { lastAddedTabHome_queryKey } from "@/lib/constants";
 import { useQueryClient } from "@tanstack/react-query";
 import { documentsPage_useGetDocumentsKey } from "@/lib/constants";
+import { useUserSession } from "@/hooks/useUserSession";
 
 type PropsType = Awaited<ReturnType<typeof getAllDocuments>>["list"][0];
 
 export default function TableItem(props: PropsType) {
+    const { userSession } = useUserSession();
+
     const queryClient = useQueryClient();
     const router = useRouter();
     const [elipsisOpen, setEllipsisOpen] = useState(false);
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [openAlert, setOpenAlert] = useState(false);
 
+    const isHavePermission = userSession?.divisionId === props.createdBy.divisionId || userSession?.role === "administrator";
+
     const handleDownload = async () => {
         const uri = props.isPrivate ? await pinataPrivateFile(props.cid) : await pinataPublicFile(props.cid);
         await downloadFileFromURI(uri, props.title);
+    }
+
+    const handleClickDelete = () => {
+        if (!isHavePermission) {
+            toast.error("Anda tidak memiliki izin untuk menghapus dokumen ini. (berbeda divisi)");
+            return;
+        }
+        setOpenAlert(true);
+    }
+
+    const handleClickEdit = () => {
+        if (!isHavePermission) {
+            toast.error("Anda tidak memiliki izin untuk mengedit dokumen ini. (berbeda divisi)");
+            return;
+        }
+        setOpenEditDialog(true);
     }
 
     const handleDelete = async () => {
@@ -58,12 +79,19 @@ export default function TableItem(props: PropsType) {
     return (
         <div
             className={cn(
-                "col-span-6 grid items-center grid-cols-subgrid gap-2 px-6 py-1 border-t bg-white h-[72px] border-gray-200 cursor-default hover:bg-gray-50 transition duration-300 focus:bg-gray-200 select-none",
+                "col-span-6 grid items-center grid-cols-subgrid gap-2 px-6 py-1 border-t bg-white h-[72px] border-gray-200 cursor-default hover:bg-gray-50 transition duration-300 focus:bg-gray-200 select-none relative",
                 elipsisOpen && "bg-gray-200"
             )}
             tabIndex={0}
             onDoubleClick={handleDoubleClick}
         >
+            {
+                !isHavePermission && (
+                    <div className="absolute top-1/2 transform -translate-y-1/2 left-2 text-gray-400">
+                        <Lock size={12} />
+                    </div>
+                )
+            }
             {/* Dokumen */}
             <div className="flex items-center gap-2">
                 <DocumentIcon type={props.fileExt} />
@@ -101,7 +129,7 @@ export default function TableItem(props: PropsType) {
             >
                 <div>
                     <p className="text-sm line-clamp-1">
-                        {props.createdBy.divisions}
+                        Div. {props.createdBy.divisions}
                     </p>
                     <p className="text-xs text-neutral-500 mt-1">
                         {props.createdBy.username}
@@ -124,9 +152,9 @@ export default function TableItem(props: PropsType) {
             <OthersInfo
                 open={elipsisOpen}
                 onOpenChange={setEllipsisOpen}
-                onEdit={() => setOpenEditDialog(true)}
+                onEdit={handleClickEdit}
                 onDownload={handleDownload}
-                onDelete={() => setOpenAlert(true)}
+                onDelete={handleClickDelete}
                 {...props}
             >
                 <div
@@ -219,7 +247,11 @@ function OthersInfo({
                         </Button>
                     </TooltipText>
                     <TooltipText text="Hapus Dokumen">
-                        <Button onClick={onDelete} variant={"outline"} size={"icon"} className="bg-transparent text-red-600 hover:bg-red-50 hover:text-red-600">
+                        <Button onClick={() => {
+                            onDelete?.();
+                            onOpenChange?.(false);
+                        }}
+                            variant={"outline"} size={"icon"} className="bg-transparent text-red-600 hover:bg-red-50 hover:text-red-600">
                             <Trash />
                         </Button>
                     </TooltipText>

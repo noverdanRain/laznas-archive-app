@@ -46,6 +46,7 @@ async function getStaffById(id: string) {
         username: users.username,
         role: users.role,
         divisionName: divisions.name,
+        divisionId: users.divisionId,
         isDisabled: users.isDisabled,
       })
       .from(users)

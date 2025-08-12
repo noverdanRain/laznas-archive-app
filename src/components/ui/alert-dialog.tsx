@@ -164,7 +164,7 @@ function AlertDialogComponent({
           </AlertDialogTrigger>
         )
       }
-      <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+      <AlertDialogContent onClick={(e) => e.stopPropagation()} onFocusOutside={(e) => e.stopPropagation()}>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>

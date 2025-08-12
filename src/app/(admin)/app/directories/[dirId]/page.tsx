@@ -47,6 +47,7 @@ export default function DetailsDirectoryPage() {
                     <Folder size={24} className="fill-amber-500 text-transparent" />
                     <h1 className="font-semibold text-lg">{directory.data?.name}</h1>
                 </div>
+                <p className="text-sm font-medium">Dibuat Oleh Div. {directory.data?.divisionName}</p>
                 <p className="text-sm text-muted-foreground mt-1 max-w-3xl">{directory.data?.description}</p>
                 <div className="flex items-center gap-2 mt-6">
                     <SelectClearable

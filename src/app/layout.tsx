@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "Arsip Publik - Laznas Al Irsyad Purwokerto",
-    description: "Portal arsip publik Laznas Al Irsyad Purwokerto. Akses dokumen, laporan keuangan, program sosial, dan informasi transparansi lembaga amil zakat nasional Al Irsyad Purwokerto.",
+    title: "Arsip - Laznas Al Irsyad Purwokerto",
+    description: "Portal arsip Laznas Al Irsyad Purwokerto. Akses dokumen, laporan keuangan, program sosial, dan informasi transparansi lembaga amil zakat nasional Al Irsyad Purwokerto.",
 };
 
 

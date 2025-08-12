@@ -21,16 +21,19 @@ type DialogProps = {
 
 export default function EditDirectoryDialog({
     children,
+    open,
+    onOpenChange,
     ...props
 }: {
     children?: React.ReactNode;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
 } & DialogProps) {
     const { defName, defDescription, defIsPrivate } = props;
 
     const [visibility, setVisibility] = useState<"private" | "public">(defIsPrivate ? "private" : "public");
     const [name, setName] = useState(defName || "")
     const [description, setDescription] = useState(defDescription || "");
-    const [isOpen, setIsOpen] = useState(false);
 
     const isChanged = name !== defName || description !== defDescription || visibility !== (defIsPrivate ? "private" : "public");
 
@@ -38,7 +41,7 @@ export default function EditDirectoryDialog({
     const editDirectory = useEditDirectory({
         onSuccess: () => {
             toast.success("Berhasil memperbarui direktori", { id: "edit-directory" });
-            setIsOpen(false);
+            onOpenChange?.(false);
         },
         onReject: (message) => {
             toast.error(message, { id: "edit-directory" });
@@ -50,7 +53,7 @@ export default function EditDirectoryDialog({
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+
         const isPrivate = visibility === "private";
 
         if (!name) {
@@ -60,25 +63,22 @@ export default function EditDirectoryDialog({
 
         editDirectory.mutate({
             id: props.id,
-            name,
-            description,
+            name: name === defName ? undefined : name,
+            description: description === defDescription ? undefined : description,
             isPrivate,
         })
         toast.loading("Memperbarui direktori...", { id: "edit-directory" });
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogTrigger asChild>
-                {children || (
-                    <Button className="rounded-full">
-                        Edit Direktori
-                    </Button>
-                )}
+                {children ? children : null}
             </DialogTrigger>
             <DialogContent
-                onOpenAutoFocus={(e) => e.preventDefault()}
-                onInteractOutside={(e) => e.preventDefault()}
+                onClick={(e) => { e.stopPropagation();}}
+                onOpenAutoFocus={(e) => { e.stopPropagation(); e.preventDefault(); }}
+                onInteractOutside={(e) => { e.stopPropagation(); e.preventDefault(); }}
                 className=""
             >
                 <AlertDialogHeader>
@@ -96,7 +96,7 @@ export default function EditDirectoryDialog({
                                 name="name"
                                 placeholder="Nama Direktori"
                                 disabled={editDirectory.isPending}
-                                defaultValue={defName} 
+                                defaultValue={defName}
                                 onChange={(e) => setName(e.target.value)}
                             />
                         </div>
@@ -108,7 +108,7 @@ export default function EditDirectoryDialog({
                                 placeholder="Deskripsi Direktori"
                                 className="min-h-24"
                                 disabled={editDirectory.isPending}
-                                defaultValue={defDescription || ""} 
+                                defaultValue={defDescription || ""}
                                 onChange={(e) => setDescription(e.target.value)}
                             />
                         </div>
@@ -118,14 +118,14 @@ export default function EditDirectoryDialog({
                                 defaultValue={visibility}
                                 onValueChange={(value) => setVisibility(value as "private" | "public")}
                                 className="flex w-full"
-                                value={visibility}
+                                // value={visibility}
                                 id="visibility-options"
                                 disabled={editDirectory.isPending}
                             >
                                 <div className="flex items-center space-x-2 w-full">
-                                    <RadioGroupItem value={"private"} id="option-private" hidden />
+                                    <RadioGroupItem value={"private"} id="option-private-2" hidden />
                                     <Label
-                                        htmlFor="option-private"
+                                        htmlFor="option-private-2"
                                         className={
                                             `h-full space-x-1 p-4 rounded-xl border-2 border-gray-200 w-full cursor-pointer ${visibility === "private" &&
                                             "bg-emerald-50 border-emerald-500"}`
@@ -142,9 +142,9 @@ export default function EditDirectoryDialog({
                                     </Label>
                                 </div>
                                 <div className="flex items-center space-x-2 w-full">
-                                    <RadioGroupItem value={"public"} id="option-public" hidden />
+                                    <RadioGroupItem value={"public"} id="option-public-2" hidden />
                                     <Label
-                                        htmlFor="option-public"
+                                        htmlFor="option-public-2"
                                         className={
                                             `h-full space-x-1 p-4 rounded-xl border-2 border-gray-200 w-full cursor-pointer ${visibility === "public" && "bg-emerald-50 border-emerald-500"}`
                                         }
@@ -165,7 +165,7 @@ export default function EditDirectoryDialog({
                         <DialogClose asChild>
                             <Button variant="outline" disabled={editDirectory.isPending}>Batal</Button>
                         </DialogClose>
-                        <Button disabled={editDirectory.isPending || !isChanged} type="submit">Buat Direktori</Button>
+                        <Button disabled={editDirectory.isPending || !isChanged} type="submit">Ubah Direktori</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

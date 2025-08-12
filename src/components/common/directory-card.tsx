@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRightFromSquare, EllipsisVertical, Lock, Pencil, Trash2 } from "lucide-react";
+import { ArrowUpRightFromSquare, EllipsisVertical, EyeClosed, EyeOff, Lock, Pencil, Trash2 } from "lucide-react";
 import { MdiFolder } from "../ui/icon";
 import { TooltipText } from "./tooltip-text";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useGetDirectories } from "@/hooks/useGetDirectories";
 import { AlertDialogComponent } from "../ui/alert-dialog";
 import EditDirectoryDialog from "@/app/(admin)/app/directories/_components/dialog-edit-directory";
+import { useUserSession } from "@/hooks/useUserSession";
 
 export default function DirectoryCard({
     id,
@@ -19,6 +20,8 @@ export default function DirectoryCard({
     isPrivate,
     docsCount,
     isPublicPage = false,
+    divisionId,
+    divisionName,
     ...props
 }: {
     id: string;
@@ -27,10 +30,15 @@ export default function DirectoryCard({
     isPrivate?: boolean;
     docsCount: number;
     isPublicPage?: boolean;
+    divisionId?: string | null;
+    divisionName?: string | null;
 } & React.HTMLAttributes<HTMLDivElement>
 ) {
 
     const [popOverOpen, setPopoverOpen] = useState(false);
+    const { userSession, ...getUserSession } = useUserSession();
+
+    const isHavePermission = userSession?.divisionId === divisionId || userSession?.role === "administrator";
 
     const handleEipsis = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
@@ -40,19 +48,26 @@ export default function DirectoryCard({
     return (
         <>
             <TooltipText text={name}>
-                <div {...props} className="flex items-center w-full gap-4 p-5 bg-white rounded-2xl border border-gray-200 hover:bg-gray-100 transition cursor-pointer group relative">
-                    <MdiFolder
-                        width={48}
-                        height={48}
-                        className="text-amber-400 group-hover:text-amber-500 transition "
-                    />
+                <div {...props} className="flex items-center w-full gap-4 py-3 px-5 bg-white rounded-2xl border border-gray-200 hover:bg-gray-100 transition cursor-pointer group relative">
+                    <div className="relative flex items-center justify-center">
+                        <MdiFolder
+                            width={40}
+                            height={40}
+                            className="text-amber-400 group-hover:text-amber-500 transition "
+                        />
+                        {
+                            isPrivate && (
+                                <EyeOff strokeWidth={2.5} size={14} className="absolute left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2 text-white" />
+                            )
+                        }
+                    </div>
                     <div className="grid grid-cols-1 w-full">
                         <h3 className="font-medium line-clamp-1">{name}</h3>
                         <p className="text-sm text-gray-500">{docsCount} Dokumen</p>
                     </div>
                     {
-                        isPrivate && (
-                            <Lock size={14} className="absolute top-2 right-2 text-gray-300" />
+                        !isHavePermission && (
+                            <Lock size={14} className="absolute top-2 right-2 text-gray-400" />
                         )
                     }
                     {
@@ -64,6 +79,8 @@ export default function DirectoryCard({
                                 description={props.description}
                                 isPrivate={isPrivate}
                                 id={id}
+                                divisionName={divisionName}
+                                isHavePermission={isHavePermission}
                             >
                                 <button onClick={handleEipsis} className="p-1 cursor-pointer">
                                     <EllipsisVertical size={16} className="text-gray-500" />
@@ -79,7 +96,7 @@ export default function DirectoryCard({
 }
 
 function MyPopOver(
-    { open, onOpenChange, children, name, id, description, isPrivate }: {
+    { open, onOpenChange, children, name, id, description, isPrivate, divisionName, isHavePermission }: {
         open: boolean;
         onOpenChange: (open: boolean) => void;
         children: React.ReactNode;
@@ -87,10 +104,31 @@ function MyPopOver(
         description?: string;
         id: string;
         isPrivate?: boolean;
+        divisionName?: string | null;
+        isHavePermission?: boolean;
     }
 ) {
     const { invalidate } = useGetDirectories();
     const [alertDelete, setAlertDelete] = useState(false);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+
+    const handleOpenEditDialog = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.stopPropagation();
+        if (!isHavePermission) {
+            toast.error("Anda tidak memiliki izin untuk mengedit direktori ini. (berbeda divisi)");
+            return;
+        }
+        setOpenEditDialog(true);
+    };
+
+    const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.stopPropagation();
+        if (!isHavePermission) {
+            toast.error("Anda tidak memiliki izin untuk menghapus direktori ini. (berbeda divisi)");
+            return;
+        }
+        setAlertDelete(true);
+    }
     const handleDelete = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.stopPropagation()
         try {
@@ -117,29 +155,27 @@ function MyPopOver(
                 <PopoverTrigger asChild>
                     {children}
                 </PopoverTrigger>
-                <PopoverContent onClick={(e) => e.stopPropagation()} className="w-48 p-2">
+                <PopoverContent onClick={(e) => e.stopPropagation()} className="min-w-48 max-w-sm p-2">
                     <div className="flex items-center justify-between gap-2">
-                        <h1>{name}</h1>
-                        <Button variant={"outline"}>
-                            <ArrowUpRightFromSquare />
-                        </Button>
+                        <h1>{name} <span className="text-gray-500 text-sm">(Div. {divisionName})</span></h1>
                     </div>
-                    <p className="text-sm text-gray-500 mb-4 line-clamp-3">{description}</p>
-                    <Button onClick={() => setAlertDelete(true)} variant={"outline"}>
+                    <p className="text-sm text-gray-500 mb-4 line-clamp-3 mt-2">{description}</p>
+                    <Button onClick={handleDeleteClick} variant={"outline"}>
                         <Trash2 />
                     </Button>
-                    <EditDirectoryDialog
-                        defName={name}
-                        defIsPrivate={isPrivate || false}
-                        defDescription={description}
-                        id={id}
-                    >
-                        <Button className="ml-2" variant={"outline"}>
-                            <Pencil />
-                        </Button>
-                    </EditDirectoryDialog>
+                    <Button onClick={handleOpenEditDialog} className="ml-2" variant={"outline"}>
+                        <Pencil />
+                    </Button>
                 </PopoverContent>
             </Popover>
+            <EditDirectoryDialog
+                open={openEditDialog}
+                onOpenChange={setOpenEditDialog}
+                defName={name}
+                defIsPrivate={isPrivate || false}
+                defDescription={description || ""}
+                id={id}
+            />
             <AlertDialogComponent
                 open={alertDelete}
                 onOpenChange={setAlertDelete}
