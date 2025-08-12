@@ -3,7 +3,7 @@ import z from "zod";
 
 export interface CustomMutateHooksProps<T = any> {
     onSuccess?: (data?: T) => void;
-    onReject?: (message: string) => void;
+    onReject?: (data: string | any) => void;
     onError?: (error: Error) => void;
     onMutate?: (params: any) => void;
 }

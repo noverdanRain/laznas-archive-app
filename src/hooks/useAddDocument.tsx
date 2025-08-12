@@ -1,6 +1,6 @@
 "use client";
 
-import { addDocument, getPinataPresignedUrl } from "@/lib/actions";
+import { addDocument, getPinataPresignedUrl, isCidExsist } from "@/lib/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { CustomMutateHooksProps } from "@/types";
@@ -13,6 +13,9 @@ import { UploadResponse } from "pinata";
 import { MutateActionsReturnType } from "@/types";
 import { lastAddedTabHome_queryKey } from "@/lib/constants";
 import { documentsPage_useGetDocumentsKey } from "@/lib/constants";
+import { randomUUID } from "crypto";
+import { predictCID } from "@/lib/utils";
+import { v4 as uuidv4 } from "uuid"
 
 export function useAddDocument(props?: CustomMutateHooksProps<AddDocumentResponse>) {
     const { onSuccess, onReject, onError, onMutate } = props || {};
@@ -51,14 +54,18 @@ export function useAddDocument(props?: CustomMutateHooksProps<AddDocumentRespons
                 }, 600);
             } else if (isRejected) {
                 if (onReject) {
-                    onReject(reject?.message || "Ada kesalahan saat menambahkan staff, silakan coba lagi.");
+                    onReject({
+                        message: reject?.message || "Ada kesalahan saat menambahkan dokumen, silakan coba lagi.",
+                        data,
+                    });
                 } else {
-                    toast.error(`${reject?.message || "Ada kesalahan saat menambahkan staff, silakan coba lagi."}`);
+                    toast.error(`${reject?.message || "Ada kesalahan saat menambahkan dokumen, silakan coba lagi."}`);
                 }
             }
         },
         onError: (error) => {
             setIsSubmitting(false);
+            console.log("Error in useAddDocument:", error);
             if (onError) {
                 onError(error);
             } else {
@@ -78,13 +85,33 @@ export function useAddDocument(props?: CustomMutateHooksProps<AddDocumentRespons
         isPrivate: boolean,
     }
 
-    async function mutate(params: AddDocMutateParams) {
+    async function mutate(params: AddDocMutateParams): Promise<MutateActionsReturnType & { data?: AddDocumentResponse }> {
         setProgress({ value: 0, message: "Sedang mengunggah dokumen..." });
+        const docId = uuidv4();
         try {
             setIsSubmitting(true);
-            setProgress({ value: 20, message: "Mendapatkan informasi untuk mengunggah dokumen..." });
+
+            setProgress({ value: 10, message: "Mempersiapkan dokumen untuk diunggah..." });
+            const cid = await predictCID(params.file);
+            if (!cid) {
+                setIsSubmitting(false);
+                throw new Error("Gagal memprediksi CID dari file.");
+            }
+            const fileExists = await isCidExsist(cid);
+            if (fileExists) {
+                setIsSubmitting(false);
+                return {
+                    isRejected: true,
+                    reject: {
+                        message: "File sudah pernah disimpan sebelumnya, silakan gunakan file lain.",
+                    },
+                    data: { cid, id: "" },
+                }
+            }
+
+            setProgress({ value: 30, message: "Mendapatkan informasi untuk mengunggah dokumen..." });
             const presignedUrl = await getPinataPresignedUrl({
-                fileName: params.title,
+                fileName: docId,
                 isPrivate: params.isPrivate,
             });
             setProgress({ value: 50, message: "Mengunggah dokumen ke IPFS..." });
@@ -95,6 +122,7 @@ export function useAddDocument(props?: CustomMutateHooksProps<AddDocumentRespons
             })
             setProgress({ value: 75, message: "Menyimpan dokumen ke database..." });
             const addDocResponse = await addDocument({
+                id: docId,
                 cid: IpfsUploadRes.data.cid,
                 directoryId: params.directoryId,
                 documentTypeId: params.documentTypeId,

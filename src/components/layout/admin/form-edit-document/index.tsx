@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useEditDocument } from "@/hooks/useEditDocuments";
 import { editDocumentFormSchema } from "@/types";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 type FormEditDocumentProps = {
@@ -35,24 +36,41 @@ export default function FormEditDocument(props: FormEditDocumentProps) {
         defaultValues: props.defaultValues,
     });
 
+    const isValueChanged = (field: keyof z.infer<typeof editDocumentFormSchema>) => {
+        return form.watch(field) !== props.defaultValues[field];
+    };
+
+    const isChanged = Object.keys(editDocumentFormSchema.shape).some((key) => {
+        const field = key as keyof z.infer<typeof editDocumentFormSchema>;
+        return isValueChanged(field);
+    });
+
+    const queryClient = useQueryClient();
+
     const editDocument = useEditDocument({
-        onSuccess: (data) => {
+        onSuccess: () => {
             form.reset();
             toast.success("Dokumen berhasil diedit.", {
                 duration: 5000,
             });
-            console.log("Document added successfully:", data);
+            queryClient.invalidateQueries({ queryKey: ["document", props.documentId] });
+            queryClient.invalidateQueries({ queryKey: ["histories", props.documentId] });
             if (props?.onSubmited) {
                 props.onSubmited();
             }
         },
+        onReject: (reject) => {
+            toast.error(reject?.message || "Ada kesalahan saat mengedit dokumen, silakan coba lagi.")
+            if (reject?.data.cid) {
+                form.setError("file", {
+                    message: "File sudah pernah disimpan sebelumnya, silakan gunakan file lain.",
+                });
+            }
+        }
     });
 
     function onSubmit(values: z.infer<typeof editDocumentFormSchema>) {
-        console.log("Submitting form with values:", {
-            data: values,
-            documentId: props.documentId,
-        });
+
         editDocument.mutate({
             documentId: props.documentId,
             data: {
@@ -102,7 +120,7 @@ export default function FormEditDocument(props: FormEditDocumentProps) {
                         >
                             Batal
                         </Button>
-                        <Button type="submit">Submit</Button>
+                        <Button disabled={!isChanged} type="submit">Submit</Button>
                     </div>
                 </form>
             </Form>

@@ -1,6 +1,6 @@
 "use client";
 
-import { addDocument, getPinataPresignedUrl } from "@/lib/actions";
+import { getPinataPresignedUrl } from "@/lib/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { CustomMutateHooksProps } from "@/types";
@@ -12,12 +12,17 @@ import { pinata } from "@/lib/pinata-config";
 import { UploadResponse } from "pinata";
 import { MutateActionsReturnType } from "@/types";
 import { lastAddedTabHome_queryKey } from "@/lib/constants";
-import getFileExt from "@/lib/utils";
+import getFileExt, { predictCID } from "@/lib/utils";
 import { documentsPage_useGetDocumentsKey } from "@/lib/constants";
+import { isCidExsist } from "@/lib/actions";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function useEditDocument(props?: CustomMutateHooksProps) {
     const { onSuccess, onReject, onError, onMutate } = props || {};
     const queryClient = useQueryClient();
+    const router = useRouter();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [progress, setProgress] = useState({
@@ -33,7 +38,7 @@ export function useEditDocument(props?: CustomMutateHooksProps) {
             }
         },
         onSettled: (res) => {
-            const { isSuccess, isRejected, reject} = res || {};
+            const { isSuccess, isRejected, reject, data } = res || {};
             if (isSuccess) {
                 setIsSubmitting(true);
                 setProgress({ value: 100, message: "Dokumen berhasil diedit." });
@@ -51,9 +56,12 @@ export function useEditDocument(props?: CustomMutateHooksProps) {
                 }, 600);
             } else if (isRejected) {
                 if (onReject) {
-                    onReject(reject?.message || "Ada kesalahan saat menambahkan staff, silakan coba lagi.");
+                    onReject({
+                        message: reject?.message || "Ada kesalahan saat mengedit dokumen, silakan coba lagi.",
+                        data: data,
+                    });
                 } else {
-                    toast.error(`${reject?.message || "Ada kesalahan saat menambahkan staff, silakan coba lagi."}`);
+                    toast.error(reject?.message || "Ada kesalahan saat menambahkan staff, silakan coba lagi.")
                 }
             }
         },
@@ -62,7 +70,7 @@ export function useEditDocument(props?: CustomMutateHooksProps) {
             if (onError) {
                 onError(error);
             } else {
-                toast.error("Terjadi kesalahan saat menambahkan dokumen, silakan coba lagi.");
+                toast.error("Terjadi kesalahan saat memperbarui dokumen, silakan coba lagi.");
             }
         },
     });
@@ -80,16 +88,35 @@ export function useEditDocument(props?: CustomMutateHooksProps) {
         };
     }
 
-    async function mutate(params: EditDocMutateParams) {
+    async function mutate(params: EditDocMutateParams): Promise<MutateActionsReturnType & { data?: any }> {
         const { documentId, data } = params;
-        setProgress({ value: 10, message: "Sedang mengunggah dokumen..." });
         let ipfsUploadRes: Awaited<ReturnType<typeof pinataUpload>> | undefined;
         try {
             setIsSubmitting(true);
-            setProgress({ value: 20, message: "Mendapatkan informasi untuk mengunggah dokumen..." });
             if (data.file) {
+                setProgress({ value: 10, message: "Mempersiapkan dokumen untuk diunggah..." });
+                const cid = await predictCID(data.file);
+                if (!cid) {
+                    setIsSubmitting(false);
+                    throw new Error("Gagal memprediksi CID dari file.");
+                }
+                const fileExists = await isCidExsist(cid);
+                if (fileExists) {
+                    setIsSubmitting(false);
+                    return {
+                        isRejected: true,
+                        reject: {
+                            message: "File sudah pernah disimpan sebelumnya, silakan gunakan file lain.",
+                        },
+                        data: {
+                            cid
+                        }
+                    }
+                }
+
+                setProgress({ value: 30, message: "Mendapatkan informasi untuk mengunggah dokumen..." });
                 const presignedUrl = await getPinataPresignedUrl({
-                    fileName: data.title || "document",
+                    fileName: documentId,
                     isPrivate: data.isPrivate,
                 });
                 setProgress({ value: 50, message: "Mengunggah dokumen ke IPFS..." });

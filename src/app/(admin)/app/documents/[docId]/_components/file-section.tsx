@@ -3,22 +3,24 @@
 import { TooltipText } from "@/components/common/tooltip-text";
 import { ButtonDownload } from "./button-download";
 import Link from "next/link";
-import { getDocumentById, pinataPrivateFile, pinataPublicFile } from "@/lib/actions";
-import { Eye, Lock, SquareArrowOutUpRight } from "lucide-react";
+import { getDocumentById, getDocumentHistoryById, pinataPrivateFile, pinataPublicFile } from "@/lib/actions";
+import { Eye, Loader2, Lock, SquareArrowOutUpRight } from "lucide-react";
 import Image from "next/image";
 import DocumentIcon from "@/components/common/document-Icon";
 import { cidElipsis } from "@/lib/utils";
 import useGetPinataFile from "@/hooks/useGetPinataFile";
 type DocumentType = Awaited<ReturnType<typeof getDocumentById>>;
+type HistoryType = Awaited<ReturnType<typeof getDocumentHistoryById>>;
 
+export default function FileSection({ document, documentHist }: { document?: DocumentType, documentHist?: HistoryType }) {
+    const documentData = document ? document : documentHist;
 
-export default function FileSection({ documentData }: { documentData: DocumentType }) {
     const { url, isLoading } = useGetPinataFile({
         cid: documentData?.cid || "",
         visibility: documentData?.isPrivate ? "private" : "public",
     });
 
-    const handleOpenInNewTab = async() => {
+    const handleOpenInNewTab = async () => {
         const uri = documentData?.isPrivate ? await pinataPrivateFile(documentData!.cid) : await pinataPublicFile(documentData!.cid);
         window.open(uri, "_blank");
     }
@@ -33,33 +35,36 @@ export default function FileSection({ documentData }: { documentData: DocumentTy
                         isPrivate={documentData?.isPrivate}
                     />
                     <TooltipText text="Buka dokumen di Tab Baru">
-                            <button onClick={handleOpenInNewTab} className="cursor-pointer hover:text-emerald-600 transition-colors">
-                                <SquareArrowOutUpRight size={16} />
-                            </button>
+                        <button onClick={handleOpenInNewTab} className="cursor-pointer hover:text-emerald-600 transition-colors">
+                            <SquareArrowOutUpRight size={16} />
+                        </button>
                     </TooltipText>
                 </div>
                 <div className="w-[calc(100%+2px)] h-[calc(100%-3rem)] border border-gray-200 rounded-t-[20px] absolute -left-[1px] -bottom-0.5 bg-white overflow-hidden">
                     <div className="h-[calc(100%-4.5rem)] w-full flex items-center justify-center text-gray-400">
                         <div className="flex flex-col items-center justify-center gap-1 w-full h-full">
                             {
-                                url && (documentData?.fileExt == "png" || documentData?.fileExt == "jpg" || documentData?.fileExt == "jpeg") ? (
-                                    <Image
-                                        src={url}
-                                        alt="Preview Dokumen"
-                                        width={200}
-                                        height={200}
-                                        className="w-full h-full object-cover object-center"
-                                    />
-                                ) : (
-                                    <>
-                                        <DocumentIcon
-                                            size={30}
-                                            className="text-gray-300"
-                                            type={documentData?.fileExt || ""}
+                                isLoading ? (
+                                    <Loader2 className="animate-spin" />
+                                ) :
+                                    url && (documentData?.fileExt == "png" || documentData?.fileExt == "jpg" || documentData?.fileExt == "jpeg") ? (
+                                        <Image
+                                            src={url}
+                                            alt="Preview Dokumen"
+                                            width={200}
+                                            height={200}
+                                            className="w-full h-full object-cover object-center"
                                         />
-                                        <p>Tidak ada preview</p>
-                                    </>
-                                )
+                                    ) : (
+                                        <>
+                                            <DocumentIcon
+                                                size={30}
+                                                className="text-gray-300"
+                                                type={documentData?.fileExt || ""}
+                                            />
+                                            <p>Tidak ada preview</p>
+                                        </>
+                                    )
                             }
                         </div>
                     </div>
@@ -70,7 +75,7 @@ export default function FileSection({ documentData }: { documentData: DocumentTy
                                 {documentData?.title}
                             </p>
                             <button
-                                onClick={handleOpenInNewTab} 
+                                onClick={handleOpenInNewTab}
                                 className="text-xs text-gray-500 hover:underline"
                             >
                                 {cidElipsis(documentData?.cid || "", 10, 10)}.
@@ -87,12 +92,13 @@ export default function FileSection({ documentData }: { documentData: DocumentTy
                         <p className="text-xs ">Private</p>
                     </>
 
-                ) : (
+                ) : document && (
                     <>
-                        <Eye size={16} className="" />
-                        <p className="text-xs ">{documentData?.viewsCount} Dilihat</p>
+                        <Eye size={16} />
+                        <p className="text-xs">{document.viewsCount} Dilihat</p>
                     </>
-                )}
+                )
+                }
             </div>
         </section>
     )

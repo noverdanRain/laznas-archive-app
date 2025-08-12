@@ -4,13 +4,18 @@ import { TooltipText } from "@/components/common/tooltip-text";
 import { activeTabAtom } from "@/lib/atom";
 import { cn } from "@/lib/utils";
 import { atom, useAtom } from "jotai";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
+
 
 type tabName = "last-added" | "last-modified" | "added-by-me";
 
 export default function HomepageTabButton() {
-    const [activeTab, setActiveTab] = useAtom(activeTabAtom);
+    const searchParams = useSearchParams();
+    const activeTab = searchParams.get("t") || "last-added";
+    const router = useRouter();
     const handleTabChange = (tab: tabName) => {
-        setActiveTab(tab);
+        router.push(`/app?t=${tab}`);
     };
 
     return (

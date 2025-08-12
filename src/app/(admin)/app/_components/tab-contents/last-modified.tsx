@@ -7,8 +7,13 @@ const lastModifiedTabHome_queryKey = ["last-modified-documents"];
 
 export default function LastModifiedTabContent() {
     const getDocuments = useGetDocuments({
-        key: lastModifiedTabHome_queryKey, filter: {
+        key: lastModifiedTabHome_queryKey,
+        filter: {
             lastUpdated: "30days"
+        },
+        sort: {
+            field:"updatedAt",
+            order: "desc"
         }
     });
 

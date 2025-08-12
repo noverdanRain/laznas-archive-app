@@ -25,6 +25,7 @@ export default function DirectoriesList({ directories }: { directories: Director
                         key={directory.id}
                         id={directory.id}
                         name={directory.name}
+                        description={directory.description ?? undefined}
                         isPrivate={directory.isPrivate}
                         docsCount={directory.documentsCount}
                         onClick={(e) => {

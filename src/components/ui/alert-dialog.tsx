@@ -147,18 +147,24 @@ function AlertDialogComponent({
   title,
   description,
   onConfirm,
+  danger,
   ...props
 }: React.PropsWithChildren<React.ComponentProps<typeof AlertDialog>> & {
   title: string;
   description: string;
-  onConfirm?: () => void;
+  onConfirm?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  danger?: boolean;
 }) {
   return (
     <AlertDialog {...props}>
-      <AlertDialogTrigger asChild>
-        {children}
-      </AlertDialogTrigger>
-      <AlertDialogContent>
+      {
+        children && (
+          <AlertDialogTrigger asChild>
+            {children}
+          </AlertDialogTrigger>
+        )
+      }
+      <AlertDialogContent onClick={(e) => e.stopPropagation()}>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>
@@ -166,8 +172,12 @@ function AlertDialogComponent({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Batal</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>Lanjut</AlertDialogAction>
+          <AlertDialogCancel onClick={(e) => e.stopPropagation()}>Batal</AlertDialogCancel>
+          <AlertDialogAction onClick={(e) => onConfirm?.(e)}
+            className={cn(danger ? "bg-red-500 hover:bg-red-600" : "bg-emerald-500 hover:bg-emerald-600")}
+          >
+            Lanjut
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

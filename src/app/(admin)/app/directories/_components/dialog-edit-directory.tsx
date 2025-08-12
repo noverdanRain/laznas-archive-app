@@ -2,38 +2,55 @@
 
 import { AlertDialogHeader } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { useAddDirectory } from "@/hooks/useAddDirectory";
+import useEditDirectory from "@/hooks/useEditDirectory";
 import { Eye, Lock } from "lucide-react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
-export default function AddDirectoryDialog({
+type DialogProps = {
+    defName: string;
+    defDescription?: string;
+    defIsPrivate: boolean;
+    id: string;
+}
+
+export default function EditDirectoryDialog({
     children,
+    ...props
 }: {
     children?: React.ReactNode;
-}) {
-    const [visibility, setVisibility] = useState<"private" | "public">("private");
+} & DialogProps) {
+    const { defName, defDescription, defIsPrivate } = props;
+
+    const [visibility, setVisibility] = useState<"private" | "public">(defIsPrivate ? "private" : "public");
+    const [name, setName] = useState(defName || "")
+    const [description, setDescription] = useState(defDescription || "");
     const [isOpen, setIsOpen] = useState(false);
 
-    const addDirectory = useAddDirectory({
+    const isChanged = name !== defName || description !== defDescription || visibility !== (defIsPrivate ? "private" : "public");
+
+
+    const editDirectory = useEditDirectory({
         onSuccess: () => {
+            toast.success("Berhasil memperbarui direktori", { id: "edit-directory" });
             setIsOpen(false);
-            setVisibility("private");
+        },
+        onReject: (message) => {
+            toast.error(message, { id: "edit-directory" });
+        },
+        onError: (error) => {
+            toast.error(error.message || "Ada kesalahan saat mengedit direktori, silakan coba lagi.", { id: "edit-directory" });
         }
     });
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        const formData = new FormData(e.currentTarget);
-        const name = formData.get("name") as string;
-        const description = formData.get("description") as string;
+        
         const isPrivate = visibility === "private";
 
         if (!name) {
@@ -41,12 +58,13 @@ export default function AddDirectoryDialog({
             return;
         }
 
-        addDirectory.mutate({
+        editDirectory.mutate({
+            id: props.id,
             name,
-            description: description || null,
+            description,
             isPrivate,
         })
-        toast.loading("Membuat direktori...", { id: "add-directory" });
+        toast.loading("Memperbarui direktori...", { id: "edit-directory" });
     };
 
     return (
@@ -54,7 +72,7 @@ export default function AddDirectoryDialog({
             <DialogTrigger asChild>
                 {children || (
                     <Button className="rounded-full">
-                        Buat Direktori Baru
+                        Edit Direktori
                     </Button>
                 )}
             </DialogTrigger>
@@ -64,7 +82,7 @@ export default function AddDirectoryDialog({
                 className=""
             >
                 <AlertDialogHeader>
-                    <DialogTitle>Buat Direktori Baru</DialogTitle>
+                    <DialogTitle>Ubah Direktori</DialogTitle>
                     <DialogDescription>
                         Masukkan nama direktori yang diinginkan dan jika diperlukan, tambahkan deskripsi untuk direktori tersebut.
                     </DialogDescription>
@@ -77,7 +95,9 @@ export default function AddDirectoryDialog({
                                 id="dir-name"
                                 name="name"
                                 placeholder="Nama Direktori"
-                                disabled={addDirectory.isPending}
+                                disabled={editDirectory.isPending}
+                                defaultValue={defName} 
+                                onChange={(e) => setName(e.target.value)}
                             />
                         </div>
                         <div className="grid gap-3">
@@ -87,7 +107,9 @@ export default function AddDirectoryDialog({
                                 name="description"
                                 placeholder="Deskripsi Direktori"
                                 className="min-h-24"
-                                disabled={addDirectory.isPending}
+                                disabled={editDirectory.isPending}
+                                defaultValue={defDescription || ""} 
+                                onChange={(e) => setDescription(e.target.value)}
                             />
                         </div>
                         <div className="grid gap-3">
@@ -98,7 +120,7 @@ export default function AddDirectoryDialog({
                                 className="flex w-full"
                                 value={visibility}
                                 id="visibility-options"
-                                disabled={addDirectory.isPending}
+                                disabled={editDirectory.isPending}
                             >
                                 <div className="flex items-center space-x-2 w-full">
                                     <RadioGroupItem value={"private"} id="option-private" hidden />
@@ -141,9 +163,9 @@ export default function AddDirectoryDialog({
                     </div>
                     <DialogFooter className="mt-4 bg-amber">
                         <DialogClose asChild>
-                            <Button variant="outline" disabled={addDirectory.isPending}>Batal</Button>
+                            <Button variant="outline" disabled={editDirectory.isPending}>Batal</Button>
                         </DialogClose>
-                        <Button disabled={addDirectory.isPending} type="submit">Buat Direktori</Button>
+                        <Button disabled={editDirectory.isPending || !isChanged} type="submit">Buat Direktori</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

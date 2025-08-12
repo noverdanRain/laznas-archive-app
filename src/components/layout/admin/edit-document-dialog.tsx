@@ -27,6 +27,10 @@ type EditDocumentDialogProps = {
 export default function EditDocumentDialog(props: EditDocumentDialogProps) {
     const { open, onOpenChange, defaultFile } = props;
     const closeRef = useRef<HTMLButtonElement>(null);
+    const handleSubmited = ()=>{
+        onOpenChange?.(false);
+        closeRef.current?.click();
+    }
     const handleClose = () => {
         onOpenChange?.(false);
         closeRef.current?.click();
@@ -47,6 +51,7 @@ export default function EditDocumentDialog(props: EditDocumentDialogProps) {
                 className="p-0 overflow-clip"
                 onOpenAutoFocus={(e) => e.preventDefault()}
                 onInteractOutside={(e) => e.preventDefault()}
+                onDoubleClick={(e) => e.stopPropagation()}
             >
                 <div className="h-[calc(100vh-2rem)] px-5 pb-5 w-full overflow-y-scroll">
                     <DialogHeader className="pb-4 pt-5 border-b-2 border-gray-200 border-dashed sticky top-0 bg-white z-10">
@@ -59,7 +64,7 @@ export default function EditDocumentDialog(props: EditDocumentDialogProps) {
                         className="mt-4"
                         onCancel={handleClose}
                         defaultFile={defaultFile}
-                        onSubmited={handleClose}
+                        onSubmited={handleSubmited}
                         documentId={props.defaultValues.id}
                         defaultValues={{
                             file: null,
@@ -73,7 +78,7 @@ export default function EditDocumentDialog(props: EditDocumentDialogProps) {
                     />
                 </div>
                 <DialogClose hidden asChild>
-                    <button>Close</button>
+                    <button ref={closeRef}>Close</button>
                 </DialogClose>
             </DialogContent>
         </Dialog>

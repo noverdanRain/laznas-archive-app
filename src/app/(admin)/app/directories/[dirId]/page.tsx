@@ -5,7 +5,6 @@ import StaffDocumentsTable from "@/components/layout/admin/documents-table";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useGetDirectoryById } from "@/hooks/useGetDirectoryById";
 import { useGetDocuments } from "@/hooks/useGetDocuments";
-import { dir } from "console";
 import { Folder } from "lucide-react";
 import { useParams } from 'next/navigation'
 
@@ -56,13 +55,6 @@ export default function DetailsDirectoryPage() {
                             {label: "Dokumen Pribadi", value: "private"},
                         ]}
                         placeholder="Jenis Dokumen"
-                    />
-                    <SelectClearable
-                        items={[
-                            {label: "Semua Dokumen", value: "all"},
-                            {label: "Dokumen Pribadi", value: "private"},
-                        ]}
-                        placeholder="Dirambahkan Oleh"
                     />
                     <SelectClearable
                         items={[

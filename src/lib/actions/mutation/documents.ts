@@ -61,14 +61,14 @@ async function addDocument(
         const docId = randomUUID() as string;
         const dateNow = new Date();
         await db.insert(documents).values({
-            id: docId,
+            id: params.id || docId,
             createdAt: dateNow,
             updatedAt: dateNow,
             userId: useSession.id,
             ...params,
         });
         await addDocumentHistory({
-            documentId: docId,
+            documentId: params.id || docId,
             dateChanged: dateNow,
             cid: params.cid,
             documentTypeId: params.documentTypeId,

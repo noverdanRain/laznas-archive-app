@@ -6,7 +6,7 @@ type Params = {
 }
 export function useGetDocHistories(params: Params) {
     const queryClient = useQueryClient();
-    const queryKey = ["get-document-histories", params.docId];
+    const queryKey = ["histories", params.docId];
 
     const query = useQuery({
         queryKey,

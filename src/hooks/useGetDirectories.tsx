@@ -6,7 +6,7 @@ import { IGetDirectoriesParams } from "@/lib/actions/query/directories";
 import { useState } from "react";
 
 export function useGetDirectories(params?: IGetDirectoriesParams & { key?: string[] }) {
-    const queryKey = params?.key || ['get-directories'];
+    const queryKey = ['get-directories', ...(params?.key || [])];
     const queryClient = useQueryClient();
     const [isUpdate, setIsUpdate] = useState<boolean>(false);
 

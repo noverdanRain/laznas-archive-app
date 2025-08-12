@@ -11,7 +11,7 @@ export default function TableContent({ children, getDocsData }: Props & { getDoc
     return (
         <div className="flex w-full flex-col justify-between bg-white rounded-b-2xl border border-t-0 border-gray-200 text-sm overflow-hidden min-h-[calc(100vh-300px)]">
             <div
-                className="grid grid-cols-[5fr_3fr_2.5fr_2fr_0.9fr_0.6fr] gap-x-4 w-full"
+                className="grid grid-cols-[5fr_3fr_2fr_2.5fr_0.9fr_0.6fr] gap-x-4 w-full"
             >
                 {children}
             </div>

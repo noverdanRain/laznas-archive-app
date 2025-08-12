@@ -1,6 +1,9 @@
 import { clsx, type ClassValue } from "clsx";
 import moment from "moment-timezone";
 import { twMerge } from "tailwind-merge";
+import { importer } from "ipfs-unixfs-importer";
+import { MemoryBlockstore } from "blockstore-core/memory";
+import { FileWithPath } from "react-dropzone";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -78,8 +81,33 @@ export async function downloadFileFromURI(uri: string, fileName: string) {
     }
 }
 
-export const urlToFile = async (url: string, filename: string, mimeType: string) => {
-  const response = await fetch(url);
-  const blob = await response.blob();
-  return new File([blob], filename, { type: mimeType });
+export const urlToFile = async (
+    url: string,
+    filename: string,
+    mimeType: string
+) => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new File([blob], filename, { type: mimeType });
+};
+
+export const predictCID = async (file: File | FileWithPath, version: 0 | 1 = 1): Promise<string | undefined> => {
+    try {
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const blockstore = new MemoryBlockstore();
+
+        let rootCid: string | undefined;
+
+        for await (const result of importer([{ content: buffer }], blockstore, {
+            cidVersion: version,
+            rawLeaves: version === 1,
+        })) {
+            rootCid = result.cid.toString();
+        }
+
+        return rootCid;
+    } catch (err) {
+        throw new Error(`Failed to predict CID: ${err instanceof Error ? err.message : String(err)}`);
+    }
 };

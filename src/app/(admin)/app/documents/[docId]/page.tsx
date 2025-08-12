@@ -1,3 +1,5 @@
+"use client";
+
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -12,6 +14,7 @@ import {
     Eye,
     FileX,
     Folder,
+    Loader2,
     Pencil,
 } from "lucide-react";
 import Link from "next/link";
@@ -22,18 +25,24 @@ import { toast } from "sonner";
 import FileSection from "./_components/file-section";
 import { Button } from "@/components/ui/button";
 import EditDocumentDialog from "@/components/layout/admin/edit-document-dialog";
-
-type Params = Promise<{ docId: string }>;
+import { useParams } from "next/navigation";
+import { useGetDocumentById } from "@/hooks/useGetDocumentById";
 
 type DocumentType = Awaited<ReturnType<typeof getDocumentById>>;
 
-export default async function DetailsDocumentPage(props: { params: Params }) {
-    const { docId } = await props.params;
-    let documentData: DocumentType = null;
-    try {
-        documentData = await getDocumentById({ id: docId });
-    } catch (error) {
-        toast.error("Gagal mengambil data dokumen");
+export default function DetailsDocumentPage() {
+    const { docId } = useParams<{ docId: string }>()
+
+    let { data: documentData, ...getDoc } = useGetDocumentById({
+        id: docId,
+    });
+
+    if(getDoc.isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[calc(100vh-5rem)] gap-2">
+                <Loader2 className="text-emerald-600 animate-spin" size={30} />
+            </div>
+        );
     }
 
     if (!documentData) {
@@ -76,7 +85,7 @@ export default async function DetailsDocumentPage(props: { params: Params }) {
                 />
             </div>
             <div className="grid grid-cols-[1.1fr_2fr] gap-6 mt-6">
-                <FileSection documentData={documentData} />
+                <FileSection document={documentData} />
                 <IdentitySection documentData={documentData} />
             </div>
         </div>

@@ -47,11 +47,18 @@ export default function FormAddDocument(props?: FormAddDocumentProps) {
                 description: `Dokumen telah berhasil ditambahkan.`,
                 duration: 5000,
             });
-            console.log("Document added successfully:", data);
             if (props?.onSubmited) {
                 props.onSubmited();
             }
         },
+        onReject: (reject) => {
+            toast.error(reject.message || "Ada kesalahan saat menambahkan dokumen, silakan coba lagi.");
+            if (reject?.data.cid) {
+                form.setError("file", {
+                    message: "File sudah pernah disimpan sebelumnya, silakan gunakan file lain.",
+                });
+            }
+        }
     });
 
     function onSubmit(values: z.infer<typeof addDocumentFormSchema>) {
@@ -73,8 +80,6 @@ export default function FormAddDocument(props?: FormAddDocumentProps) {
             props.onCancel();
         }
     };
-
-    console.log("Is loading:", addDocument.isLoading);
 
 
     return (

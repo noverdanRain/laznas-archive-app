@@ -40,7 +40,7 @@ export default function FileField({
                             className={cn(
                                 "flex items-center gap-2 border border-gray-200 rounded-lg py-3 px-4 relative",
                                 fieldState.error && "border-red-500",
-                                value && "border-emerald-400"
+                                (value && !fieldState.error) && "border-emerald-400"
                             )}
                         >
 

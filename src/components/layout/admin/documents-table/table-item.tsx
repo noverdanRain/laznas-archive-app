@@ -89,14 +89,25 @@ export default function TableItem(props: PropsType) {
                     {props.directory?.name || "Tidak ada direktori"}
                 </Link>
             </div>
-            {/* Jenis Dokumen */}
-            <p className="line-clamp-1">
-                {props.documentType || "Tidak ada jenis dokumen"}
-            </p>
             {/* Ditambahkan pada */}
             <p className="line-clamp-1 text-xs">
                 {formatDate(props.createdAt)}
             </p>
+            {/* Ditambahkan Oleh */}
+            <TooltipText
+                delay={200}
+                text={`${props.createdBy.divisions} (${props.createdBy.username})`}
+                bgColorTw="bg-gray-200 text-black"
+            >
+                <div>
+                    <p className="text-sm line-clamp-1">
+                        {props.createdBy.divisions}
+                    </p>
+                    <p className="text-xs text-neutral-500 mt-1">
+                        {props.createdBy.username}
+                    </p>
+                </div>
+            </TooltipText>
             {/* Dilihat */}
             {props.isPrivate ? (
                 <div className="w-full flex items-center gap-1">
@@ -169,6 +180,7 @@ function OthersInfo({
             <PopoverContent
                 side="left"
                 className="max-w-lg w-fit grid grid-cols-[140px_1fr] gap-4 text-sm py-4 bg-gray-50"
+                onDoubleClick={(e) => e.stopPropagation()}
             >
                 <div className="col-span-2">
                     <p className="font-medium">{props.title}</p>
@@ -180,13 +192,8 @@ function OthersInfo({
                 </div>
                 <p className="text-neutral-500">No. Dokumen</p>
                 <p>{props.documentNum || "-"}</p>
-                <p className="text-neutral-500">Ditambahkan Oleh</p>
-                <p>
-                    Div.{props.createdBy.divisions}{" "}
-                    <span className="text-neutral-500">
-                        ({props.createdBy.username})
-                    </span>
-                </p>
+                <p className="text-neutral-500">Jenis Dokumen</p>
+                <p>{props.documentType}</p>
                 <p className="text-neutral-500">Dimodifikasi pada</p>
                 <p>{formatDate(props.updatedAt)}</p>
                 <p className="text-neutral-500">Dimodifikasi oleh</p>

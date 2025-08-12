@@ -27,6 +27,7 @@ export default function AddDocumentDialog(props: AddDocumentDialogProps) {
                 className="p-0 overflow-clip"
                 onOpenAutoFocus={(e) => e.preventDefault()}
                 onInteractOutside={(e) => e.preventDefault()}
+                onDoubleClick={(e) => e.stopPropagation()}
             >
                 <div className="h-[calc(100vh-2rem)] px-5 pb-5 w-full overflow-y-scroll">
                     <DialogHeader className="pb-4 pt-5 border-b-2 border-gray-200 border-dashed sticky top-0 bg-white z-10">

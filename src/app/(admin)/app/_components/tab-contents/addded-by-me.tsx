@@ -15,7 +15,6 @@ export default function AddedByMeTabContent() {
         filter: {
             addedBy: userSession?.id
         },
-        query: "kurban"
     });
 
     const handleSelectChange = (value: "7days" | "30days" | "6month" | "1year") => {

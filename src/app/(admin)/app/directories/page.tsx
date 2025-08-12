@@ -11,8 +11,6 @@ import { useGetDirectories } from "@/hooks/useGetDirectories";
 export default function DirectoryPage() {
     const directories = useGetDirectories({
         key: ["dir-staff"],
-        filter: {
-        },
     });
 
     const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {

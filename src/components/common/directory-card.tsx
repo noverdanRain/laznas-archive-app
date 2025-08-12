@@ -9,6 +9,9 @@ import { set } from "zod";
 import { Button } from "../ui/button";
 import { deleteDirectoryById } from "@/lib/actions";
 import { toast } from "sonner";
+import { useGetDirectories } from "@/hooks/useGetDirectories";
+import { AlertDialogComponent } from "../ui/alert-dialog";
+import EditDirectoryDialog from "@/app/(admin)/app/directories/_components/dialog-edit-directory";
 
 export default function DirectoryCard({
     id,
@@ -20,6 +23,7 @@ export default function DirectoryCard({
 }: {
     id: string;
     name: string;
+    description?: string;
     isPrivate?: boolean;
     docsCount: number;
     isPublicPage?: boolean;
@@ -57,6 +61,8 @@ export default function DirectoryCard({
                                 open={popOverOpen}
                                 onOpenChange={setPopoverOpen}
                                 name={name}
+                                description={props.description}
+                                isPrivate={isPrivate}
                                 id={id}
                             >
                                 <button onClick={handleEipsis} className="p-1 cursor-pointer">
@@ -73,50 +79,75 @@ export default function DirectoryCard({
 }
 
 function MyPopOver(
-    { open, onOpenChange, children, name, id }: {
+    { open, onOpenChange, children, name, id, description, isPrivate }: {
         open: boolean;
         onOpenChange: (open: boolean) => void;
         children: React.ReactNode;
         name: string;
+        description?: string;
         id: string;
+        isPrivate?: boolean;
     }
 ) {
-const handleDelete = async ()=>{
-    try {
-        toast.loading("Menghapus direktori...", {id: "delete-directory" });
-        const deleted = await deleteDirectoryById(id)
-        if(deleted.isSuccess) {
-            toast.success("Direktori berhasil dihapus", {id: "delete-directory" });
-        } else {
-            toast.error("Gagal menghapus direktori", {id: "delete-directory" });
-        }
-        onOpenChange(false);
+    const { invalidate } = useGetDirectories();
+    const [alertDelete, setAlertDelete] = useState(false);
+    const handleDelete = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.stopPropagation()
+        try {
+            toast.loading("Menghapus direktori...", { id: "delete-directory" });
+            const deleted = await deleteDirectoryById(id)
+            if (deleted.isSuccess) {
+                toast.success("Direktori berhasil dihapus", { id: "delete-directory" });
+                invalidate();
+            } else {
+                toast.error("Gagal menghapus direktori", { id: "delete-directory" });
+            }
+            setAlertDelete(false);
+            onOpenChange(false);
 
-    } catch (error) {   
-        console.error("Failed to delete directory:", error);
-        toast.error("Gagal menghapus direktori", {id: "delete-directory" });
+        } catch (error) {
+            console.error("Failed to delete directory:", error);
+            toast.error("Gagal menghapus direktori", { id: "delete-directory" });
+        }
     }
-}
 
     return (
-        <Popover open={open} onOpenChange={onOpenChange} modal={true}>
-            <PopoverTrigger asChild>
-                {children}
-            </PopoverTrigger>
-            <PopoverContent onClick={(e) => e.stopPropagation()} className="w-48 p-2">
-                <div className="flex items-start justify-between gap-2">
-                    <h1>{name}</h1>
-                    <Button variant={"outline"}>
-                        <ArrowUpRightFromSquare />
+        <>
+            <Popover open={open} onOpenChange={onOpenChange} modal={true}>
+                <PopoverTrigger asChild>
+                    {children}
+                </PopoverTrigger>
+                <PopoverContent onClick={(e) => e.stopPropagation()} className="w-48 p-2">
+                    <div className="flex items-center justify-between gap-2">
+                        <h1>{name}</h1>
+                        <Button variant={"outline"}>
+                            <ArrowUpRightFromSquare />
+                        </Button>
+                    </div>
+                    <p className="text-sm text-gray-500 mb-4 line-clamp-3">{description}</p>
+                    <Button onClick={() => setAlertDelete(true)} variant={"outline"}>
+                        <Trash2 />
                     </Button>
-                </div>
-                <Button onClick={handleDelete} variant={"outline"}>
-                    <Trash2 />
-                </Button>
-                <Button className="ml-2" variant={"outline"}>
-                    <Pencil />
-                </Button>
-            </PopoverContent>
-        </Popover>
+                    <EditDirectoryDialog
+                        defName={name}
+                        defIsPrivate={isPrivate || false}
+                        defDescription={description}
+                        id={id}
+                    >
+                        <Button className="ml-2" variant={"outline"}>
+                            <Pencil />
+                        </Button>
+                    </EditDirectoryDialog>
+                </PopoverContent>
+            </Popover>
+            <AlertDialogComponent
+                open={alertDelete}
+                onOpenChange={setAlertDelete}
+                title={`Hapus Direktori "${name}"`}
+                description="Apakah Anda yakin ingin menghapus direktori ini?, semua dokumen di dalamnya akan ikut terhapus."
+                onConfirm={(e) => handleDelete(e)}
+                danger
+            />
+        </>
     );
 }

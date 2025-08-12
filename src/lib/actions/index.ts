@@ -21,7 +21,7 @@ import {
     getDocumentsCountByUserId,
 } from "./query/documents";
 
-import { pinataPrivateFile, pinataPublicFile, } from "./query/pinata";
+import { pinataPrivateFile, pinataPublicFile, isCidExsist} from "./query/pinata";
 
 export {
     getUserSession,
@@ -42,6 +42,7 @@ export {
     getDirectoriesCount,
     getDocumentsCount,
     getDocumentsCountByUserId,
+    isCidExsist
 };
 
 // =================================================================================
