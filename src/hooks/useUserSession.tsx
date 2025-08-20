@@ -11,16 +11,6 @@ export function useUserSession() {
         staleTime: 1000 * 60 * 10, // 10 minutes
     });
 
-    if (!isLoading) {
-        if (!userSession) {
-            logout();
-        }
-    }
-
-    if (isError) {
-        logout();
-    }
-
 
     return { userSession, isLoading, isError, ...others, queryKey };
 }

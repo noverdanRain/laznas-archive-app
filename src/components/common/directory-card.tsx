@@ -39,7 +39,6 @@ export default function DirectoryCard({
     const { userSession, ...getUserSession } = useUserSession();
 
     const isHavePermission = userSession?.divisionId === divisionId || userSession?.role === "administrator";
-
     const handleEipsis = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         setPopoverOpen(!popOverOpen);
@@ -76,7 +75,7 @@ export default function DirectoryCard({
                                 open={popOverOpen}
                                 onOpenChange={setPopoverOpen}
                                 name={name}
-                                description={props.description}
+                                description={"Anjing"}
                                 isPrivate={isPrivate}
                                 id={id}
                                 divisionName={divisionName}
