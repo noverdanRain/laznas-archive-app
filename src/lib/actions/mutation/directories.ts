@@ -9,6 +9,7 @@ type AddDirectoryParams = {
   name: string;
   description: string | null;
   isPrivate: boolean;
+  divisionId: string | null;
 };
 type EditDirectoryParams = {
   id: string;
@@ -20,7 +21,7 @@ type EditDirectoryParams = {
 async function addDirectory(
   params: AddDirectoryParams
 ): Promise<MutateActionsReturnType> {
-  const { name, description, isPrivate } = params;
+  const { name, description, isPrivate, divisionId } = params;
 
   try {
     const [existingName] = await db
@@ -41,6 +42,7 @@ async function addDirectory(
       name,
       description,
       isPrivate,
+      divisionId,
     });
     return {
       isSuccess: true,

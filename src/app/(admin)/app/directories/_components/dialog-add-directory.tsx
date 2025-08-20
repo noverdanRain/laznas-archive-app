@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useAddDirectory } from "@/hooks/useAddDirectory";
+import { useUserSession } from "@/hooks/useUserSession";
 import { Eye, Lock } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -19,6 +20,7 @@ export default function AddDirectoryDialog({
     children?: React.ReactNode;
 }) {
     const [visibility, setVisibility] = useState<"private" | "public">("private");
+    const { userSession } = useUserSession();
     const [isOpen, setIsOpen] = useState(false);
 
     const addDirectory = useAddDirectory({
@@ -34,7 +36,12 @@ export default function AddDirectoryDialog({
         const formData = new FormData(e.currentTarget);
         const name = formData.get("name") as string;
         const description = formData.get("description") as string;
-        const isPrivate = visibility === "private";
+        const isPrivate = visibility === "private"
+
+        if (!userSession) {
+            toast.error("Anda harus masuk sebagai staff untuk membuat direktori.");
+            return;
+        }
 
         if (!name) {
             toast.error("Nama direktori harus diisi");
@@ -45,6 +52,7 @@ export default function AddDirectoryDialog({
             name,
             description: description || null,
             isPrivate,
+            divisionId: userSession?.divisionId,
         })
         toast.loading("Membuat direktori...", { id: "add-directory" });
     };

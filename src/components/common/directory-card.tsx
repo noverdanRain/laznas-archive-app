@@ -75,7 +75,7 @@ export default function DirectoryCard({
                                 open={popOverOpen}
                                 onOpenChange={setPopoverOpen}
                                 name={name}
-                                description={"Anjing"}
+                                description={props.description}
                                 isPrivate={isPrivate}
                                 id={id}
                                 divisionName={divisionName}
