@@ -7,21 +7,31 @@ export default function PublicHomeLastAdded() {
 
     const documents = useGetDocuments({
         key: ["public-home-last-added"],
-        filter:{
+        filter: {
             visibility: "public",
+            lastAdded: "30days"
         },
         sort: {
             field: "createdAt",
             order: "desc"
         }
     })
+    const handleSelectChange = (value: "7days" | "30days" | "6month" | "1year" | "all") => {
+        documents.setQuery({
+            filter: {
+                visibility: "public",
+                lastAdded: value == "all" ? undefined : value,
+            },
+        })
+    }
+
     return (
         <>
             <div className="flex items-center gap-4 justify-between mb-4">
                 <p className="font-semibold ml-2">
                     Dokumen terakhir ditambahkan ke arsip
                 </p>
-                <Select defaultValue="30days">
+                <Select defaultValue="30days" onValueChange={handleSelectChange}>
                     <SelectTrigger className="w-3xs shadow-none rounded-full border-none bg-gray-100 text-sm h-8 py-0 focus-within:ring-0">
                         <div className="flex items-center gap-2">
                             <ChartNoAxesGantt strokeWidth={2.5} />
@@ -41,6 +51,9 @@ export default function PublicHomeLastAdded() {
                             </SelectItem>
                             <SelectItem value="1year">
                                 1 Tahun Terakhir
+                            </SelectItem>
+                            <SelectItem value="all">
+                                Semua
                             </SelectItem>
                         </SelectGroup>
                     </SelectContent>

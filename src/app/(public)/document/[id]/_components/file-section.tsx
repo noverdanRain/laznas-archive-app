@@ -3,12 +3,13 @@
 import { TooltipText } from "@/components/common/tooltip-text";
 import { ButtonDownload } from "./button-download";
 import Link from "next/link";
-import { getDocumentById, pinataPrivateFile, pinataPublicFile } from "@/lib/actions";
+import { getDocumentById, incrementDocumentViews, pinataPrivateFile, pinataPublicFile } from "@/lib/actions";
 import { Eye, Lock, SquareArrowOutUpRight } from "lucide-react";
 import Image from "next/image";
 import DocumentIcon from "@/components/common/document-Icon";
 import { cidElipsis } from "@/lib/utils";
 import useGetPinataFile from "@/hooks/useGetPinataFile";
+import { useEffect } from "react";
 type DocumentType = Awaited<ReturnType<typeof getDocumentById>>;
 
 
@@ -17,6 +18,15 @@ export default function FileSection({ documentData }: { documentData: DocumentTy
         cid: documentData?.cid || "",
         visibility: documentData?.isPrivate ? "private" : "public",
     });
+        useEffect(() => {
+        incrementDocumentViews({ id: documentData!.id })
+            .then((res) => {
+                console.log("Document views incremented:", res);
+            })
+            .catch((error) => {
+                console.error("Error incrementing document views:", error);
+            });
+    }, [])
 
     const handleOpenInNewTab = async() => {
         const {url} = documentData?.isPrivate ? await pinataPrivateFile(documentData!.cid) : await pinataPublicFile(documentData!.cid);

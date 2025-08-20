@@ -71,6 +71,7 @@ import {
   editDocumentById,
   makeFilePublic,
   makeFilePrivate,
+  incrementDocumentViews,
 } from "./mutation/documents";
 
 export {
@@ -89,4 +90,5 @@ export {
   editDocumentById,
   makeFilePublic,
   makeFilePrivate,
+  incrementDocumentViews
 };

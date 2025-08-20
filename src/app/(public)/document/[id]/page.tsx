@@ -13,7 +13,6 @@ export default function PublicDocumentPage() {
     const { id } = useParams<{ id: string }>()
 
     const documentData = useGetDocumentById({ id });
-    console.log("Document Data:", documentData.data);
     if (!documentData.data && !documentData.isLoading) {
         return (
             <div className="flex flex-col items-center justify-center h-[calc(100vh-5rem)] gap-2">

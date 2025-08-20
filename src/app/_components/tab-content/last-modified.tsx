@@ -14,6 +14,14 @@ export default function PublicHomeLastModified() {
             order: "desc"
         }
     })
+    const handleSelectChange = (value: "7days" | "30days" | "6month" | "1year" | "all") => {
+        documents.setQuery({
+            filter: {
+                visibility: "public",
+                lastUpdated: value == "all" ? undefined : value,
+            },
+        })
+    }
 
     return (
         <>
@@ -21,7 +29,7 @@ export default function PublicHomeLastModified() {
                 <p className="font-semibold ml-2">
                     Dokumen terakhir dimodifikasi
                 </p>
-                <Select defaultValue="30days">
+                <Select onValueChange={handleSelectChange} defaultValue="30days">
                     <SelectTrigger className="w-3xs shadow-none rounded-full border-none bg-gray-100 text-sm h-8 py-0 focus-within:ring-0">
                         <div className="flex items-center gap-2">
                             <ChartNoAxesGantt strokeWidth={2.5} />
@@ -41,6 +49,9 @@ export default function PublicHomeLastModified() {
                             </SelectItem>
                             <SelectItem value="1year">
                                 1 Tahun Terakhir
+                            </SelectItem>
+                            <SelectItem value="all">
+                                Semua
                             </SelectItem>
                         </SelectGroup>
                     </SelectContent>

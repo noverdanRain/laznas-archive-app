@@ -65,7 +65,7 @@ export default function DirectoryCard({
                         <p className="text-sm text-gray-500">{docsCount} Dokumen</p>
                     </div>
                     {
-                        !isHavePermission && (
+                        (!isHavePermission && !isPublicPage) && (
                             <Lock size={14} className="absolute top-2 right-2 text-red-400" />
                         )
                     }

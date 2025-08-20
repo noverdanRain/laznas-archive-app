@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 import { getUserSession } from "../query/user-session";
 import { eq } from "drizzle-orm";
 import { pinata } from "@/lib/pinata-config";
+import { getDocumentById } from "../query/documents";
 
 export type AddDocumentParams = typeof documents.$inferInsert;
 export type EditDocumentParams = {
@@ -281,6 +282,60 @@ async function makeFilePrivate(
     }
 }
 
+type ViewsMarkType = Record<string, { lastSeen: Date }>;
+
+async function incrementDocumentViews({ id }: { id: string }) {
+    if (!id) {
+        return false;
+    }
+    try {
+        const cookieStorage = await cookies();
+        const viewsMark = cookieStorage.get("viewsMark")?.value;
+        const parsedViewsMark: ViewsMarkType = viewsMark
+            ? JSON.parse(viewsMark)
+            : {};
+        const [document] = await db
+            .select()
+            .from(documents)
+            .where(eq(documents.id, id))
+            .limit(1);
+        if (!document) return false;
+        if (document.isPrivate == true) return false;
+
+        if (!parsedViewsMark[id] || !viewsMark) {
+            await db
+                .update(documents)
+                .set({
+                    viewsCount: document.viewsCount + 1,
+                })
+                .where(eq(documents.id, id));
+            parsedViewsMark[id] = { lastSeen: new Date() };
+            cookieStorage.set("viewsMark", JSON.stringify(parsedViewsMark));
+            return true;
+        }
+
+        if (parsedViewsMark[id]) {
+            const lastSeen = new Date(parsedViewsMark[id].lastSeen);
+            const now = new Date();
+            if (now.getTime() - lastSeen.getTime() > 12 * 60 * 60 * 1000) {
+                await db
+                    .update(documents)
+                    .set({
+                        viewsCount: document.viewsCount + 1,
+                    })
+                    .where(eq(documents.id, id));
+                parsedViewsMark[id].lastSeen = now;
+                cookieStorage.set("viewsMark", JSON.stringify(parsedViewsMark));
+                return true;
+            }
+        }
+        return false;
+    } catch (error) {
+        console.error("Error incrementing document views:", error);
+        throwActionError(error);
+    }
+}
+
 export {
     addDocument,
     addDocumentHistory,
@@ -288,4 +343,5 @@ export {
     editDocumentById,
     makeFilePublic,
     makeFilePrivate,
+    incrementDocumentViews,
 };

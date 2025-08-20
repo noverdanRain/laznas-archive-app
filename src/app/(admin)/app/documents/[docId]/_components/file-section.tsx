@@ -9,11 +9,23 @@ import Image from "next/image";
 import DocumentIcon from "@/components/common/document-Icon";
 import { cidElipsis } from "@/lib/utils";
 import useGetPinataFile from "@/hooks/useGetPinataFile";
+import { useEffect, useState } from "react";
+import { incrementDocumentViews } from "@/lib/actions";
 type DocumentType = Awaited<ReturnType<typeof getDocumentById>>;
 type HistoryType = Awaited<ReturnType<typeof getDocumentHistoryById>>;
 
 export default function FileSection({ document, documentHist }: { document?: DocumentType, documentHist?: HistoryType }) {
     const documentData = document ? document : documentHist;
+
+    useEffect(() => {
+        incrementDocumentViews({ id: documentData!.id })
+            .then((res) => {
+                console.log("Document views incremented:", res);
+            })
+            .catch((error) => {
+                console.error("Error incrementing document views:", error);
+            });
+    }, [])
 
     const { url, isLoading } = useGetPinataFile({
         cid: documentData?.cid || "",
