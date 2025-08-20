@@ -20,6 +20,7 @@ export default function AddedByMeTabContent() {
     const handleSelectChange = (value: "7days" | "30days" | "6month" | "1year") => {
         getDocuments.setQuery({
             filter: {
+                addedBy: userSession?.id,
                 lastAdded: value,
             },
         })

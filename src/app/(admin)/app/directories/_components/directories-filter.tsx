@@ -2,42 +2,71 @@
 
 import SelectClearable from "@/components/common/select-clearable";
 import { useGetDivisions } from "@/hooks/useGetDivisions";
-import { DocumentsFilterType } from "@/types";
-import { useState } from "react";
-import { useAtom } from "jotai";
-import { dirFilterAtom } from "@/lib/atom";
+import { useEffect, useState } from "react";
 import { IGetDirectoriesParams } from "@/lib/actions/query/directories";
 import { useGetDirectories } from "@/hooks/useGetDirectories";
-import { useQueryClient } from "@tanstack/react-query";
+type GetDirectoriesResponse = ReturnType<typeof useGetDirectories>;
+type FilterType = NonNullable<IGetDirectoriesParams["filter"]>;
+import { useTopLoader } from "nextjs-toploader";
 
-export function DirectoriesFilter() {
-    const [dirFilter, setDirFilter] = useAtom(dirFilterAtom);
-    const queryclient = useQueryClient();
-    const { directories, isLoading, setFilter } = useGetDirectories({
-        key: ["dir-staff"]
-    })
+export function DirectoriesFilter({ getDirectories, query }: { getDirectories: GetDirectoriesResponse, query?: string | undefined }) {
+    const [filter, setFilter] = useState<FilterType>()
+    const topLoader = useTopLoader();
+    console.log(filter);
+
+    const handleFilterChange = (name: keyof FilterType, value: string) => {
+        if (!value) {
+            setFilter((prev) => ({
+                ...prev,
+                [name]: undefined
+            }))
+            return;
+        }
+        setFilter((prev) => ({
+            ...prev,
+            [name]: name === "isPrivate" ? value === "private" : value ? value : undefined,
+        }));
+    };
+
+    useEffect(() => {
+        setFilter((prev) => ({
+            ...prev,
+            query
+        }))
+    }, [query]);
+
+    useEffect(() => {
+        getDirectories.setFilter(filter);
+    }, [filter]);
+
+    useEffect(() => {
+        if (getDirectories.isUpdating) {
+            topLoader.start();
+        } else {
+            topLoader.done();
+        }
+    }, [getDirectories.isUpdating]);
 
     const { data: divisions } = useGetDivisions();
 
-    const handleFilterChange = (name: keyof IGetDirectoriesParams, value: string) => {
-        if (!value) {
-            setFilter({ isPrivate: undefined });
-        } else {
-            setFilter({ isPrivate: value === "private" });
-        }
-    };
-
     return (
         <div className="flex items-center gap-2">
+            <SelectClearable
+                items={divisions?.map((division) => ({
+                    value: division.id,
+                    label: `Div. ${division.name}`,
+                }))}
+                placeholder="Dibuat Oleh"
+                onValueChange={(value) => handleFilterChange("divisionId", value)}
+            />
             <SelectClearable
                 items={[
                     { value: "public", label: "Public" },
                     { value: "private", label: "Private" },
                 ]}
                 placeholder="Visibilitas"
-                onValueChange={(value) => handleFilterChange("filter", value)}
+                onValueChange={(value) => handleFilterChange("isPrivate", value)}
             />
-            {/* <Button variant={"ghost"}>Hapus Filter</Button> */}
         </div>
     )
 }

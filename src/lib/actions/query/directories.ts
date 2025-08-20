@@ -38,7 +38,7 @@ const handleFilter = (params: IGetDirectoriesParams["filter"]) => {
     }
     if (query) {
         filters.push(
-            sql`MATCH(${directories.name}, ${directories.description}) AGAINST(${query} IN NATURAL LANGUAGE MODE)`
+            sql`${directories.name} LIKE ${`%${query}%`}`
         );
     }
     return filters;
