@@ -4,20 +4,33 @@ import SelectClearable from "@/components/common/select-clearable";
 import StaffDocumentsTable from "@/components/layout/admin/documents-table";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useGetDirectoryById } from "@/hooks/useGetDirectoryById";
-import { useGetDocuments } from "@/hooks/useGetDocuments";
+import { useGetDocType } from "@/hooks/useGetDocType";
+import { useGetDocuments, UseGetDocumentsParams } from "@/hooks/useGetDocuments";
 import { Folder } from "lucide-react";
 import { useParams } from 'next/navigation'
+import { useEffect, useState } from "react";
+
+type FilterType = UseGetDocumentsParams["filter"]
 
 
 export default function DetailsDirectoryPage() {
     const { dirId } = useParams<{ dirId: string }>()
     const directory = useGetDirectoryById({ id: dirId })
+    const [filter, setFilter] = useState<FilterType>({
+        directory: dirId,
+    })
+    const { data: documentType } = useGetDocType();
+
     const document = useGetDocuments({
         key: ["documents", dirId],
-        filter: {
-            directory: dirId
-        }
+        filter
     })
+
+    useEffect(() => {
+        document.setQuery({
+            filter
+        })
+    }, [filter])
 
     return (
         <div className="p-4">
@@ -51,18 +64,24 @@ export default function DetailsDirectoryPage() {
                 <p className="text-sm text-muted-foreground mt-1 max-w-3xl">{directory.data?.description}</p>
                 <div className="flex items-center gap-2 mt-6">
                     <SelectClearable
-                        items={[
-                            {label: "Semua Dokumen", value: "all"},
-                            {label: "Dokumen Pribadi", value: "private"},
-                        ]}
+                        items={documentType?.map((type) => ({
+                            label: type.name,
+                            value: type.id
+                        }))}
                         placeholder="Jenis Dokumen"
+                        onValueChange={(value) => {
+                            setFilter((prev) => ({ ...prev, documentType: value }))
+                        }}
                     />
                     <SelectClearable
                         items={[
-                            {label: "Semua Dokumen", value: "all"},
-                            {label: "Dokumen Pribadi", value: "private"},
+                            { label: "Public", value: "public" },
+                            { label: "Private", value: "private" },
                         ]}
                         placeholder="Visibilitas"
+                        onValueChange={(value) => {
+                            setFilter((prev) => ({ ...prev, visibility: value as "public" | "private" }))
+                        }}
                     />
                 </div>
                 <StaffDocumentsTable stickyTop={100} getDocsData={document} />
