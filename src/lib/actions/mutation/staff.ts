@@ -141,6 +141,7 @@ async function updateStaffById(
     }
 
     await db.update(users).set(updateData).where(eq(users.id, id));
+    revalidateTag("all-staff");
     return {
       isSuccess: true,
     };

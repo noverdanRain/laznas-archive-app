@@ -7,9 +7,12 @@ import { Ban, Check, Loader2, Pencil } from "lucide-react";
 import { AlertDialogComponent } from "@/components/ui/alert-dialog";
 import { useGetStaff } from "@/hooks/useGetStaff";
 import { useEditStaffStatus } from "@/hooks/useEditStaffStatus";
+import EditAccountDialog from "./dialog-edit-account";
 
-export default function ListAccountsSection() {
-    const { staffs, isLoading } = useGetStaff();
+type GetStaffReturn = ReturnType<typeof useGetStaff>;
+
+export default function ListAccountsSection({ getStaff }: { getStaff: GetStaffReturn }) {
+    const { staffs, isLoading } = getStaff;
 
     if (isLoading) {
         return (
@@ -25,7 +28,7 @@ export default function ListAccountsSection() {
                 <Item
                     key={staff.username}
                     username={staff.username}
-                    division={staff.division.name}
+                    division={staff.division}
                     isDisabled={staff.isDisabled}
                     id={staff.id}
                 />
@@ -40,9 +43,9 @@ function Item({
     division,
     isDisabled,
 }: {
-    id:string;
+    id: string;
     username: string;
-    division: string;
+    division: { id: string; name: string };
     isDisabled: boolean;
 }) {
 
@@ -68,7 +71,7 @@ function Item({
                 <div>
                     <p className="font-medium">@{username}</p>
                     <p className="text-sm text-gray-500 mt-1">
-                        Div. {division}
+                        Div. {division.name}
                     </p>
                 </div>
             </div>
@@ -87,9 +90,17 @@ function Item({
                         text="Edit akun"
                         bgColorTw="bg-gray-200 text-neutral-800"
                     >
-                        <button className="text-neutral-600 hover:text-neutral-800 cursor-pointer">
-                            <Pencil size={18} />
-                        </button>
+                        <EditAccountDialog
+                            defaultValues={{
+                                username: username,
+                                divisionId: division.id,
+                            }}
+                            id={id}
+                        >
+                            <button className="text-neutral-600 hover:text-neutral-800 cursor-pointer">
+                                <Pencil size={18} />
+                            </button>
+                        </EditAccountDialog>
                     </TooltipText>
                     {isDisabled ? (
                         <TooltipText
