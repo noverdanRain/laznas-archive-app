@@ -10,9 +10,16 @@ import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown, Folder } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
+import { useUserSession } from "@/hooks/useUserSession";
 
 export default function SelectDirectoryField({ form }: { form: ReturnType<typeof useForm<z.infer<typeof addDocumentFormSchema>>> }) {
-    const { directories, isLoading } = useGetDirectories();
+    const { userSession } = useUserSession();
+    const { directories, isLoading } = useGetDirectories({
+        key: ["select-directory", `dir-${userSession?.divisionId}`],
+        filter: {
+            divisionId: userSession?.divisionId || "0"
+        }
+    });
 
     const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -28,18 +35,18 @@ export default function SelectDirectoryField({ form }: { form: ReturnType<typeof
                         <PopoverTrigger asChild>
                             <FormControl>
                                 {/* <div> */}
-                                    <Button
-                                        variant="outline"
-                                        role="combobox"
-                                        className={`w-full h-10 ${field.value ? "text-neutral-800" : "text-neutral-500"}`}
-                                    >
-                                        <Folder className={`${field.value ? "text-amber-500 fill-amber-500" : ""}`} />
-                                        {field.value
-                                            ? directories?.find((directory) => directory.id === field.value)?.name
-                                            : "Pilih direktori"}
-                                        <ChevronsUpDown className="opacity-50 ml-auto" />
-                                    </Button>
-                                    {/* <Input {...field} type="hidden" /> */}
+                                <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    className={`w-full h-10 ${field.value ? "text-neutral-800" : "text-neutral-500"}`}
+                                >
+                                    <Folder className={`${field.value ? "text-amber-500 fill-amber-500" : ""}`} />
+                                    {field.value
+                                        ? directories?.find((directory) => directory.id === field.value)?.name
+                                        : "Pilih direktori"}
+                                    <ChevronsUpDown className="opacity-50 ml-auto" />
+                                </Button>
+                                {/* <Input {...field} type="hidden" /> */}
                                 {/* </div> */}
                             </FormControl>
                         </PopoverTrigger>

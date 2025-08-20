@@ -8,6 +8,7 @@ import { throwActionError } from "../helpers";
 export interface IGetDirectoriesParams {
     token?: string;
     filter?: {
+        divisionId?: string;
         isPrivate?: boolean;
         query?: string;
     };
@@ -25,11 +26,15 @@ const checkIsLoggedIn = async (token?: string): Promise<boolean> => {
 };
 
 const handleFilter = (params: IGetDirectoriesParams["filter"]) => {
-    const { isPrivate, query } = params || {};
+    const { isPrivate, query, divisionId } = params || {};
     const filters: SQL[] = [];
 
     if (isPrivate !== undefined) {
         filters.push(eq(directories.isPrivate, isPrivate));
+    }
+
+    if (divisionId) {
+        filters.push(eq(directories.divisionId, divisionId));
     }
     if (query) {
         filters.push(
