@@ -1,6 +1,6 @@
 "use client";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { set, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -19,6 +19,11 @@ import { toast } from "sonner";
 import { useAddDocument } from "@/hooks/useAddDocument";
 import { cn } from "@/lib/utils";
 import { addDocumentFormSchema } from "@/types";
+import { useState } from "react";
+import { getDirectories } from "@/lib/actions";
+
+type directoriesType = Awaited<ReturnType<typeof getDirectories>>;
+type directoryType = directoriesType[number];
 
 type FormAddDocumentProps = {
     defaultFile?: File | FileWithPath;
@@ -81,6 +86,8 @@ export default function FormAddDocument(props?: FormAddDocumentProps) {
         }
     };
 
+    const [dirSelected, setDirSelected] = useState<directoryType | null>(null);
+
 
     return (
         <>
@@ -93,13 +100,13 @@ export default function FormAddDocument(props?: FormAddDocumentProps) {
                     )}
                 >
                     <FileField form={form} />
-                    <SelectDirectoryField form={form} />
+                    <SelectDirectoryField onDirChanged={setDirSelected} form={form} />
                     <div className="w-full border-b-2 border-dashed border-gray-200" />
                     <NameFileld form={form} />
                     <SelectDocumentTypeField form={form} />
                     <DescriptionField form={form} />
                     <DocumentNumberField form={form} />
-                    <VisibilityField form={form} />
+                    <VisibilityField dirSelected={dirSelected} form={form} />
                     <div className="flex gap-2 items-center justify-end">
                         <Button
                             type="button"

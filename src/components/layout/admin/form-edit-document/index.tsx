@@ -20,6 +20,11 @@ import { cn } from "@/lib/utils";
 import { useEditDocument } from "@/hooks/useEditDocuments";
 import { editDocumentFormSchema } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { getDirectories } from "@/lib/actions";
+
+type directoriesType = Awaited<ReturnType<typeof getDirectories>>;
+type directoryType = directoriesType[number];
 
 
 type FormEditDocumentProps = {
@@ -92,7 +97,7 @@ export default function FormEditDocument(props: FormEditDocumentProps) {
         }
     };
 
-
+    const [dirSelected, setDirSelected] = useState<directoryType | null>(null);
 
     return (
         <>
@@ -105,13 +110,13 @@ export default function FormEditDocument(props: FormEditDocumentProps) {
                     )}
                 >
                     <FileField defaultFile={props.defaultFile} form={form} />
-                    <SelectDirectoryField form={form} />
+                    <SelectDirectoryField onDirChanged={setDirSelected} form={form} />
                     <div className="w-full border-b-2 border-dashed border-gray-200" />
                     <NameFileld form={form} />
                     <SelectDocumentTypeField form={form} />
                     <DescriptionField form={form} />
                     <DocumentNumberField form={form} />
-                    <VisibilityField form={form} />
+                    <VisibilityField dirSelected={dirSelected} form={form} />
                     <div className="flex gap-2 items-center justify-end">
                         <Button
                             type="button"

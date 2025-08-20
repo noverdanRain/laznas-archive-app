@@ -35,8 +35,8 @@ export default function TableItem(props: PropsType) {
     const isHavePermission = userSession?.divisionId === props.createdBy.divisionId || userSession?.role === "administrator";
 
     const handleDownload = async () => {
-        const uri = props.isPrivate ? await pinataPrivateFile(props.cid) : await pinataPublicFile(props.cid);
-        await downloadFileFromURI(uri, props.title);
+        const { url } = props.isPrivate ? await pinataPrivateFile(props.cid) : await pinataPublicFile(props.cid);
+        await downloadFileFromURI(url, props.title);
     }
 
     const handleClickDelete = () => {

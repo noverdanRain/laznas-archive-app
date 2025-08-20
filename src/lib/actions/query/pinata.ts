@@ -7,7 +7,9 @@ export async function pinataPrivateFile(cid: string) {
             cid: cid,
             expires: 120,
         });
-        return url;
+        const files = await pinata.files.private.list().cid(cid);
+        const file = files?.files[0];
+        return { ...file, url };
     } catch (error) {
         console.log("Error fetching private file:", error);
         throw error;
@@ -17,7 +19,9 @@ export async function pinataPrivateFile(cid: string) {
 export async function pinataPublicFile(cid: string) {
     try {
         const url = await pinata.gateways.public.convert(cid);
-        return url;
+        const files = await pinata.files.public.list().cid(cid);
+        const file = files?.files[0];
+        return { ...file, url };
     } catch (error) {
         console.log("Error fetching public file:", error);
         throw error;
@@ -26,12 +30,8 @@ export async function pinataPublicFile(cid: string) {
 
 export async function isCidExsist(cid: string): Promise<boolean> {
     try {
-        const filesPublicPromise = pinata.files.public
-            .list()
-            .cid(cid);
-        const filesPrivatePromise = pinata.files.private
-            .list()
-            .cid(cid);
+        const filesPublicPromise = pinata.files.public.list().cid(cid);
+        const filesPrivatePromise = pinata.files.private.list().cid(cid);
 
         const [filesPublic, filesPrivate] = await Promise.all([
             filesPublicPromise,

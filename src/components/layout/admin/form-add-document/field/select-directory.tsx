@@ -7,14 +7,21 @@ import { useState } from "react";
 import { useGetDirectories } from "@/hooks/useGetDirectories";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronsUpDown, Folder } from "lucide-react";
+import { Check, ChevronsUpDown, EyeOff, Folder } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { useUserSession } from "@/hooks/useUserSession";
+import { getDirectories } from "@/lib/actions";
 
-export default function SelectDirectoryField({ form }: { form: ReturnType<typeof useForm<z.infer<typeof addDocumentFormSchema>>> }) {
+type directoriesType = Awaited<ReturnType<typeof getDirectories>>;
+type directoryType = directoriesType[number];
+
+export default function SelectDirectoryField({ form, onDirChanged }: {
+    form: ReturnType<typeof useForm<z.infer<typeof addDocumentFormSchema>>>,
+    onDirChanged?: (dir: directoryType) => void
+}) {
     const { userSession } = useUserSession();
-    const { directories, isLoading } = useGetDirectories({
+    const { directories, isLoading, } = useGetDirectories({
         key: ["select-directory", `dir-${userSession?.divisionId}`],
         filter: {
             divisionId: userSession?.divisionId || "0"
@@ -22,6 +29,11 @@ export default function SelectDirectoryField({ form }: { form: ReturnType<typeof
     });
 
     const [popoverOpen, setPopoverOpen] = useState(false);
+
+    const getDirById = (id: string) => {
+        const dir = directories?.find((directory) => directory.id === id);
+        return dir;
+    }
 
 
     return (
@@ -41,9 +53,16 @@ export default function SelectDirectoryField({ form }: { form: ReturnType<typeof
                                     className={`w-full h-10 ${field.value ? "text-neutral-800" : "text-neutral-500"}`}
                                 >
                                     <Folder className={`${field.value ? "text-amber-500 fill-amber-500" : ""}`} />
-                                    {field.value
-                                        ? directories?.find((directory) => directory.id === field.value)?.name
-                                        : "Pilih direktori"}
+                                    {
+                                        field.value
+                                            ? (
+                                                <>
+                                                    <span>{getDirById(field.value)?.name}</span>
+                                                    {getDirById(field.value)?.isPrivate && <EyeOff className="text-neutral-800 size-2.5" strokeWidth={2.3} />}
+                                                </>
+                                            )
+                                            : "Pilih direktori"
+                                    }
                                     <ChevronsUpDown className="opacity-50 ml-auto" />
                                 </Button>
                                 {/* <Input {...field} type="hidden" /> */}
@@ -70,11 +89,17 @@ export default function SelectDirectoryField({ form }: { form: ReturnType<typeof
                                                     onSelect={() => {
                                                         field.onChange(dir.id);
                                                         setPopoverOpen(false);
+                                                        onDirChanged?.(dir);
                                                     }}
                                                     className=" h-10"
                                                 >
                                                     <Folder className="text-amber-500 fill-amber-500" />
                                                     {dir.name}
+                                                    {
+                                                        dir.isPrivate && (
+                                                            <EyeOff className="text-neutral-800 size-2.5" strokeWidth={2.3} />
+                                                        )
+                                                    }
                                                     <Check
                                                         className={cn(
                                                             "ml-auto",

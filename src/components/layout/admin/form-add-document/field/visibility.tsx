@@ -5,10 +5,26 @@ import z from "zod";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Eye, Lock } from "lucide-react";
+import { getDirectories } from "@/lib/actions";
+import { useEffect } from "react";
+import { cn } from "@/lib/utils";
+
+type directoriesType = Awaited<ReturnType<typeof getDirectories>>;
+type directoryType = directoriesType[number];
 
 type Visibility = "private" | "public";
 
-export default function VisibilityField({ form }: { form: ReturnType<typeof useForm<z.infer<typeof addDocumentFormSchema>>> }) {
+export default function VisibilityField({ form, dirSelected }: {
+    form: ReturnType<typeof useForm<z.infer<typeof addDocumentFormSchema>>>,
+    dirSelected?: directoryType | null
+}) {
+
+    useEffect(() => {
+        if (dirSelected?.isPrivate) {
+            form.setValue("visibility", "private");
+        }
+    }, [dirSelected?.isPrivate])
+
 
     return (
         <FormField
@@ -45,8 +61,11 @@ export default function VisibilityField({ form }: { form: ReturnType<typeof useF
                                 </div>
                             </Label>
                         </div>
-                        <div className="flex items-center space-x-2 w-full">
-                            <RadioGroupItem value={"public"} id="option-public" hidden />
+                        <div className={cn(
+                            "flex items-center space-x-2 w-full",
+                            dirSelected?.isPrivate && "opacity-50"
+                        )}>
+                            <RadioGroupItem disabled={dirSelected?.isPrivate} value={"public"} id="option-public" hidden />
                             <Label
                                 htmlFor="option-public"
                                 className={

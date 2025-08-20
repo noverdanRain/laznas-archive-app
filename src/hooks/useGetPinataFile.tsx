@@ -12,7 +12,7 @@ type UseGetPinataFileParams = {
 
 export default function useGetPinataFile(params: UseGetPinataFileParams) {
     const { cid, visibility = "public" } = params;
-    const { data: url, ...others } = useQuery({
+    const { data, ...others } = useQuery({
         queryKey: ["get-pinata-file", cid, visibility],
         queryFn: async () => {
             if (visibility === "private") {
@@ -30,7 +30,7 @@ export default function useGetPinataFile(params: UseGetPinataFileParams) {
     }, [others.isError])
 
     return {
-        url,
+        ...data,
         ...others,
     };
 }

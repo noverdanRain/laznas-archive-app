@@ -200,24 +200,34 @@ async function addDocumentHistory(
 async function deleteDocumentById(
   params: DeleteDocumentByIdParams
 ): Promise<MutateActionsReturnType> {
-  try {
-    const { id } = params;
-    if (!id) {
-      return {
-        isRejected: true,
-        reject: {
-          message: "ID dokumen tidak boleh kosong.",
-        },
-      };
+    try {
+        const { id } = params;
+        if (!id) {
+            return {
+                isRejected: true,
+                reject: {
+                    message: "ID dokumen tidak boleh kosong.",
+                },
+            };
+        }
+        const { files: publicFiles } = await pinata.files.public
+            .list()
+            .name(id);
+        await pinata.files.public.delete(publicFiles.map((file) => file.id));
+
+        const { files: privateFiles } = await pinata.files.private
+            .list()
+            .name(id);
+        await pinata.files.private.delete(privateFiles.map((file) => file.id));
+
+        await db.delete(documents).where(eq(documents.id, id));
+        return {
+            isSuccess: true,
+        };
+    } catch (error) {
+        console.error("Error deleting document:", error);
+        throwActionError(error);
     }
-    await db.delete(documents).where(eq(documents.id, id));
-    return {
-      isSuccess: true,
-    };
-  } catch (error) {
-    console.error("Error deleting document:", error);
-    throwActionError(error);
-  }
 }
 
 async function makeFilePublic(

@@ -19,8 +19,8 @@ export default function FileSection({ documentData }: { documentData: DocumentTy
     });
 
     const handleOpenInNewTab = async() => {
-        const uri = documentData?.isPrivate ? await pinataPrivateFile(documentData!.cid) : await pinataPublicFile(documentData!.cid);
-        window.open(uri, "_blank");
+        const {url} = documentData?.isPrivate ? await pinataPrivateFile(documentData!.cid) : await pinataPublicFile(documentData!.cid);
+        window.open(url, "_blank");
     }
     return (
         <section>
