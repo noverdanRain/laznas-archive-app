@@ -11,8 +11,8 @@ export function ButtonDownload({ fileName, cid, isPrivate }: { fileName: string,
 
     const handleDownload = async () => {
         setIsLoading(true);
-        const uri = isPrivate ? await pinataPrivateFile(cid) : await pinataPublicFile(cid);
-        await downloadFileFromURI(uri, fileName);
+        const { url } = isPrivate ? await pinataPrivateFile(cid) : await pinataPublicFile(cid);
+        await downloadFileFromURI(url, fileName);
         setIsLoading(false);
     }
     return (
