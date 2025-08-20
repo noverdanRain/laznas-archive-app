@@ -1,6 +1,6 @@
 "use client";
 
-import { getPinataPresignedUrl } from "@/lib/actions";
+import { getPinataPresignedUrl, makeFilePrivate, makeFilePublic, pinataPrivateFile, pinataPublicFile } from "@/lib/actions";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { CustomMutateHooksProps } from "@/types";
@@ -18,6 +18,25 @@ import { isCidExsist } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+type EditDocMutateParams = {
+    documentId: string;
+    cid: string;
+    data: {
+        documentNum?: string;
+        documentTypeId?: string;
+        directoryId?: string;
+        title?: string;
+        description?: string;
+        file?: File | FileWithPath | null;
+        isPrivate?: boolean;
+    };
+}
+
+type PinataUploadParams = {
+    file: File | FileWithPath;
+    presignedUrl: string;
+    isPrivate?: boolean;
+};
 
 export function useEditDocument(props?: CustomMutateHooksProps) {
     const { onSuccess, onReject, onError, onMutate } = props || {};
@@ -75,21 +94,10 @@ export function useEditDocument(props?: CustomMutateHooksProps) {
         },
     });
 
-    type EditDocMutateParams = {
-        documentId: string;
-        data: {
-            documentNum?: string;
-            documentTypeId?: string;
-            directoryId?: string;
-            title?: string;
-            description?: string;
-            file?: File | FileWithPath | null;
-            isPrivate?: boolean;
-        };
-    }
+
 
     async function mutate(params: EditDocMutateParams): Promise<MutateActionsReturnType & { data?: any }> {
-        const { documentId, data } = params;
+        const { documentId, data, cid } = params;
         let ipfsUploadRes: Awaited<ReturnType<typeof pinataUpload>> | undefined;
         try {
             setIsSubmitting(true);
@@ -126,6 +134,18 @@ export function useEditDocument(props?: CustomMutateHooksProps) {
                     isPrivate: data.isPrivate,
                 })
             }
+            if (!data.file && data.isPrivate !== undefined) {
+                setProgress({ value: 30, message: "Mengubah visibilitas file di IPFS" });
+                if (data.isPrivate == true) {
+                    const { url, id } = await pinataPublicFile(cid)
+                    await makeFilePrivate({ docId: documentId, id, url })
+                }
+                if (data.isPrivate == false) {
+                    const { url, id } = await pinataPrivateFile(cid)
+                    await makeFilePublic({ docId: documentId, id, url })
+                }
+            }
+
             setProgress({ value: 70, message: "Menyimpan dokumen ke database..." });
             const editDocResponse = await editDocumentById({
                 documentId,
@@ -153,11 +173,6 @@ export function useEditDocument(props?: CustomMutateHooksProps) {
     };
 }
 
-type PinataUploadParams = {
-    file: File | FileWithPath;
-    presignedUrl: string;
-    isPrivate?: boolean;
-};
 
 async function pinataUpload(
     params: PinataUploadParams

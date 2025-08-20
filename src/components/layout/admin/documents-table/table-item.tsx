@@ -6,9 +6,24 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { cidElipsis, cn, downloadFileFromURI, formatDate } from "@/lib/utils";
-import { ArrowDownToLine, Ellipsis, Eye, EyeOff, Folder, Lock, Pencil, Trash } from "lucide-react";
+import {
+    ArrowDownToLine,
+    Ellipsis,
+    Eye,
+    EyeOff,
+    Folder,
+    FolderLock,
+    Lock,
+    Pencil,
+    Trash,
+} from "lucide-react";
 import Link from "next/link";
-import { deleteDocumentById, getAllDocuments, pinataPrivateFile, pinataPublicFile } from "@/lib/actions";
+import {
+    deleteDocumentById,
+    getAllDocuments,
+    pinataPrivateFile,
+    pinataPublicFile,
+} from "@/lib/actions";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -32,28 +47,36 @@ export default function TableItem(props: PropsType) {
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [openAlert, setOpenAlert] = useState(false);
 
-    const isHavePermission = userSession?.divisionId === props.createdBy.divisionId || userSession?.role === "administrator";
+    const isHavePermission =
+        userSession?.divisionId === props.createdBy.divisionId ||
+        userSession?.role === "administrator";
 
     const handleDownload = async () => {
-        const { url } = props.isPrivate ? await pinataPrivateFile(props.cid) : await pinataPublicFile(props.cid);
+        const { url } = props.isPrivate
+            ? await pinataPrivateFile(props.cid)
+            : await pinataPublicFile(props.cid);
         await downloadFileFromURI(url, props.title);
-    }
+    };
 
     const handleClickDelete = () => {
         if (!isHavePermission) {
-            toast.error("Anda tidak memiliki izin untuk menghapus dokumen ini. (berbeda divisi)");
+            toast.error(
+                "Anda tidak memiliki izin untuk menghapus dokumen ini. (berbeda divisi)"
+            );
             return;
         }
         setOpenAlert(true);
-    }
+    };
 
     const handleClickEdit = () => {
         if (!isHavePermission) {
-            toast.error("Anda tidak memiliki izin untuk mengedit dokumen ini. (berbeda divisi)");
+            toast.error(
+                "Anda tidak memiliki izin untuk mengedit dokumen ini. (berbeda divisi)"
+            );
             return;
         }
         setOpenEditDialog(true);
-    }
+    };
 
     const handleDelete = async () => {
         setEllipsisOpen(false);
@@ -64,14 +87,18 @@ export default function TableItem(props: PropsType) {
                 toast.error(result.reject?.message, { id: "delete-doc" });
                 return;
             }
-            queryClient.invalidateQueries({ queryKey: documentsPage_useGetDocumentsKey });
-            queryClient.invalidateQueries({ queryKey: lastAddedTabHome_queryKey });
+            queryClient.invalidateQueries({
+                queryKey: documentsPage_useGetDocumentsKey,
+            });
+            queryClient.invalidateQueries({
+                queryKey: lastAddedTabHome_queryKey,
+            });
             toast.success("Dokumen berhasil dihapus.", { id: "delete-doc" });
         } catch (error) {
             toast.error("Gagal menghapus dokumen.", { id: "delete-doc" });
             return;
         }
-    }
+    };
 
     const handleDoubleClick = () => {
         router.push(`/app/documents/${props.id}`);
@@ -85,13 +112,11 @@ export default function TableItem(props: PropsType) {
             tabIndex={0}
             onDoubleClick={handleDoubleClick}
         >
-            {
-                !isHavePermission && (
-                    <div className="absolute top-1/2 transform -translate-y-1/2 left-2 text-gray-400">
-                        <Lock size={12} />
-                    </div>
-                )
-            }
+            {!isHavePermission && (
+                <div className="absolute top-1/2 transform -translate-y-1/2 left-2 text-red-400">
+                    <Lock size={12} />
+                </div>
+            )}
             {/* Dokumen */}
             <div className="flex items-center gap-2">
                 <DocumentIcon type={props.fileExt} />
@@ -111,9 +136,18 @@ export default function TableItem(props: PropsType) {
                 </div>
             </div>
             {/* Direktori */}
-            <div className="flex items-center gap-2">
-                <Folder size={18} className="text-amber-600 min-w-fit" />
-                <Link href={`/app/directories/${props.directory?.id}`} className="line-clamp-1 hover:underline">
+            <div className="flex items-center gap-2 relative">
+                {
+                    props.directory?.isPrivate ? (
+                        <FolderLock size={18} className="text-amber-600 min-w-fit" />
+                    ) : (
+                        <Folder size={18} className="text-amber-600 min-w-fit" />
+                    )
+                }
+                <Link
+                    href={`/app/directories/${props.directory?.id}`}
+                    className="line-clamp-1 hover:underline"
+                >
                     {props.directory?.name || "Tidak ada direktori"}
                 </Link>
             </div>
@@ -181,7 +215,6 @@ export default function TableItem(props: PropsType) {
     );
 }
 
-
 function OthersInfo({
     open,
     onOpenChange,
@@ -201,9 +234,7 @@ function OthersInfo({
     return (
         <Popover open={open} onOpenChange={onOpenChange} modal={true}>
             <TooltipText text="Lainnya" bgColorTw="bg-gray-200 text-black">
-                <PopoverTrigger asChild>
-                    {children}
-                </PopoverTrigger>
+                <PopoverTrigger asChild>{children}</PopoverTrigger>
             </TooltipText>
             <PopoverContent
                 side="left"
@@ -232,26 +263,38 @@ function OthersInfo({
                     </span>
                 </p>
                 <div className="col-span-2 flex items-center gap-2 justify-end">
-
-                    <Button onClick={onDownload} variant={"outline"} size={"icon"} className="bg-transparent">
+                    <Button
+                        onClick={onDownload}
+                        variant={"outline"}
+                        size={"icon"}
+                        className="bg-transparent"
+                    >
                         <ArrowDownToLine />
                     </Button>
                     <Separator orientation="vertical" />
                     <TooltipText text="Edit">
-                        <Button onClick={() => {
-                            onEdit?.();
-                            onOpenChange?.(false);
-                        }}
-                            variant={"outline"} size={"icon"} className="bg-transparent" >
+                        <Button
+                            onClick={() => {
+                                onEdit?.();
+                                onOpenChange?.(false);
+                            }}
+                            variant={"outline"}
+                            size={"icon"}
+                            className="bg-transparent"
+                        >
                             <Pencil />
                         </Button>
                     </TooltipText>
                     <TooltipText text="Hapus Dokumen">
-                        <Button onClick={() => {
-                            onDelete?.();
-                            onOpenChange?.(false);
-                        }}
-                            variant={"outline"} size={"icon"} className="bg-transparent text-red-600 hover:bg-red-50 hover:text-red-600">
+                        <Button
+                            onClick={() => {
+                                onDelete?.();
+                                onOpenChange?.(false);
+                            }}
+                            variant={"outline"}
+                            size={"icon"}
+                            className="bg-transparent text-red-600 hover:bg-red-50 hover:text-red-600"
+                        >
                             <Trash />
                         </Button>
                     </TooltipText>

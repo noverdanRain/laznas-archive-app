@@ -110,6 +110,7 @@ const docsQuery = async (
             directory: {
                 id: directories.id,
                 name: directories.name,
+                isPrivate: directories.isPrivate,
             },
             createdBy: {
                 username: users.username,

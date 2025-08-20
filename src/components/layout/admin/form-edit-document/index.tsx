@@ -76,16 +76,19 @@ export default function FormEditDocument(props: FormEditDocumentProps) {
 
     function onSubmit(values: z.infer<typeof editDocumentFormSchema>) {
 
+        const cidWithoutExtension = props.defaultFile.split('.').slice(0, -1).join('.');
+        
         editDocument.mutate({
             documentId: props.documentId,
+            cid: cidWithoutExtension,
             data: {
-                isPrivate: values.visibility !== props.defaultValues?.visibility ? values.visibility === "private" : undefined,
-                title: values.title !== props.defaultValues?.title ? values.title : undefined,
-                description: values.description !== props.defaultValues?.description ? values.description : undefined,
-                documentNum: values.documentNum !== props.defaultValues?.documentNum ? values.documentNum : undefined,
-                directoryId: values.directoryId !== props.defaultValues?.directoryId ? values.directoryId : undefined,
-                documentTypeId: values.documentTypeId !== props.defaultValues?.documentTypeId ? values.documentTypeId : undefined,
-                file: values.file
+            isPrivate: values.visibility !== props.defaultValues?.visibility ? values.visibility === "private" : undefined,
+            title: values.title !== props.defaultValues?.title ? values.title : undefined,
+            description: values.description !== props.defaultValues?.description ? values.description : undefined,
+            documentNum: values.documentNum !== props.defaultValues?.documentNum ? values.documentNum : undefined,
+            directoryId: values.directoryId !== props.defaultValues?.directoryId ? values.directoryId : undefined,
+            documentTypeId: values.documentTypeId !== props.defaultValues?.documentTypeId ? values.documentTypeId : undefined,
+            file: values.file
             },
         })
     }
@@ -116,7 +119,7 @@ export default function FormEditDocument(props: FormEditDocumentProps) {
                     <SelectDocumentTypeField form={form} />
                     <DescriptionField form={form} />
                     <DocumentNumberField form={form} />
-                    <VisibilityField dirSelected={dirSelected} form={form} />
+                    <VisibilityField defaultValue={props.defaultValues.visibility} dirSelected={dirSelected} form={form} />
                     <div className="flex gap-2 items-center justify-end">
                         <Button
                             type="button"
@@ -140,7 +143,7 @@ export default function FormEditDocument(props: FormEditDocumentProps) {
                     </div>
                     <div className="grid w-full">
                         <p className="font-medium ">
-                            Mengunggah{" "}
+                            Mengubah{" "}
                             <span className="font-semibold">
                                 {editDocument.variables?.data.title || "dokumen"}
                             </span>

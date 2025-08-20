@@ -14,19 +14,18 @@ type directoryType = directoriesType[number];
 
 type Visibility = "private" | "public";
 
-export default function VisibilityField({ form, dirSelected }: {
+export default function VisibilityField({ form, dirSelected, defaultValue }: {
     form: ReturnType<typeof useForm<z.infer<typeof editDocumentFormSchema>>>,
-    dirSelected?: directoryType | null
+    dirSelected?: directoryType | null,
+    defaultValue?: Visibility
 }) {
-    console.log("Directory Selected:", dirSelected);
 
     useEffect(() => {
-        if (dirSelected?.isPrivate) {
+        if (dirSelected?.isPrivate == true) {
             form.setValue("visibility", "private");
-        } else {
-            console.log("is Private", dirSelected?.isPrivate);
-            const visibility = dirSelected?.isPrivate ? "private" : "public";
-            form.setValue("visibility", visibility);
+        }
+        else {
+            form.setValue("visibility", defaultValue);
         }
     }, [dirSelected])
 

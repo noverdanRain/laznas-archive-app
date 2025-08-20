@@ -66,7 +66,7 @@ export default function DirectoryCard({
                     </div>
                     {
                         !isHavePermission && (
-                            <Lock size={14} className="absolute top-2 right-2 text-gray-400" />
+                            <Lock size={14} className="absolute top-2 right-2 text-red-400" />
                         )
                     }
                     {
