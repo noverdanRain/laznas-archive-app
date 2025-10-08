@@ -1,4 +1,6 @@
 ignoredBuiltDependencies:
   - '@tailwindcss/oxide'
+  - bcrypt
+  - esbuild
   - sharp
   - unrs-resolver

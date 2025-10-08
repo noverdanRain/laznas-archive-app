@@ -1,0 +1,137 @@
+import { NextRequest, NextResponse } from "next/server";
+import { verifyJwt, verifyToken } from "./lib/jwt";
+
+const protectedRoute = "/app";
+const onlyAdminRoute = "/app/accounts";
+
+export async function middleware(request: NextRequest) {
+    const { pathname } = request.nextUrl;
+    const cookies = request.cookies;
+    const token = cookies.get("token")?.value;
+
+    if (pathname.startsWith(onlyAdminRoute)) {
+        if (!token) {
+            return NextResponse.redirect(new URL("/auth", request.url));
+        }
+        try {
+            const { isValid, payload } = await verifyToken(token);
+
+            if (!isValid || !payload) {
+                return NextResponse.redirect(new URL("/auth", request.url));
+            }
+
+            if (payload.role === "administrator") {
+                return NextResponse.next();
+            } else {
+                return NextResponse.redirect(new URL("/app", request.url));
+            }
+        } catch (error) {
+            return NextResponse.redirect(new URL("/auth", request.url));
+        }
+    }
+
+    if (pathname.startsWith(protectedRoute)) {
+        if (!token) {
+            return NextResponse.redirect(new URL("/auth", request.url));
+        }
+        try {
+            const { isValid } = await verifyToken(token);
+            if (!isValid) {
+                return NextResponse.redirect(new URL("/auth", request.url));
+            }
+            return NextResponse.next();
+        } catch (error) {
+            return NextResponse.redirect(new URL("/auth", request.url));
+        }
+    }
+
+    if (pathname.startsWith("/auth")) {
+        const token = cookies.get("token")?.value;
+        if (token) {
+            try {
+                const { isValid } = await verifyToken(token);
+                if (isValid) {
+                    return NextResponse.redirect(new URL("/app", request.url));
+                }
+                return NextResponse.next();
+            } catch (error) {
+                return NextResponse.next();
+            }
+        }
+    }
+
+    // API Middleware
+
+    if (pathname.startsWith("/api/staffs")) {
+        return await isAdministrator(request);
+    }
+}
+
+export async function isAuthenticated(req: NextRequest) {
+    const cookies = req.cookies;
+    const token = cookies.get("token")?.value;
+
+    if (!token) {
+        return NextResponse.json(
+            {
+                error: "Unauthorized",
+                message: "Token is required for authentication",
+            },
+            { status: 401 }
+        );
+    }
+
+    try {
+        await verifyJwt(token);
+        return NextResponse.next();
+    } catch (error) {
+        console.error("Error verifying token:", error);
+        return NextResponse.json(
+            {
+                error: "Unauthorized",
+                message: "Invalid token",
+            },
+            { status: 401 }
+        );
+    }
+}
+
+export async function isAdministrator(req: NextRequest) {
+    const cookies = req.cookies;
+    const token = cookies.get("token")?.value;
+
+    if (!token) {
+        return NextResponse.json(
+            {
+                error: "Unauthorized",
+                message: "Token is required to check administrator status",
+            },
+            { status: 401 }
+        );
+    }
+
+    try {
+        const payload = await verifyJwt(token);
+        if (payload.role === "administrator") {
+            return NextResponse.next();
+        } else {
+            return NextResponse.json(
+                {
+                    error: "Forbidden",
+                    message:
+                        "You do not have permission to access this resource",
+                },
+                { status: 403 }
+            );
+        }
+    } catch (error) {
+        console.error("Error verifying token:", error);
+        return NextResponse.json(
+            {
+                error: "Unauthorized",
+                message: "Invalid token",
+            },
+            { status: 401 }
+        );
+    }
+}
