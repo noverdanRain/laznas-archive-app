@@ -29,7 +29,7 @@ export default function PublicHomeLastModified() {
                 <p className="font-semibold ml-2">
                     Dokumen terakhir dimodifikasi
                 </p>
-                <Select onValueChange={handleSelectChange} defaultValue="30days">
+                <Select onValueChange={handleSelectChange} defaultValue="all">
                     <SelectTrigger className="w-3xs shadow-none rounded-full border-none bg-gray-100 text-sm h-8 py-0 focus-within:ring-0">
                         <div className="flex items-center gap-2">
                             <ChartNoAxesGantt strokeWidth={2.5} />

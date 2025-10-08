@@ -9,7 +9,6 @@ export default function PublicHomeLastAdded() {
         key: ["public-home-last-added"],
         filter: {
             visibility: "public",
-            lastAdded: "30days"
         },
         sort: {
             field: "createdAt",
@@ -31,7 +30,7 @@ export default function PublicHomeLastAdded() {
                 <p className="font-semibold ml-2">
                     Dokumen terakhir ditambahkan ke arsip
                 </p>
-                <Select defaultValue="30days" onValueChange={handleSelectChange}>
+                <Select defaultValue="all" onValueChange={handleSelectChange}>
                     <SelectTrigger className="w-3xs shadow-none rounded-full border-none bg-gray-100 text-sm h-8 py-0 focus-within:ring-0">
                         <div className="flex items-center gap-2">
                             <ChartNoAxesGantt strokeWidth={2.5} />
